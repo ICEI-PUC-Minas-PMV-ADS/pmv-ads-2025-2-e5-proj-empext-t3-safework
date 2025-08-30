@@ -1,29 +1,25 @@
 message: Please cite this software using these metadata.
 title:
 authors:
-  - family-names: 
-    given-names: 
-  - family-names: 
-    given-names: 
-  - family-names: 
-    given-names: 
-  - family-names: 
-    given-names: 
-  - family-names: 
-    given-names: 
-  - family-names: 
-    given-names: 
+  - family-names: Orfus Tavares
+    given-names: Alvaro Henrique
+  - family-names: Costa Magno
+    given-names: Amaury Vinícius 
+  - family-names: Felix Braga
+    given-names: Gustavo 
+  - family-names: Ferreira Nogueira
+    given-names: Pedro Flávio 
+  - family-names: Rosa De Oliveira Luciano
+    given-names: Siderley Tadeu 
+  - family-names: Abi-Acl Simões Galinari
+    given-names: Vitor 
   - name-suffix: Professor
     affiliation: PUC Minas
-    family-names: 
-    given-names: 
-  - name-suffix: Professor
-    affiliation: PUC Minas
-    family-names: 
-    given-names: 
+    family-names: da Costa
+    given-names: José Wilson 
 keywords:
-  - 
-  - 
+  - seguranca do trabalho
+  - atestados
 repository-code: 
 version: 1.0.0
-date-released: 2023-10-31
+date-released: 2025-12-10

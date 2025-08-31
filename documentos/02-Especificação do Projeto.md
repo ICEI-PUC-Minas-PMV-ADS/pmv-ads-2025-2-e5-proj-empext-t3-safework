@@ -36,14 +36,11 @@ Este projeto é uma aplicação **Fullstack** composta por:
 
 ## Project Model Canvas
 
-Deve ser desenvolvido a partir do microfundamento: Empreendedorismo e inovação.
-Colocar a imagem do modelo construído apresentando a proposta de solução.
+<figure> 
+  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/Project%20Model%20Canva.jpg" alt"Project Model Canva">
+</figure>
 
 ## Requisitos
-
-As tabelas que se seguem apresentam os requisitos funcionais e não funcionais que detalham o escopo do projeto. Para determinar a prioridade de requisitos, aplicar uma técnica de priorização de requisitos e detalhar como a técnica foi aplicada.
-
-Para mais informações, consulte os microfundamentos Fundamentos de Engenharia de Software e Engenharia de Requisitos de Software. 
 
 ### Requisitos Funcionais
 
@@ -51,8 +48,8 @@ Para mais informações, consulte os microfundamentos Fundamentos de Engenharia 
 <tbody>
 <tr align=center>
 <td width="100px"><b>ID</b></td>
-<td width="500px"><b>Descrição do Requisito</b></td>
-<td width="200px"><b>Prioridade</b></td>
+<td width="600px"><b>Descrição do Requisito</b></td>
+<td width="100px"><b>Prioridade</b></td>
 </tr>
 <tr>
 <td>RF-01</td>
@@ -79,10 +76,35 @@ Para mais informações, consulte os microfundamentos Fundamentos de Engenharia 
 
 ### Requisitos não Funcionais
 
-|ID     | Descrição do Requisito  |Prioridade |
-|-------|-------------------------|----|
-|RNF-001| O sistema deve ser responsivo para rodar em um dispositivos móvel | MÉDIA | 
-|RNF-002| Deve processar requisições do usuário em no máximo 3s |  BAIXA | 
+<table>
+<tbody>
+<tr align=center>
+<td width="100px"><b>ID</b></td>
+<td width="600px"><b>Descrição</b></td>
+<td width="100px"><b>Prioridade</b></td>
+</tr>
+<tr>
+<td><b>RNF-01</b></td>
+<td>A aplicação deve cumprir com as normas estabelecidas pela LGPD, garantindo a privacidade e proteção dos dados pessoais dos usuários.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><b>RNF-02</b></td>
+<td>A aplicação deve ter uma interface intuitiva e de fácil uso.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><b>RNF-03</b></td>
+<td>A aplicação deve ter tempos de resposta rápidos para manter uma experiência fluida.</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><b>RNF-04</b></td>
+<td>A solução deve ser desenvolvida utilizando tecnologias atuais e de fácil manutenção.</td>
+<td>Média</td>
+</tr>
+</tbody>
+</table>
 
 Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Classifique esses requisitos em dois grupos:
 
@@ -96,10 +118,6 @@ O projeto está restrito pelos itens apresentados na tabela a seguir.
 |02| Não pode ser desenvolvido um módulo de backend        |
 
 Enumere as restrições à sua solução. Lembre-se de que as restrições geralmente limitam a solução candidata.
-
-> **Links Úteis**:
-> - [O que são Requisitos Funcionais e Requisitos Não Funcionais?](https://codificar.com.br/requisitos-funcionais-nao-funcionais/)
-> - [O que são requisitos funcionais e requisitos não funcionais?](https://analisederequisitos.com.br/requisitos-funcionais-e-requisitos-nao-funcionais-o-que-sao/)
 
 ## Diagrama de Caso de Uso
 

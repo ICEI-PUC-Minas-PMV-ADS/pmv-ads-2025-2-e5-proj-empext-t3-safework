@@ -5,29 +5,41 @@
 Definição do problema e ideia de solução a partir da perspectiva do usuário. 
 
 ## Usuários
-| Tipo de Usuário   | Descrição | Responsabilidades |
-|------------------|-----------|------------------|
-| **xxx** | xxxxx | xxxxx |
-
-### Exemplo
-
-| Tipo de Usuário   | Descrição | Responsabilidades |
-|------------------|-----------|------------------|
-| **Administrador** | Gerencia a aplicação e os usuários. | Gerenciar usuários, configurar o sistema, acessar todos os relatórios. |
-| **Funcionário** | Usa a aplicação para suas tarefas principais. | Criar e editar registros, visualizar relatórios. |
-
+<table>
+<tbody>
+<tr align=center>
+<td width="200px"><b>Tipo de Usuário</b></td>
+<td width="300px"><b>Descrição</b></td>
+<td width="300px"><b>Responsabilidade</b></td>
+</tr>
+<tr>
+<td>Especialista Segurança do Trabalho</td>
+<td>Pessoa tecnicamente qualificada para exercer função de avaliações de segurança do trabalho</td>
+<td>Responsável por fazer levantamento de dados e definir aptidão da empresa e/ou pessoa analisada. Visando maior segurança para o contratante.</td>
+</tr>
+</tbody>
+</table>
+<tr>
+<td>Administrador do Sistema</td>
+<td>Pessoa que mantem a estrutura de dados de forma organizada e coerente</td>
+<td>Responsãvel pela inserção de dados no sistema, novos cadastros, atualizações e manutenções</td>
+</tr>
+</tbody>
+</table>
 
 ## Arquitetura e Tecnologias
 
-Descreva brevemente a arquitetura definida para o projeto e as tecnologias a serem utilizadas. Sugere-se a criação de um diagrama de componentes da solução.
+Este projeto é uma aplicação **Fullstack** composta por:
+
+- **Backend**: .NET WebAPI  
+- **Banco de Dados**: PostgreSQL  
+- **Frontend**: React + TypeScript (buildado e servido pelo Nginx)  
+- **Nginx**: Servidor Web + Proxy reverso para a API
 
 ## Project Model Canvas
 
 Deve ser desenvolvido a partir do microfundamento: Empreendedorismo e inovação.
 Colocar a imagem do modelo construído apresentando a proposta de solução.
-
-> **Links Úteis**:
-> Disponíveis em material de apoio do projeto
 
 ## Requisitos
 

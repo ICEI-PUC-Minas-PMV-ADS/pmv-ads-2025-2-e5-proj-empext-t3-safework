@@ -1,25 +1,37 @@
 # Especificações do Projeto
 
-<span style="color:red">Pré-requisitos: <a href="01-Documentação de Contexto.md"> Documentação de Contexto</a></span>
+A SC Prevenção enfrenta dificuldades na gestão de saúde ocupacional dos funcionários das empresas contratantes, devido à validação manual de atestados, exames periódicos e registros de aptidão. A falta de alertas sobre vencimentos e a ausência de integração com sistemas governamentais tornam o processo lento, sujeito a erros e com risco de não conformidade legal.
 
-Definição do problema e ideia de solução a partir da perspectiva do usuário. 
+Para resolver esses desafios, o projeto propõe o desenvolvimento de um sistema sociotécnico integrado, capaz de centralizar o cadastro dos funcionários, automatizar a validação documental junto a órgãos governamentais e gerar alertas mensais sobre a necessidade de renovação de exames. Essa solução otimiza os processos internos da SC Prevenção, garante maior conformidade legal e facilita a gestão preventiva da saúde dos trabalhadores das empresas contratantes, ao mesmo tempo em que proporciona aos alunos a aplicação prática de conhecimentos em um contexto real.
 
 ## Usuários
-| Tipo de Usuário   | Descrição | Responsabilidades |
-|------------------|-----------|------------------|
-| **xxx** | xxxxx | xxxxx |
-
-### Exemplo
 
 | Tipo de Usuário   | Descrição | Responsabilidades |
 |------------------|-----------|------------------|
-| **Administrador** | Gerencia a aplicação e os usuários. | Gerenciar usuários, configurar o sistema, acessar todos os relatórios. |
+| **Root** | Gerencia a aplicação e os usuários como um usuário técnico. | Gerenciar usuários, configurar o sistema, acessar funcionalidades prilivegiadas. |
+| **Administrador** | Gerencia os usuários, empresas cadastradas e relatórios. | Gerenciar usuários, gerenciar empresas, acessar todos os relatórios. |
 | **Funcionário** | Usa a aplicação para suas tarefas principais. | Criar e editar registros, visualizar relatórios. |
 
 
 ## Arquitetura e Tecnologias
 
-Descreva brevemente a arquitetura definida para o projeto e as tecnologias a serem utilizadas. Sugere-se a criação de um diagrama de componentes da solução.
+O projeto será desenvolvido seguindo uma arquitetura em contêineres, utilizando o Docker Compose para orquestrar os serviços necessários. A solução será composta por dois contêineres principais:
+
+1. Backend (.NET)
+
+  - Responsável pela lógica de negócios, processamento de dados, integração com sistemas governamentais e gerenciamento do fluxo de validação de documentos e alertas.
+
+  - Implementado em .NET, garantindo robustez, escalabilidade e compatibilidade com APIs externas.
+
+2. Frontend (Vite + TypeScript) com Nginx
+
+  - Responsável pela interface de usuário, disponibilizando dashboards, alertas e funcionalidades de gerenciamento de funcionários de forma intuitiva.
+
+  - O frontend será servido pelo Nginx, proporcionando alto desempenho e estabilidade na entrega das páginas.
+
+  - Desenvolvido com Vite e TypeScript, garantindo rapidez no desenvolvimento e tipagem estática para maior confiabilidade do código.
+
+A arquitetura em contêineres permite implantação simplificada, escalabilidade e isolamento dos serviços, enquanto o PostgreSQL em servidor externo garante segurança, persistência e facilidade de manutenção dos dados. O uso do Docker Compose assegura que backend e frontend sejam iniciados e configurados de forma automatizada, promovendo consistência entre os ambientes de desenvolvimento, teste e produção.
 
 ## Project Model Canvas
 
@@ -33,36 +45,30 @@ Colocar a imagem do modelo construído apresentando a proposta de solução.
 
 As tabelas que se seguem apresentam os requisitos funcionais e não funcionais que detalham o escopo do projeto. Para determinar a prioridade de requisitos, aplicar uma técnica de priorização de requisitos e detalhar como a técnica foi aplicada.
 
-Para mais informações, consulte os microfundamentos Fundamentos de Engenharia de Software e Engenharia de Requisitos de Software. 
-
 ### Requisitos Funcionais
 
-|ID    | Descrição do Requisito  | Prioridade |
-|------|-----------------------------------------|----|
-|RF-001| Permitir que o usuário cadastre tarefas | ALTA | 
-|RF-002| Emitir um relatório de tarefas no mês   | MÉDIA |
+|ID     | Descrição do Requisito  |Prioridade |
+|-------|-------------------------|----|
+|RN-001| O sistema deve permitir o cadastro de funcionários das empresas associadas, incluindo informações pessoais, cargo, empresa contratante e histórico de exames. | ALTA | 
+|RN-002| O sistema deve permitir o cadastro e gerenciamento das empresas associadas. |  ALTA | 
+|RN-003| O sistema deve realizar validação automática de documentos junto a sistemas governamentais. |  ALTA | 
+|RN-004| O sistema deve gerar alertas mensais sobre vencimento de exames periódicos e necessidade de renovação. |  ALTA | 
+|RN-005| O sistema deve permitir consultas por funcionário, empresa ou status de exame e gerar relatórios de conformidade. |  MÉDIA | 
+|RN-006| O sistema deve controlar diferentes perfis de usuários (administrador, gestor, colaborador) com permissões específicas. |  ALTA |
 
 ### Requisitos não Funcionais
 
 |ID     | Descrição do Requisito  |Prioridade |
 |-------|-------------------------|----|
-|RNF-001| O sistema deve ser responsivo para rodar em um dispositivos móvel | MÉDIA | 
-|RNF-002| Deve processar requisições do usuário em no máximo 3s |  BAIXA | 
+|RNF-001| O sistema deve ser responsivo e compatível com dispositivos móveis e desktops. | MÉDIA | 
+|RNF-002| O sistema deve processar requisições do usuário em no máximo 3 segundos. |  MÉDIA | 
+|RNF-003| O sistema deve garantir segurança e confidencialidade dos dados, incluindo autenticação e criptografia. |  ALTA | 
+|RNF-004| O sistema deve possuir interface intuitiva, fácil de usar por usuários com diferentes níveis de conhecimento em tecnologia. |  ALTA | 
+|RNF-005|O sistema deve ser modular e bem documentado para facilitar manutenção e atualizações. |  MÉDIA | 
+|RNF-006| O sistema deve ser compatível com diferentes navegadores e dispositivos corporativos. |  MÉDIA |
+
 
 Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Classifique esses requisitos em dois grupos:
-
-- [Requisitos Funcionais
- (RF)](https://pt.wikipedia.org/wiki/Requisito_funcional):
- correspondem a uma funcionalidade que deve estar presente na
-  plataforma (ex: cadastro de usuário).
-- [Requisitos Não Funcionais
-  (RNF)](https://pt.wikipedia.org/wiki/Requisito_n%C3%A3o_funcional):
-  correspondem a uma característica técnica, seja de usabilidade,
-  desempenho, confiabilidade, segurança ou outro (ex: suporte a
-  dispositivos iOS e Android).
-Lembre-se que cada requisito deve corresponder à uma e somente uma
-característica alvo da sua solução. Além disso, certifique-se de que
-todos os aspectos capturados nas Histórias de Usuário foram cobertos.
 
 ## Restrições
 
@@ -70,14 +76,8 @@ O projeto está restrito pelos itens apresentados na tabela a seguir.
 
 |ID| Restrição                                             |
 |--|-------------------------------------------------------|
-|01| O projeto deverá ser entregue até o final do semestre |
-|02| Não pode ser desenvolvido um módulo de backend        |
-
-Enumere as restrições à sua solução. Lembre-se de que as restrições geralmente limitam a solução candidata.
-
-> **Links Úteis**:
-> - [O que são Requisitos Funcionais e Requisitos Não Funcionais?](https://codificar.com.br/requisitos-funcionais-nao-funcionais/)
-> - [O que são requisitos funcionais e requisitos não funcionais?](https://analisederequisitos.com.br/requisitos-funcionais-e-requisitos-nao-funcionais-o-que-sao/)
+|01| O projeto deverá ser entregue no final do semestre letivo, não podendo extrapolar a data de 07/12/24 |
+|02| A equipe não pode subcontratar o desenvolvimento do trabalho        |
 
 ## Diagrama de Caso de Uso
 

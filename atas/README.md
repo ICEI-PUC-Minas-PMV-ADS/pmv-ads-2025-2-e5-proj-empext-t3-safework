@@ -1,1 +1,8 @@
-O grupo deve colocar aqui todas as atas dos encontros realizados com o parceiro (sempre colocar a foto/print de tela na parte de Registro de Presença ) e os documentos que são assinados como: Ata de Acordo de Parceria, Procuração NIT,  Termo Marco de Entrega - Homologação, Implantação e Aceite e Termo de Avaliação do Projeto
+Ata 01 - Reunião de 15 de Agosto de 2025.
+[📄 Abrir PDF](./ata01.pdf)
+[📄 Abrir Print Teams](./reuniao01.png)
+
+
+Ata 02 - À REALIZAR REUNIÃO
+[📄 SEM ARQUIVO](./ata01.pdf)
+

@@ -110,14 +110,24 @@ Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Cla
 
 ## Restrições
 
-O projeto está restrito pelos itens apresentados na tabela a seguir.
-
-|ID| Restrição                                             |
-|--|-------------------------------------------------------|
-|01| O projeto deverá ser entregue até o final do semestre |
-|02| Não pode ser desenvolvido um módulo de backend        |
-
 Enumere as restrições à sua solução. Lembre-se de que as restrições geralmente limitam a solução candidata.
+=======
+<table>
+<tbody>
+<tr align=center>
+<td width="100px"><b>ID</b></td>
+<td width="600px"><b>Restrição</b></td>
+</tr>
+<tr>
+<td><b>01</b></td>
+<td>O projeto deverá ser entregue até o final do semestre.</td>
+</tr>
+<tr>
+<td><b>02</b></td>
+<td>Não pode ser desenvolvido um módulo apenas backend, projeto precisa de interface FrontEnd.</td>
+</tr>
+</tbody>
+</table>
 
 ## Diagrama de Caso de Uso
 
@@ -135,6 +145,16 @@ As referências abaixo irão auxiliá-lo na geração do artefato “Diagrama de
 > - [Diagrams](https://app.diagrams.net/)
 
 ## Modelo da Base de Dados
+
+# Para banco de dados relacional:
+* <figure> 
+  <img src="documentos\img\bancoDados.jpg"
+    <figcaption>Figura 1 - Tela do pgAdmin (Administrador Banco de Dados PostgreSQL</figcaption>
+</figure> 
+* <figure> 
+  <img src="documentos\img\diagramaclasse.jpg"
+    <figcaption>Figura 2 - Relação entre tabelas</figcaption>
+</figure>
 
 # Para banco de dados relacional:
 - Apresentar o MER (Modelo Entidade-Relacionamento)

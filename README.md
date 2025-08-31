@@ -1,25 +1,26 @@
-# TÍTULO DO PROJETO
+# SAFEWORK
 
-`CURSO`
+`Análise e Desenvolvimento de Sistemas`
 
-`DISCIPLINA`
+`Projeto - Desenvolvimento de um Sistema Sociotécnico Inovador`
 
-`SEMESTRE`
+`Eixo 5 - 2025/02`
 
-Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo desenvolvido.
+SafeWork é um software desenvolvido para gestão de atestados, análises e avaliações de segurança do trabalho.
+Planejado para controlar minuciosamente situação de funcionários, prestadores de serviço e empresas, o gestor do sistema pode controlar vencimentos das avaliações, definir conexões entre pessoas e empresas, e acompanhar via dashboard o status atual dos dados importantes cadastrados no sistema.
 
 ## Integrantes
 
-* Nome completo do aluno 1
-* Nome completo do aluno 2
-* Nome completo do aluno 3
-* Nome completo do aluno 4
-* Nome completo do aluno 5
-* Nome completo do aluno 6
+* Alvaro Henrique Orfus Tavares
+* Amaury Vinícius Costa Magno
+* Gustavo Felix Braga
+* Pedro Flávio Ferreira Nogueira
+* Siderley Tadeu Rosa De Oliveira Luciano
+* Vitor Abi-Acl Simões Galinari
 
 ## Orientador
 
-* Nome completo do professor orientador
+* José Wilson da Costa
 
 ## Instruções de utilização
 

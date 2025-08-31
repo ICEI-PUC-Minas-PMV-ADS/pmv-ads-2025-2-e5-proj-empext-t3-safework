@@ -36,8 +36,9 @@ Este projeto é uma aplicação **Fullstack** composta por:
 
 ## Project Model Canvas
 
-Deve ser desenvolvido a partir do microfundamento: Empreendedorismo e inovação.
-Colocar a imagem do modelo construído apresentando a proposta de solução.
+<figure> 
+  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/Project%20Model%20Canva.jpg" alt"Project Model Canva">
+</figure>
 
 ## Requisitos
 

@@ -145,6 +145,16 @@ As referências abaixo irão auxiliá-lo na geração do artefato “Diagrama de
 ## Modelo da Base de Dados
 
 # Para banco de dados relacional:
+* <figure> 
+  <img src="documentos\img\bancoDados.jpg"
+    <figcaption>Figura 1 - Tela do pgAdmin (Administrador Banco de Dados PostgreSQL</figcaption>
+</figure> 
+* <figure> 
+  <img src="documentos\img\diagramaclasse.jpg"
+    <figcaption>Figura 2 - Relação entre tabelas</figcaption>
+</figure>
+
+# Para banco de dados relacional:
 - Apresentar o MER (Modelo Entidade-Relacionamento)
 - Apresentar o Projeto Físico da Base de Dados (estrutura das tabelas, tipos de dados, chaves primárias e estrangeiras)
 # Para banco de dados NoSQL:

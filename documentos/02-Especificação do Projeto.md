@@ -17,8 +17,6 @@ Definição do problema e ideia de solução a partir da perspectiva do usuário
 <td>Pessoa tecnicamente qualificada para exercer função de avaliações de segurança do trabalho</td>
 <td>Responsável por fazer levantamento de dados e definir aptidão da empresa e/ou pessoa analisada. Visando maior segurança para o contratante.</td>
 </tr>
-</tbody>
-</table>
 <tr>
 <td>Administrador do Sistema</td>
 <td>Pessoa que mantem a estrutura de dados de forma organizada e coerente</td>
@@ -49,10 +47,35 @@ Para mais informações, consulte os microfundamentos Fundamentos de Engenharia 
 
 ### Requisitos Funcionais
 
-|ID    | Descrição do Requisito  | Prioridade |
-|------|-----------------------------------------|----|
-|RF-001| Permitir que o usuário cadastre tarefas | ALTA | 
-|RF-002| Emitir um relatório de tarefas no mês   | MÉDIA |
+<table>
+<tbody>
+<tr align=center>
+<td width="100px"><b>ID</b></td>
+<td width="500px"><b>Descrição do Requisito</b></td>
+<td width="200px"><b>Prioridade</b></td>
+</tr>
+<tr>
+<td>RF-01</td>
+<td>Permitir o usuário cadastrar as empresas que possuem contrato</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>RF-02</td>
+<td>Permitir o usuário cadastrar as pessoas que serão avaliadas para emissão de laudo</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>RF-03</td>
+<td>Permitir vincular pessoa à empresa contratada</td>
+<td>Média</td>
+</tr>
+<tr>
+<td>RF-04</td>
+<td>Permitir o usuário emitir os laudos técnicos para consulta posterior</td>
+<td>Alta</td>
+</tr>
+</tbody>
+</table>
 
 ### Requisitos não Funcionais
 
@@ -62,19 +85,6 @@ Para mais informações, consulte os microfundamentos Fundamentos de Engenharia 
 |RNF-002| Deve processar requisições do usuário em no máximo 3s |  BAIXA | 
 
 Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Classifique esses requisitos em dois grupos:
-
-- [Requisitos Funcionais
- (RF)](https://pt.wikipedia.org/wiki/Requisito_funcional):
- correspondem a uma funcionalidade que deve estar presente na
-  plataforma (ex: cadastro de usuário).
-- [Requisitos Não Funcionais
-  (RNF)](https://pt.wikipedia.org/wiki/Requisito_n%C3%A3o_funcional):
-  correspondem a uma característica técnica, seja de usabilidade,
-  desempenho, confiabilidade, segurança ou outro (ex: suporte a
-  dispositivos iOS e Android).
-Lembre-se que cada requisito deve corresponder à uma e somente uma
-característica alvo da sua solução. Além disso, certifique-se de que
-todos os aspectos capturados nas Histórias de Usuário foram cobertos.
 
 ## Restrições
 

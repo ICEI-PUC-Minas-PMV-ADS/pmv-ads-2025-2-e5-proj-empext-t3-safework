@@ -129,25 +129,15 @@ Este projeto é uma aplicação **Fullstack** composta por:
 
 O diagrama de casos de uso é o próximo passo após a elicitação de requisitos, que utiliza um modelo gráfico e uma tabela com as descrições sucintas dos casos de uso e dos atores. Ele contempla a fronteira do sistema e o detalhamento dos requisitos funcionais com a indicação dos atores, casos de uso e seus relacionamentos. 
 
-Para mais informações, consulte o microfundamento Engenharia de Requisitos de Software 
-
-As referências abaixo irão auxiliá-lo na geração do artefato “Diagrama de Casos de Uso”.
-
-> **Links Úteis**:
-> - [Criando Casos de Uso](https://www.ibm.com/docs/pt-br/elm/6.0?topic=requirements-creating-use-cases)
-> - [Como Criar Diagrama de Caso de Uso: Tutorial Passo a Passo](https://gitmind.com/pt/fazer-diagrama-de-caso-uso.html/)
-> - [Lucidchart](https://www.lucidchart.com/)
-> - [Astah](https://astah.net/)
-> - [Diagrams](https://app.diagrams.net/)
-
 ## Modelo da Base de Dados
 
 # Para banco de dados relacional:
 * <figure> 
-  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/bancoDados.jpg"
-    <figcaption>Figura 1 - Tela do pgAdmin (Administrador Banco de Dados PostgreSQL</figcaption>
+  <img src="img/bancoDados.jpg"
+    <figcaption>Figura 1 - Tela do pgAdmin (Administrador Banco de Dados PostgreSQL)</figcaption>
 </figure> 
+
 * <figure> 
-  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/diagramaclasse.jpg"
+  <img src="img/diagramaclasse.jpg"
     <figcaption>Figura 2 - Relação entre tabelas</figcaption>
 </figure>

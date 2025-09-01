@@ -37,7 +37,7 @@ Este projeto é uma aplicação **Fullstack** composta por:
 ## Project Model Canvas
 
 <figure> 
-  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/Project%20Model%20Canva.jpg" alt"Project Model Canva">
+  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/ProjectModelCanva.jpg" alt"Project Model Canva">
 </figure>
 
 ## Requisitos
@@ -106,8 +106,6 @@ Este projeto é uma aplicação **Fullstack** composta por:
 </tbody>
 </table>
 
-Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Classifique esses requisitos em dois grupos:
-
 ## Restrições
 
 <table>
@@ -146,17 +144,10 @@ As referências abaixo irão auxiliá-lo na geração do artefato “Diagrama de
 
 # Para banco de dados relacional:
 * <figure> 
-  <img src="documentos\img\bancoDados.jpg"
+  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/bancoDados.jpg"
     <figcaption>Figura 1 - Tela do pgAdmin (Administrador Banco de Dados PostgreSQL</figcaption>
 </figure> 
 * <figure> 
-  <img src="documentos\img\diagramaclasse.jpg"
+  <img src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2025-2-e5-proj-empext-t3-safework/blob/main/documentos/img/diagramaclasse.jpg"
     <figcaption>Figura 2 - Relação entre tabelas</figcaption>
 </figure>
-
-# Para banco de dados relacional:
-- Apresentar o MER (Modelo Entidade-Relacionamento)
-- Apresentar o Projeto Físico da Base de Dados (estrutura das tabelas, tipos de dados, chaves primárias e estrangeiras)
-# Para banco de dados NoSQL:
-Apresentar o Modelo da Base de Dados (estrutura dos documentos, coleções, ou grafos, conforme o tipo de NoSQL utilizado)
-

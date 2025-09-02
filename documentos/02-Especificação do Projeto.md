@@ -108,6 +108,8 @@ Este projeto é uma aplicação **Fullstack** composta por:
 
 ## Restrições
 
+Enumere as restrições à sua solução. Lembre-se de que as restrições geralmente limitam a solução candidata.
+=======
 <table>
 <tbody>
 <tr align=center>

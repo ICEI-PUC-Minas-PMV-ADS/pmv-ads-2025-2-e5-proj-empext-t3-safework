@@ -10,12 +10,12 @@ namespace safeWorkApi.Models
 {
     public class UsuarioDto
     {
-        [Key]
-        public int Id { get; set; }
-        public string Nome_completo { get; set; }
+        public string Nome_completo { get; set; } = null!;
         [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
         [Required]
-        public string Senha { get; set; }
+        public string Senha { get; set; } = null!;
+        [Required]
+        public int IdPerfil { get; set; }
     }
 }

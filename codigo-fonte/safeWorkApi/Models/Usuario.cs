@@ -8,22 +8,31 @@ using System.Threading.Tasks;
 
 namespace safeWorkApi.Models
 {
-    [Table("Usuarios")]
+    [Table("usuarios")]
     public class Usuario
     {
         [Key]
         public int Id { get; set; }
+        [Column("nome_completo")]
+        public string NomeCompleto { get; set; } = null!;
+
         [Required]
-        public string Nome_usuario { get; set; }
+        [Column("email")]
+        public string Email { get; set; } = null!;
 
-        public string Nome_completo { get; set; }
-
-        public string Email { get; set; }
         [Required]
         [JsonIgnore]
-        public string Senha { get; set; }
+        [Column("senha")]
+        public string Senha { get; set; } = null!;
+
         [Required]
-        public string Perfil_Id { get; set; }
+        [Column("id_empresa_prestadora")]
+        public int IdEmpresaPrestadora { get; set; }
+        public EmpresaPrestadora EmpresaPrestadora { get; set; } = null!;
+
+        [Required]
+        [Column("id_perfil")]
+        public int IdPerfil { get; set; }
         public Perfil Perfil { get; set; } = null!;
     }
 }

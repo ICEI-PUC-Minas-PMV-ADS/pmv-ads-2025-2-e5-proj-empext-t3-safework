@@ -11,8 +11,10 @@ namespace safeWorkApi.Models
     public class Perfil
     {
         [Key]
-        public string Id { get; set; }
-        public string Nome_perfil { get; set; } = string.Empty;
+        public int Id { get; set; }
+        [Required]
+        [Column("nome_perfil")]
+        public string NomePerfil { get; set; } = string.Empty;
         public ICollection<Usuario> Usuario { get; set; } = new List<Usuario>();
     }
 }

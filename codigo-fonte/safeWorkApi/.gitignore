@@ -1,0 +1,106 @@
+# ─────────────────────────────────────────────
+# Build / artefatos
+# ─────────────────────────────────────────────
+bin/
+obj/
+out/
+[Bb]uild/
+[Ll]og/
+*.log
+
+# Perf/diagnostics
+*.etl
+*.etl.json
+*.perf
+*.trace
+*.dtrace
+*.gcda
+*.gcno
+
+# Publicação
+publish/
+*.pubxml
+*.pubxml.user
+
+# ─────────────────────────────────────────────
+# IDEs / Editores
+# ─────────────────────────────────────────────
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Rider / IntelliJ
+.idea/
+*.sln.iml
+
+# VS Code (opcional manter settings)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# ─────────────────────────────────────────────
+# Pacotes / Dependências
+# ─────────────────────────────────────────────
+# NuGet (geralmente restaurado via restore)
+packages/
+*.nupkg
+*.snupkg
+# npm/yarn/pnpm (se usar SPA junto)
+node_modules/
+# LibMan (se restaurar libs no build)
+wwwroot/lib/
+
+# ─────────────────────────────────────────────
+# Testes / Cobertura
+# ─────────────────────────────────────────────
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+
+# ─────────────────────────────────────────────
+# Config locais / Segredos
+# ─────────────────────────────────────────────
+# UserSecrets (mantidos fora do repo)
+secrets.json
+# Variáveis de ambiente locais
+.env
+.env.*
+# AppSettings locais (não compartilhar)
+appsettings.Local.json
+appsettings.*.local.json
+# (opcional) se você preferir NÃO versionar dev:
+appsettings.Development.json
+
+# ─────────────────────────────────────────────
+# SO / Diversos
+# ─────────────────────────────────────────────
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+desktop.ini
+# Linux
+*~
+
+# ─────────────────────────────────────────────
+# Docker
+# ─────────────────────────────────────────────
+# Logs e arquivos temporários de containers
+**/.docker/
+docker-compose.override.yml
+
+# ─────────────────────────────────────────────
+# Certificados / chaves (se gerar localmente)
+# ─────────────────────────────────────────────
+*.pfx
+*.p12
+*.key
+*.cer
+*.crt

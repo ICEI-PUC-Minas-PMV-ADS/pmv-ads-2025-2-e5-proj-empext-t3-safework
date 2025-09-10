@@ -30,20 +30,6 @@ namespace safeWorkApi.Models
                 }
             );
 
-            //Implementa os dados iniciais do Usuario Root
-            modelBuilder.Entity<Usuario>().HasData(
-                new Usuario
-                {
-                    Id = 1,
-                    NomeCompleto = "RootUser",
-                    Email = "root@root",
-                    Senha = "1234",
-                    IdEmpresaPrestadora = null,
-                    IdPerfil = 1
-                }
-            );
-
-
             //Configuracoes dos relacionamentos entre entidades
             modelBuilder.Entity<Usuario>()
                 .HasOne(u => u.Perfil)

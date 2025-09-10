@@ -234,11 +234,6 @@ namespace safeWorkApi.Migrations
                     { 3, "Colaborador" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "usuarios",
-                columns: new[] { "Id", "email", "id_empresa_prestadora", "id_perfil", "nome_completo", "senha" },
-                values: new object[] { 1, "root@root", null, 1, "RootUser", "1234" });
-
             migrationBuilder.CreateIndex(
                 name: "IX_asos_id_colaborador",
                 table: "asos",

@@ -12,7 +12,7 @@ using safeWorkApi.Models;
 namespace safeWorkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250910040602_InitialMigration")]
+    [Migration("20250910140531_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -426,16 +426,6 @@ namespace safeWorkApi.Migrations
                     b.HasIndex("IdPerfil");
 
                     b.ToTable("usuarios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "root@root",
-                            IdPerfil = 1,
-                            NomeCompleto = "RootUser",
-                            Senha = "1234"
-                        });
                 });
 
             modelBuilder.Entity("safeWorkApi.Models.Aso", b =>

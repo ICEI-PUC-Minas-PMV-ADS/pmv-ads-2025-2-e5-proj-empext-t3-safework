@@ -423,16 +423,6 @@ namespace safeWorkApi.Migrations
                     b.HasIndex("IdPerfil");
 
                     b.ToTable("usuarios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "root@root",
-                            IdPerfil = 1,
-                            NomeCompleto = "RootUser",
-                            Senha = "1234"
-                        });
                 });
 
             modelBuilder.Entity("safeWorkApi.Models.Aso", b =>

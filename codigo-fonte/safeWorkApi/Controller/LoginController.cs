@@ -40,7 +40,21 @@ namespace safeWorkApi.Controller
             if (usuarioDb is null || !BCrypt.Net.BCrypt.Verify(model.Senha, usuarioDb.Senha)) return Unauthorized();
 
             var jwt = GenerateJwtToken(usuarioDb);
-            return Ok(new { jwtToken = jwt });
+            
+            var response = new LoginResponseDto
+            {
+                JwtToken = jwt,
+                Usuario = new UsuarioDto
+                {
+                    Id = usuarioDb.Id,
+                    NomeCompleto = usuarioDb.NomeCompleto,
+                    Email = usuarioDb.Email,
+                    IdPerfil = usuarioDb.IdPerfil,
+                    IdEmpresaPrestadora = usuarioDb.IdEmpresaPrestadora
+                }
+            };
+            
+            return Ok(response);
         }
 
 
@@ -66,6 +80,31 @@ namespace safeWorkApi.Controller
             return tokenHandler.WriteToken(token);
         }
 
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
+
+            var usuario = await _context.Usuarios.AsNoTracking()
+                .Include(u => u.Perfil)
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (usuario == null)
+                return NotFound();
+
+            var usuarioDto = new UsuarioDto
+            {
+                Id = usuario.Id,
+                NomeCompleto = usuario.NomeCompleto,
+                Email = usuario.Email,
+                IdPerfil = usuario.IdPerfil,
+                IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
+            };
+
+            return Ok(usuarioDto);
+        }
 
     }
 }

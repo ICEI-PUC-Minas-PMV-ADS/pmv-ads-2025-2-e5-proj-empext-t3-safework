@@ -54,6 +54,15 @@ npm run dev
 
 ## Configuração
 
+### Variáveis de Ambiente
+
+Crie um arquivo `.env.local` na raiz do projeto com:
+
+```env
+# URL da API do backend SafeWork
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
 ### Tailwind CSS
 
 O Tailwind CSS está configurado com:
@@ -89,3 +98,4 @@ Para build de produção:
 npm run build
 npm run start
 ```
+

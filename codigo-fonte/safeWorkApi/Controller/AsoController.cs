@@ -54,10 +54,7 @@ namespace safeWorkApi.Controller
         [HttpPut("{id}")]
         public async Task<ActionResult<Aso>> Update(int id, Aso model)
         {
-            if (id != model.Id)
-            {
-                return BadRequest();
-            }
+            if (id != model.Id) return BadRequest();
 
             _context.Asos.Update(model);
             try

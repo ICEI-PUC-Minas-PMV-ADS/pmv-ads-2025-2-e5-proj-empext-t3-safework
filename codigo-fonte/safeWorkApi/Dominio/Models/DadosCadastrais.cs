@@ -23,32 +23,34 @@ namespace safeWorkApi.Models
 
         [Required]
         [Column("cpf_cnpj")]
-        public string CpfCnpj { get; set; } = null!;
+        [MaxLength(14)]
+        [MinLength(11)]
+        public string? CpfCnpj { get; set; }
 
         [Required]
         [Column("nome_razao")]
-        public string NomeRazao { get; set; } = null!;
+        public string? NomeRazao { get; set; }
 
         [Column("nome_fantasia")]
-        public string NomeFantasia { get; set; } = null!;
+        public string? NomeFantasia { get; set; }
 
         [Column("telefone")]
-        public string Telefone { get; set; } = null!;
+        public string? Telefone { get; set; }
 
         [Column("celular")]
-        public string Celular { get; set; } = null!;
+        public string? Celular { get; set; }
 
         [Column("email")]
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; }
 
         [Required]
         [Column("status")]
         public bool Status { get; set; }
 
         [Column("id_endereco")]
-        public string IdEndereco { get; set; } = null!;
+        public int? IdEndereco { get; set; }
 
-        public Endereco Endereco { get; set; } = null!;
+        public Endereco? Endereco { get; set; }
 
     }
 }

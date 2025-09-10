@@ -12,6 +12,7 @@ namespace safeWorkApi.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         [Column("nome_perfil")]
         public string NomePerfil { get; set; } = string.Empty;

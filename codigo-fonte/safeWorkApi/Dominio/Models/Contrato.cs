@@ -36,14 +36,14 @@ namespace safeWorkApi.Models
         public StatusContrato StatusContrato { get; set; }
 
         [Column("path_file")]
-        public string PathFile { get; set; }
+        public string? PathFile { get; set; }
 
         [Required]
         [Column("valor")]
         public decimal Valor { get; set; }
 
         [Column("observacoes")]
-        public string Observacoes { get; set; } = null!;
+        public string? Observacoes { get; set; }
 
         [Required]
         [Column("id_empresa_cliente")]

@@ -5,16 +5,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace safeWorkApi.Models
 {
     [Table("usuarios")]
+    [Index(nameof(Email), IsUnique = true)]
     public class Usuario
     {
         [Key]
         public int Id { get; set; }
+
         [Column("nome_completo")]
-        public string NomeCompleto { get; set; } = null!;
+        public string? NomeCompleto { get; set; }
 
         [Required]
         [Column("email")]
@@ -25,10 +28,10 @@ namespace safeWorkApi.Models
         [Column("senha")]
         public string Senha { get; set; } = null!;
 
-        [Required]
+
         [Column("id_empresa_prestadora")]
-        public int IdEmpresaPrestadora { get; set; }
-        public EmpresaPrestadora EmpresaPrestadora { get; set; } = null!;
+        public int? IdEmpresaPrestadora { get; set; }
+        public EmpresaPrestadora? EmpresaPrestadora { get; set; }
 
         [Required]
         [Column("id_perfil")]

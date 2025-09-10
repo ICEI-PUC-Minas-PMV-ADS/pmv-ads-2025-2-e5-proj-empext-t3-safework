@@ -47,10 +47,10 @@ namespace safeWorkApi.Models
         public StatusAso Status { get; set; }
 
         [Column("path_file")]
-        public string PathFile { get; set; }
+        public string? PathFile { get; set; }
 
         [Column("observacoes")]
-        public string Observacoes { get; set; } = null!;
+        public string? Observacoes { get; set; }
 
         [Required]
         [Column("id_colaborador")]

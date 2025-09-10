@@ -1,14 +1,50 @@
 using Microsoft.EntityFrameworkCore;
+using safeWorkApi.Dominio.DTOs;
 
 
 namespace safeWorkApi.Models
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        //Configuracoes de utilizacao da ORM (Relacionamentos e dados iniciais)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Implementa os dados iniciais do Perfil
+            modelBuilder.Entity<Perfil>().HasData(
+                new Perfil { Id = 1, NomePerfil = "Root" },
+                new Perfil { Id = 2, NomePerfil = "Administrador" },
+                new Perfil { Id = 3, NomePerfil = "Colaborador" }
+            );
+
+            //Implementa os dados iniciais da EmpresaPrestadora
+            modelBuilder.Entity<EmpresaPrestadora>().HasData(
+                new EmpresaPrestadora
+                {
+                    Id = 1,
+                    TipoPessoa = TipoPessoa.Juridica,
+                    CpfCnpj = "99999999000199",
+                    NomeRazao = "ScPrevenção",
+                    Status = true
+                }
+            );
+
+            //Implementa os dados iniciais do Usuario Root
+            modelBuilder.Entity<Usuario>().HasData(
+                new Usuario
+                {
+                    Id = 1,
+                    NomeCompleto = "RootUser",
+                    Email = "root@root",
+                    Senha = "1234",
+                    IdEmpresaPrestadora = null,
+                    IdPerfil = 1
+                }
+            );
+
+
+            //Configuracoes dos relacionamentos entre entidades
             modelBuilder.Entity<Usuario>()
                 .HasOne(u => u.Perfil)
                 .WithMany(p => p.Usuario)
@@ -48,7 +84,7 @@ namespace safeWorkApi.Models
                 .HasOne(c => c.EmpresaCliente)
                 .WithMany(ec => ec.Contratos)
                 .HasForeignKey(c => c.IdEmpresaCliente);
-            
+
             modelBuilder.Entity<Contrato>()
                 .HasOne(c => c.EmpresaPrestadora)
                 .WithMany(ep => ep.Contratos)
@@ -65,5 +101,5 @@ namespace safeWorkApi.Models
 
     }
 
-    
+
 }

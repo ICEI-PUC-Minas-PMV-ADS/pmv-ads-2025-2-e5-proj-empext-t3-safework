@@ -1,3 +1,5 @@
+import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios'
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5219/api'
 
 export interface LoginRequest {
@@ -19,15 +21,53 @@ export interface User {
 }
 
 class ApiClient {
-  private baseURL: string
+  private axiosInstance: AxiosInstance
   private token: string | null = null
 
   constructor(baseURL: string) {
-    this.baseURL = baseURL
+    this.axiosInstance = axios.create({
+      baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('auth_token')
+      if (this.token) {
+        this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+      }
     }
+
+    this.axiosInstance.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        if (this.token) {
+          config.headers.Authorization = `Bearer ${this.token}`
+        }
+        return config
+      },
+      (error: any) => {
+        return Promise.reject(error)
+      }
+    )
+
+    this.axiosInstance.interceptors.response.use(
+      (response: AxiosResponse) => {
+        return response
+      },
+      (error: AxiosError) => {
+        if (error.response?.status === 401) {
+          this.setToken(null)
+          throw new Error('Sessão expirada. Faça login novamente.')
+        }
+        
+        const errorMessage = (error.response?.data as any)?.message || 
+                           `Erro ${error.response?.status}: ${error.response?.statusText}` ||
+                           'Erro de conexão com o servidor'
+        
+        throw new Error(errorMessage)
+      }
+    )
   }
 
   setToken(token: string | null) {
@@ -35,8 +75,10 @@ class ApiClient {
     if (typeof window !== 'undefined') {
       if (token) {
         localStorage.setItem('auth_token', token)
+        this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
       } else {
         localStorage.removeItem('auth_token')
+        delete this.axiosInstance.defaults.headers.common['Authorization']
       }
     }
   }
@@ -49,66 +91,24 @@ class ApiClient {
     return !!this.token
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`
-    
-    const config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    }
-
-    if (this.token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${this.token}`,
-      }
-    }
-
-    try {
-      const response = await fetch(url, config)
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          this.setToken(null)
-          throw new Error('Sessão expirada. Faça login novamente.')
-        }
-        
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`)
-      }
-
-      return await response.json()
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error
-      }
-      throw new Error('Erro de conexão com o servidor')
-    }
-  }
-
   async login(credentials: LoginRequest): Promise<LoginResponse> {
-    return this.request<LoginResponse>('/Login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    })
+    const response = await this.axiosInstance.post<LoginResponse>('/Login', credentials)
+    return response.data
   }
 
   async getCurrentUser(): Promise<User> {
-    return this.request<User>('/Login/me')
+    const response = await this.axiosInstance.get<User>('/Login/me')
+    return response.data
   }
 
   async getUsers(): Promise<User[]> {
-    return this.request<User[]>('/Usuario')
+    const response = await this.axiosInstance.get<User[]>('/Usuario')
+    return response.data
   }
 
   async getUserById(id: number): Promise<User> {
-    return this.request<User>(`/Usuario/${id}`)
+    const response = await this.axiosInstance.get<User>(`/Usuario/${id}`)
+    return response.data
   }
 
   logout() {

@@ -395,48 +395,155 @@
 
 
 #### Exemplo de Caso de Teste de Insucesso
-Os casos de testes de insucesso devem ser identificados por CT - xxx - I + sequencial de insucesso.
-Para cada etapa do projeto, criar uma seção com o nome da Etapa do projeto: Etapa 2, Etapa 3 e Etapa 4
-### ETAPA 2  
-<table>
-  <tr>
-    <th colspan="2" width="1000">CT-001 - I01<br>Login com credenciais inválidas</th>
-  </tr>
-  <tr>
-    <td width="150"><strong>Descrição</strong></td>
-    <td>Este caso de teste verifica o tratamento de credenciais inválidas no login.</td>
-  </tr>
-  <tr>
-    <td><strong>Responsável Caso de Teste </strong></td>
-    <td width="430">José da Silva</td>
-  </tr>
- <tr>
-    <td><strong>Tipo do Teste</strong></td>
-    <td width="430">Insucesso</td>
+
+### ETAPA 2 - Autenticação, Gestão de Usuários e Empresas
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-001 - I01<br>Login com senha inválida</th> 
   </tr> 
-  <tr>
-    <td><strong>Requisitos associados</strong></td>
-    <td>RF-001: O funcionário não conseguirá logar no aplicativo</td>
-  </tr>
-  <tr>
-    <td><strong>Passos</strong></td>
+  <tr> 
+    <td width="150"><strong>Descrição</strong></td> 
+    <td>Verifica tratamento de credenciais inválidas no login.</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td width="430">Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Insucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-15 (Login); RNF-05 (Segurança)</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
     <td>
-      1. Abrir o aplicativo.<br>
-      2. Inserir o CPF válido.<br>
-      3. Inserir a senha inválida.<br>
-      4. Clicar no botão "Entrar".
-      </td>
-  </tr>
-    <tr>
-    <td><strong>Dados de teste</strong></td>
+      1. Inserir usuário válido.<br>
+      2. Inserir senha inválida.<br>
+      3. Clicar "Entrar".
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Dados de teste</strong></td> 
+    <td>Senha: "123"</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Exibir mensagem "Credenciais inválidas" sem revelar motivo específico; nenhuma sessão criada.</td> 
+  </tr> 
+</table> 
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-002 - I02<br>Tentativas repetidas de login (bloqueio)</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>Confere se o sistema aplica bloqueio temporário após várias tentativas falhas.</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Insucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RNF-05: Segurança; RF-15</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
     <td>
-      - <strong>CPF:</strong> Colocar CPF cadastrado na base<br>
-      - <strong>Senha:</strong> Colocar senha inválida
-  </tr>
-    <tr>
-    <td><strong>Critérios de êxito</strong></td>
-    <td>O sistema deve apresentar a mensagem de login inválido.</td>
-  </tr>
+      1. Realizar 5 tentativas de login com senha incorreta.<br>
+      2. Tentar novamente com senha correta durante bloqueio.
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Dados de teste</strong></td> 
+    <td>Mesmo usuário; senhas erradas repetidas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Conta/sessão bloqueada temporariamente; mensagem informativa sem expor dados sensíveis.</td> 
+  </tr> 
+</table> 
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-003 - I03<br>Cadastro de Empresa com CNPJ inválido</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>Valida tratamento de formato/validação de CNPJ incorreto no cadastro de empresa.</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Insucesso</td> </tr> <tr> <td><strong>Requisitos associados</strong></td> 
+      <td>RF-01: CRUD de empresas; RNF-02: Usabilidade (validação de formulário)</td> 
+    </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Abrir "Nova Empresa".<br>
+      2. Preencher CNPJ "11.111.111/1111-11".<br>
+      3. Salvar.
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Dados de teste</strong></td> 
+    <td>CNPJ com dígitos verificadores inválidos</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Bloquear gravação e exibir mensagem de CNPJ inválido.</td> 
+  </tr> 
+</table> 
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-004 - I04<br>Anexo de contrato com tipo/tamanho inválido</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>Garante tratamento de arquivo não permitido (extensão/tamanho) no upload contratual.</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Insucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-02; RNF-05 (segurança de arquivos); RNF-02</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Abrir "Anexar documento".<br>
+      2. Selecionar arquivo .exe de 15MB.<br>
+      3. Enviar.
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Dados de teste</strong></td> 
+    <td>Arquivo: contrato.exe (15MB)</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Upload bloqueado; mensagem clara de tipo/tamanho inválido; nada salvo.</td> 
+  </tr> 
 </table>
 
 ### ETAPA 3

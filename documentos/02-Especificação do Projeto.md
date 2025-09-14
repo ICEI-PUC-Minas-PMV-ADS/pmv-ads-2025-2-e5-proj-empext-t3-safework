@@ -176,8 +176,6 @@ A arquitetura em contêineres permite implantação simplificada, escalabilidade
 
 ## Restrições
 
-Enumere as restrições à sua solução. Lembre-se de que as restrições geralmente limitam a solução candidata.
-=======
 <table>
 <tbody>
 <tr align=center>

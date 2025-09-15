@@ -30,14 +30,14 @@ namespace safeWorkApi.Controller
             if (model is null || (
                 string.IsNullOrWhiteSpace(model.Email) &&
                 string.IsNullOrWhiteSpace(model.Senha)))
-                return Unauthorized();
+                return Unauthorized(new { message = "Email e senha são obrigatórios" });
 
             Usuario? usuarioDb = await _context.Usuarios.AsNoTracking()
                 .Include(u => u.Perfil)
                 .FirstOrDefaultAsync(c => c.Email == model.Email);
 
-
-            if (usuarioDb is null || !BCrypt.Net.BCrypt.Verify(model.Senha, usuarioDb.Senha)) return Unauthorized();
+            if (usuarioDb is null || !BCrypt.Net.BCrypt.Verify(model.Senha, usuarioDb.Senha)) 
+                return Unauthorized(new { message = "Email ou senha incorretos" });
 
             var jwt = GenerateJwtToken(usuarioDb);
             

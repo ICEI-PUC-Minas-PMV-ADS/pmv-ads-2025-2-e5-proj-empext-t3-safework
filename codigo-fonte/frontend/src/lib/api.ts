@@ -57,8 +57,15 @@ class ApiClient {
       },
       (error: AxiosError) => {
         if (error.response?.status === 401) {
-          this.setToken(null)
-          throw new Error('Sessão expirada. Faça login novamente.')
+          const isLoginRequest = error.config?.url?.includes('/Login') && error.config?.method === 'post'
+          
+          if (isLoginRequest) {
+            const backendMessage = (error.response?.data as any)?.message
+            throw new Error(backendMessage || 'Email ou senha incorretos. Verifique suas credenciais.')
+          } else {
+            this.setToken(null)
+            throw new Error('Sessão expirada. Faça login novamente.')
+          }
         }
         
         const errorMessage = (error.response?.data as any)?.message || 

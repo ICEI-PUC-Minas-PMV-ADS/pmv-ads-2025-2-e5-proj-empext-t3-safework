@@ -35,7 +35,7 @@ A arquitetura em contêineres permite implantação simplificada, escalabilidade
 ## Project Model Canvas
 
 <figure> 
-  <img src="img/ProjectModelCanva.jpg" alt"Project Model Canva">
+  <img src="img/PMC 2.0.png" alt"Project Model Canva">
 </figure>
 
 ## Requisitos

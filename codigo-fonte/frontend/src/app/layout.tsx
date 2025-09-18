@@ -6,7 +6,7 @@ import { AuthProvider } from '../contexts/AuthContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SafeWork - Frontend',
+  title: 'SafeWork',
   description: 'Aplicação frontend do projeto SafeWork',
 }
 

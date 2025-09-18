@@ -57,7 +57,7 @@ export function LoginForm() {
         senha: formData.password
       })
       
-      router.push('/home')
+      router.push('/dashboard/home')
       
     } catch (error) {
       console.error('Erro no login:', error)
@@ -147,18 +147,6 @@ export function LoginForm() {
             'Entrar'
           )}
         </button>
-      </div>
-
-      <div className="text-center">
-        <p className="text-sm text-gray-600">
-          Não tem uma conta?{' '}
-          <a
-            href="#"
-            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-          >
-            Cadastre-se aqui
-          </a>
-        </p>
       </div>
     </form>
   )

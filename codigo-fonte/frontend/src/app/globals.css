@@ -24,4 +24,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .sidebar-right-shadow {
+    box-shadow: 10px 0 15px -2px rgba(0, 0, 0, 0.20);
+    position: relative;
+    z-index: 10;
+  }
 }

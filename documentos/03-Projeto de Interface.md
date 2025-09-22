@@ -2,6 +2,12 @@
 
 1. **Login / Logout**  
    - Login, recuperação de senha, mensagens de erro (RF-15, RF-16; RNF-05).
+   Tela Login:
+   ![Tela de Login](./img/Login.png)
+   Tela Recuperação de Senha:
+   ![Tela Dashboard](./img/Esqueceu_Senha.png)
+   Tela Regisrar Nova Senha:
+   ![Tela Registrar Nova Senha](./img/Recuperar_Senha.png)
 
 2. **Dashboard**  
    - Indicadores de ASO vencendo, alertas, status de integrações (RF-07, RF-10; RNF-03).  

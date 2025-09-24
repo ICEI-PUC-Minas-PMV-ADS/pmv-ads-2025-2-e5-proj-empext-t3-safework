@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recuperação de Senha</title>
+</head>
+
+<body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f4f6f8;">
+
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%"
+        style="max-width:600px; margin:auto; background:#ffffff; border-radius:8px; overflow:hidden;">
+        <!-- Cabeçalho -->
+        <tr>
+            <td align="center" bgcolor="#2563eb" style="padding:20px; color:white;">
+                <h2 style="margin:0; font-size:22px;">Recuperação de Senha</h2>
+                <p style="margin:0; font-size:14px;">Sua segurança é nossa prioridade</p>
+            </td>
+        </tr>
+
+        <!-- Imagem -->
+        <tr>
+            <td align="center" style="padding:30px;">
+                <img src="./imgs/IconSafeWork.png" width="400" height="200" style="border-radius:6px;" alt="Imagem" />
+            </td>
+        </tr>
+
+        <!-- Corpo -->
+        <tr>
+            <td style="padding:20px; background-color:#eef6ff; border-left:4px solid #16a34a; border-radius:6px;">
+                <p style="font-size:16px; margin:0 0 10px 0; font-weight:bold; color:#1e3a8a;">Olá, {{USER_NAME}}</p>
+                <p style="font-size:14px; margin:0 0 15px 0; color:#1f2937;">
+                    Recebemos uma solicitação para redefinir sua senha. Aqui está sua senha temporária para acessar sua
+                    conta:
+                </p>
+
+                <!-- Senha temporária -->
+                <table border="0" cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:15px;">
+                    <tr>
+                        <td
+                            style="padding:10px; align-items: center; text-align: center; background:white; border:1px solid #cbd5e1; border-radius:4px; font-size:18px; font-weight:bold; color:#065f46;">
+                            {{TEMP_PASSWORD}}
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Alerta importante -->
+                <p style="font-size:14px; margin:0 0 15px 0; color:#1f2937;">
+                    <strong style="color:#1d4ed8;">Importante:</strong> Esta senha é válida por 1 hora. Recomendamos que
+                    você altere sua senha imediatamente após o login.
+                </p>
+
+                <!-- Aviso -->
+                <div
+                    style="padding:10px; border:1px solid #facc15; background:#fefce8; border-radius:4px; font-size:13px; color:#92400e;">
+                    ⚠️ Se você não solicitou esta redefinição, ignore este e-mail ou entre em contato conosco.
+                </div>
+            </td>
+        </tr>
+
+        <!-- Rodapé -->
+        <tr>
+            <td align="center" style="padding:15px; font-size:12px; color:#6b7280;">
+                &copy; 2025 SafeWork - Todos os direitos reservados.
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

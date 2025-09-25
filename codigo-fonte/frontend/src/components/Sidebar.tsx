@@ -1,115 +1,130 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useAuth } from "../contexts/AuthContext";
-import { useRouter, usePathname } from "next/navigation";
-import { getProfileNameById } from "@/constants/userProfiles";
+import { useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
+import { 
+  HomeIcon, 
+  UsersIcon, 
+  UserGroupIcon, 
+  MapPinIcon,
+  BuildingOfficeIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ArrowRightOnRectangleIcon
+} from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 export function Sidebar() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
+  const [isOpen, setIsOpen] = useState(false)
+  const { user, logout } = useAuth()
+  const pathname = usePathname()
 
   const menuItems = [
-    { href: "/dashboard/home", label: "Dashboard" },
-    { href: "/dashboard/empresas", label: "Empresas" },
-    { href: "/dashboard/asos", label: "Asos" },
-    { href: "/dashboard/contratos", label: "Contratos" },
-    { href: "/dashboard/colaboradores", label: "Colaboradores" },
-  ];
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+    { name: 'Usuários', href: '/dashboard/usuarios', icon: UsersIcon },
+    { name: 'Colaboradores', href: '/dashboard/colaboradores', icon: UserGroupIcon },
+    { name: 'Endereços', href: '/dashboard/enderecos', icon: MapPinIcon },
+    { name: 'Empresas', href: '/dashboard/empresas', icon: BuildingOfficeIcon },
+  ]
 
-  const configItems = [
-    { href: "/usuarios", label: "Usuarios" },
-    { href: "/enderecos", label: "Endereços" },
-  ];
-
-  const NavItem = ({ href, label }: { href: string; label: string }) => {
-    const isActive = pathname === href;
-    return (
-      <li
-        className={`
-          p-2 rounded cursor-pointer transition-all duration-200
-          ${isActive 
-            ? "bg-blue-400 text-white" 
-            : "hover:bg-blue-400 hover:text-white text-gray-700"
-          }
-        `}
-      >
-        <Link href={href}>{label}</Link>
-      </li>
-    );
-  };
+  const handleLogout = () => {
+    logout()
+  }
 
   return (
-    <nav className="w-64 md:w-[16%] lg:w-[14%] p-4 h-screen bg-white sidebar-right-shadow flex flex-col">
-      <div className="mb-6">
-        {/* Logo */}
-        <div className="mb-14 flex items-center justify-center">
-          {/* Substitua por sua logo */}
-          <div className="w-32 h-12 bg-gray-200 rounded flex items-center justify-center text-sm text-gray-600">
-            LOGO
-          </div>
-          {/* Exemplo de como usar:
-          <Image 
-            src="/logo.png" 
-            alt="SafeWork" 
-            width={128} 
-            height={48}
-            className="object-contain"
-          />
-          */}
-        </div>
-        
-        <ul className="flex flex-col gap-1">
-          {menuItems.map((item) => (
-            <NavItem key={item.href} href={item.href} label={item.label} />
-          ))}
-        </ul>
-      </div>
-
-      <div className="border-t border-gray-200 pt-4">
-        <ul className="flex flex-col gap-1">
-          {configItems.map((item) => (
-            <NavItem key={item.href} href={item.href} label={item.label} />
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-auto border-t border-gray-200 pt-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-            {user?.nomeCompleto?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-800 truncate">
-              {user?.nomeCompleto}
-            </p>
-            <p className="text-xs text-gray-500 truncate">
-              {getProfileNameById(user?.idPerfil || 0)}
-            </p>
-          </div>
-        </div>
-        
+    <>
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-2 p-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 rounded cursor-pointer transition-all duration-200"
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-white p-2 rounded-md shadow-md"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
-          </svg>
-          Sair
+          {isOpen ? (
+            <XMarkIcon className="h-6 w-6" />
+          ) : (
+            <Bars3Icon className="h-6 w-6" />
+          )}
         </button>
       </div>
-    </nav>
-  );
+
+      {/* Overlay */}
+      {isOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:static lg:inset-0
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="flex flex-col h-full">
+          {/* Logo */}
+          <div className="flex items-center justify-center h-16 px-4 bg-gray-800">
+            <h1 className="text-xl font-bold text-white">SafeWork</h1>
+          </div>
+
+          {/* User info */}
+          <div className="px-4 py-4 border-b border-gray-700">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium text-white">
+                    {user?.nomeCompleto?.charAt(0) || 'U'}
+                  </span>
+                </div>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-white">
+                  {user?.nomeCompleto || 'Usuário'}
+                </p>
+                <p className="text-xs text-gray-300">
+                  {user?.email || 'email@exemplo.com'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-4 space-y-2">
+            {menuItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`
+                    flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
+                    ${isActive 
+                      ? 'bg-gray-800 text-white' 
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }
+                  `}
+                >
+                  <item.icon className="mr-3 h-5 w-5" />
+                  {item.name}
+                </Link>
+              )
+            })}
+          </nav>
+
+          {/* Logout button */}
+          <div className="px-4 py-4 border-t border-gray-700">
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white transition-colors"
+            >
+              <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5" />
+              Sair
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
 }

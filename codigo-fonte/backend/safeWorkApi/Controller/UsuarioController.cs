@@ -51,16 +51,35 @@ namespace safeWorkApi.Controller
                 return BadRequest(ModelState);
             }
 
-            var newUsuario = new Usuario
+            var newUsuario = new Usuario { };
+            if (usuario.IdPerfil == 1)
             {
-                NomeCompleto = usuario.NomeCompleto,
-                Email = usuario.Email,
-                Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
-                IdPerfil = usuario.IdPerfil,
-                IdEmpresaPrestadora = 0 /* => Necessario alterar 
-                futuramente caso tenham mais empresas
-                de seguranca do trabalho cadastradas*/
-            };
+                //Configuracao para usuario de perfil Root
+                newUsuario = new Usuario
+                {
+                    NomeCompleto = usuario.NomeCompleto,
+                    Email = usuario.Email,
+                    Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                    IdPerfil = usuario.IdPerfil,
+                    IdEmpresaPrestadora = null
+                };
+            }
+            else
+            {
+                //Configuracao para usuario convencional
+                newUsuario = new Usuario
+                {
+                    NomeCompleto = usuario.NomeCompleto,
+                    Email = usuario.Email,
+                    Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                    IdPerfil = usuario.IdPerfil,
+                    IdEmpresaPrestadora = 1 /* => Necessario alterar 
+                    futuramente caso tenham mais empresas
+                    de seguranca do trabalho cadastradas*/
+                };
+            }
+
+
 
             try
             {

@@ -118,6 +118,30 @@ class ApiClient {
     return response.data
   }
 
+  async recoverPassword(email: string): Promise<void> {
+    const axiosInstance = axios.create({
+      baseURL: this.axiosInstance.defaults.baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    const response = await axiosInstance.post<void>(`/Login/recoverPassword?email=${encodeURIComponent(email)}`)
+    return response.data
+  }
+
+  async resetPassword(email: string, tempPassword: string, newPassword: string): Promise<void> {
+    const axiosInstance = axios.create({
+      baseURL: this.axiosInstance.defaults.baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    const response = await axiosInstance.post<void>(`/Login/resetPassword?email=${encodeURIComponent(email)}&tempPassword=${encodeURIComponent(tempPassword)}&newPassword=${encodeURIComponent(newPassword)}`)
+    return response.data
+  }
+
   logout() {
     this.setToken(null)
   }

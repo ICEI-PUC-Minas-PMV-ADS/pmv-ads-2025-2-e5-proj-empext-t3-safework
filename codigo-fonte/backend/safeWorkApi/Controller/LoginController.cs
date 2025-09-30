@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
@@ -110,6 +111,7 @@ namespace safeWorkApi.Controller
         }
 
         [HttpPost("recoverPassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> RecoverPassword(string? email)
         {
             //Verifica se o parametro recebido é nulo e se tem as
@@ -145,6 +147,7 @@ namespace safeWorkApi.Controller
         }
 
         [HttpPost("resetPassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(string email, string tempPassword, string newPassword)
         {
             //Validacao para entrada dos dados

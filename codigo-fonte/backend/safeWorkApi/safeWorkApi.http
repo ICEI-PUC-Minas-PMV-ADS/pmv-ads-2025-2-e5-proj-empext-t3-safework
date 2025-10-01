@@ -4,3 +4,115 @@ GET {{safeWorkApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+# EmpresaCliente Endpoints
+
+### Get all EmpresasClientes
+GET {{safeWorkApi_HostAddress}}/api/EmpresaCliente
+Accept: application/json
+
+###
+
+### Get EmpresaCliente by ID
+GET {{safeWorkApi_HostAddress}}/api/EmpresaCliente/1
+Accept: application/json
+
+###
+
+### Create new EmpresaCliente
+POST {{safeWorkApi_HostAddress}}/api/EmpresaCliente
+Content-Type: application/json
+
+{
+  "tipoPessoa": 2,
+  "cpfCnpj": "12345678000190",
+  "nomeRazao": "Empresa Teste Ltda",
+  "nomeFantasia": "Teste Tech",
+  "telefone": "1134567890",
+  "celular": "11987654321",
+  "email": "contato@teste.com",
+  "status": true,
+  "idEndereco": null
+}
+
+###
+
+### Update EmpresaCliente
+PUT {{safeWorkApi_HostAddress}}/api/EmpresaCliente/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "tipoPessoa": 2,
+  "cpfCnpj": "12345678000190",
+  "nomeRazao": "Empresa Teste Atualizada Ltda",
+  "nomeFantasia": "Teste Tech Atualizada",
+  "telefone": "1134567890",
+  "celular": "11987654321",
+  "email": "contato@teste.com",
+  "status": true,
+  "idEndereco": null
+}
+
+###
+
+### Delete EmpresaCliente
+DELETE {{safeWorkApi_HostAddress}}/api/EmpresaCliente/1
+
+###
+
+# EmpresaPrestadora Endpoints
+
+### Get all EmpresasPrestadoras
+GET {{safeWorkApi_HostAddress}}/api/EmpresaPrestadora
+Accept: application/json
+
+###
+
+### Get EmpresaPrestadora by ID
+GET {{safeWorkApi_HostAddress}}/api/EmpresaPrestadora/1
+Accept: application/json
+
+###
+
+### Create new EmpresaPrestadora
+POST {{safeWorkApi_HostAddress}}/api/EmpresaPrestadora
+Content-Type: application/json
+
+{
+  "tipoPessoa": 2,
+  "cpfCnpj": "98765432000199",
+  "nomeRazao": "Prestadora Teste Ltda",
+  "nomeFantasia": "Prestadora Tech",
+  "telefone": "1134567890",
+  "celular": "11987654321",
+  "email": "contato@prestadora.com",
+  "status": true,
+  "idEndereco": null
+}
+
+###
+
+### Update EmpresaPrestadora
+PUT {{safeWorkApi_HostAddress}}/api/EmpresaPrestadora/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "tipoPessoa": 2,
+  "cpfCnpj": "98765432000199",
+  "nomeRazao": "Prestadora Teste Atualizada Ltda",
+  "nomeFantasia": "Prestadora Tech Atualizada",
+  "telefone": "1134567890",
+  "celular": "11987654321",
+  "email": "contato@prestadora.com",
+  "status": true,
+  "idEndereco": null
+}
+
+###
+
+### Delete EmpresaPrestadora
+DELETE {{safeWorkApi_HostAddress}}/api/EmpresaPrestadora/1
+
+###

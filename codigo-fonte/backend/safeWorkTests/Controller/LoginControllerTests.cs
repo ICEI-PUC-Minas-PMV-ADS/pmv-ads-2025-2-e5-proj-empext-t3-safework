@@ -92,8 +92,11 @@ namespace safeWorkTests.Controller
             var controller = CreateController();
             var model = new AuthenticateDto { Email = "", Senha = "" };
 
+
             //Act
             var result = await controller.Login(model);
+
+            string teste = "";
 
             //Assert
             var resultUnauthorized = Assert.IsType<UnauthorizedObjectResult>(result);

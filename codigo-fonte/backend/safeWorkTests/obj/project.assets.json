@@ -6091,19 +6091,19 @@
     ]
   },
   "packageFolders": {
-    "/home/amaury-magno/.nuget/packages/": {}
+    "C:\\Users\\gusta\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkTests/safeWorkTests.csproj",
+      "projectUniqueName": "C:\\Users\\gusta\\Documents\\pmv-ads-2025-2-e5-proj-empext-t3-safework\\codigo-fonte\\backend\\safeWorkTests\\safeWorkTests.csproj",
       "projectName": "safeWorkTests",
-      "projectPath": "/home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkTests/safeWorkTests.csproj",
-      "packagesPath": "/home/amaury-magno/.nuget/packages/",
-      "outputPath": "/home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkTests/obj/",
+      "projectPath": "C:\\Users\\gusta\\Documents\\pmv-ads-2025-2-e5-proj-empext-t3-safework\\codigo-fonte\\backend\\safeWorkTests\\safeWorkTests.csproj",
+      "packagesPath": "C:\\Users\\gusta\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\gusta\\Documents\\pmv-ads-2025-2-e5-proj-empext-t3-safework\\codigo-fonte\\backend\\safeWorkTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/amaury-magno/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\gusta\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -6115,8 +6115,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkApi/safeWorkApi.csproj": {
-              "projectPath": "/home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkApi/safeWorkApi.csproj"
+            "C:\\Users\\gusta\\Documents\\pmv-ads-2025-2-e5-proj-empext-t3-safework\\codigo-fonte\\backend\\safeWorkApi\\safeWorkApi.csproj": {
+              "projectPath": "C:\\Users\\gusta\\Documents\\pmv-ads-2025-2-e5-proj-empext-t3-safework\\codigo-fonte\\backend\\safeWorkApi\\safeWorkApi.csproj"
             }
           }
         }
@@ -6131,7 +6131,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -6178,7 +6178,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

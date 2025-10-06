@@ -499,3 +499,14 @@
 /home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkTests/obj/Debug/net9.0/safeWorkTests.pdb
 /home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkTests/obj/Debug/net9.0/safeWorkTests.genruntimeconfig.cache
 /home/amaury-magno/Documents/PUC-MG/EIXO5/pmv-ads-2025-2-e5-proj-empext-t3-safework/codigo-fonte/backend/safeWorkTests/obj/Debug/net9.0/ref/safeWorkTests.dll
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\bin\Debug\net9.0\.msCoverageSourceRootsMapping_safeWorkTests
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\bin\Debug\net9.0\CoverletSourceRootsMapping_safeWorkTests
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.csproj.AssemblyReference.cache
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.AssemblyInfoInputs.cache
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.AssemblyInfo.cs
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.csproj.CoreCompileInputs.cache
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.sourcelink.json
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.dll
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\refint\safeWorkTests.dll
+C:\Users\gusta\Documents\pmv-ads-2025-2-e5-proj-empext-t3-safework\codigo-fonte\backend\safeWorkTests\obj\Debug\net9.0\safeWorkTests.pdb

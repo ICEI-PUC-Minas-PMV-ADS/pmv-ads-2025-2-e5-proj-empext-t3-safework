@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using safeWorkApi.DTOs;
 using safeWorkApi.Models;
 
 namespace safeWorkApi.Controller
@@ -36,39 +37,57 @@ namespace safeWorkApi.Controller
 
         // POST api/Endereco
         [HttpPost]
-        public async Task<ActionResult<Endereco>> Create(Endereco model)
+        public async Task<ActionResult<Endereco>> Create(EnderecoCreateDto dto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _context.Enderecos.Add(model);
+
+            var endereco = new Endereco
+            {
+                Logradouro = dto.Logradouro,
+                Numero = dto.Numero,
+                Complemento = dto.Complemento ?? string.Empty,
+                Bairro = dto.Bairro,
+                Municipio = dto.Municipio,
+                Uf = dto.Uf.ToUpper(),
+                Cep = dto.Cep
+            };
+
+            _context.Enderecos.Add(endereco);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
+            return CreatedAtAction(nameof(GetById), new { id = endereco.Id }, endereco);
         }
 
         // PUT api/Endereco/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Endereco>> Update(int id, Endereco model)
+        public async Task<ActionResult<Endereco>> Update(int id, EnderecoUpdateDto dto)
         {
-            if (id != model.Id) return BadRequest();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            _context.Enderecos.Update(model);
+            var existingEndereco = await _context.Enderecos.FindAsync(id);
+            if (existingEndereco == null)
+                return NotFound($"Endereço com ID {id} não encontrado");
+
+            // Atualiza as propriedades
+            existingEndereco.Logradouro = dto.Logradouro;
+            existingEndereco.Numero = dto.Numero;
+            existingEndereco.Complemento = dto.Complemento ?? string.Empty;
+            existingEndereco.Bairro = dto.Bairro;
+            existingEndereco.Municipio = dto.Municipio;
+            existingEndereco.Uf = dto.Uf.ToUpper();
+            existingEndereco.Cep = dto.Cep;
+
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(model);
+                return Ok(existingEndereco);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Enderecos.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Conflict("Conflito na update do registro, tente novamente");
-                }
+                return Conflict("Conflito na atualização do registro, tente novamente");
             }
         }
 

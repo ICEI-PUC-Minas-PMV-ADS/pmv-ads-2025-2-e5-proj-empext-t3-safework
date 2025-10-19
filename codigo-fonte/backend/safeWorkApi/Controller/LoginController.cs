@@ -148,35 +148,35 @@ namespace safeWorkApi.Controller
 
         [HttpPost("resetPassword")]
         [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(string email, string tempPassword, string newPassword)
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
         {
             //Validacao para entrada dos dados
-            if (string.IsNullOrEmpty(tempPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(email))
-                return StatusCode(400, $"Dados nao fornecidos");
+            if (model == null || string.IsNullOrEmpty(model.TempPassword) || string.IsNullOrEmpty(model.NewPassword) || string.IsNullOrEmpty(model.Email))
+                return StatusCode(400, "Dados não fornecidos");
 
             var userDb = await _context.Usuarios
-                .AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+                .AsNoTracking().FirstOrDefaultAsync(u => u.Email == model.Email);
 
             if (userDb == null)
-                return StatusCode(422, "Usuário nao pertence ao site");
+                return StatusCode(422, "Usuário não pertence ao site");
 
             string? tempPwd = _tempData.GetData(userDb.Email);
 
             //Verifica password temporarios com password enviado
-            if (string.IsNullOrEmpty(tempPwd) || tempPassword != tempPwd)
-                return StatusCode(400, "Token invalido ou expirado");
+            if (string.IsNullOrEmpty(tempPwd) || model.TempPassword != tempPwd)
+                return StatusCode(400, "Token inválido ou expirado");
 
-            userDb.Senha = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            userDb.Senha = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
             try
             {
                 _context.Usuarios.Update(userDb);
                 await _context.SaveChangesAsync();
                 _tempData.RemoveData(userDb.Email);
-                return StatusCode(200, $"Senha Restaurada");
+                return StatusCode(200, "Senha Restaurada");
             }
             catch (Exception e)
             {
-                return StatusCode(500, $"Erro na atualizacao do usuario");
+                return StatusCode(500, "Erro na atualização do usuário");
             }
         }
     }

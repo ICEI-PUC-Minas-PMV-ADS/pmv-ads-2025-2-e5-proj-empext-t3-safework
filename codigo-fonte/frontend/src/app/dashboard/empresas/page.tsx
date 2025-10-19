@@ -106,10 +106,32 @@ export default function EmpresasPage() {
   }
 
   const handleSaveEmpresa = (empresa: Empresa) => {
-    // Aqui seria implementada a lógica de salvar no backend
-    console.log('Salvando empresa:', empresa)
+    if (editingEmpresa) {
+      setEmpresas(prevEmpresas => 
+        prevEmpresas.map(emp => 
+          emp.id === editingEmpresa.id 
+            ? { ...empresa, id: editingEmpresa.id }
+            : emp
+        )
+      )
+    } else {
+      const novaEmpresa = {
+        ...empresa,
+        id: Math.max(...empresas.map(e => e.id || 0)) + 1
+      }
+      setEmpresas(prevEmpresas => [...prevEmpresas, novaEmpresa])
+    }
+    
     setShowForm(false)
     setEditingEmpresa(null)
+  }
+
+  const handleDeleteEmpresa = (empresa: Empresa) => {
+    if (window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome_razao}"?`)) {
+      setEmpresas(prevEmpresas => 
+        prevEmpresas.filter(emp => emp.id !== empresa.id)
+      )
+    }
   }
 
   return (
@@ -301,6 +323,12 @@ export default function EmpresasPage() {
                           className="text-blue-600 hover:text-blue-900 mr-3"
                         >
                           Editar
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEmpresa(empresa)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Excluir
                         </button>
                       </td>
                     </tr>

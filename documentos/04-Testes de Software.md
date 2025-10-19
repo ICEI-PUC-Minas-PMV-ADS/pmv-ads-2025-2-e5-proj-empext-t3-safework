@@ -396,8 +396,6 @@
 
 #### Exemplo de Caso de Teste de Insucesso
 
-### ETAPA 2 - Autenticação, Gestão de Usuários e Empresas
-
 <table> 
   <tr> 
     <th colspan="2" width="1000">CT-001 - I01<br>Login com senha inválida</th> 
@@ -546,8 +544,6 @@
   </tr> 
 </table>
 
-### ETAPA 3 - Colaboradores e ASO
-
 <table> 
   <tr>
     <th colspan="2" width="1000">CT-005 - I01<br>Cadastro de Colaborador com CPF inválido</th>
@@ -695,8 +691,6 @@
     <td>Upload bloqueado; log de segurança registrado; alerta ao usuário sem detalhes técnicos sensíveis.</td>
   </tr>
 </table>
-
-### ETAPA 4 - Integração Governamental e Alertas
 
 <table>
   <tr>

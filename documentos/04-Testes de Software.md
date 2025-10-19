@@ -1102,7 +1102,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/ff415b01-85d0-459a-b209-5869ccdbf8ec"/></td>
   </tr>
 </table>
 
@@ -1128,7 +1128,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/b400bc83-a94d-44e3-9f4c-bce7f62332c8"/></td>
   </tr>
 </table>
 
@@ -1154,7 +1154,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/660e194e-de47-47ed-acc2-6e12f077b126"/></td>
   </tr>
 </table>
 
@@ -1180,7 +1180,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/5043711d-4ef3-4a5f-8ab4-d639d7f41203"/></td>
   </tr>
 </table>
 
@@ -1206,7 +1206,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/47936393-d4af-4a76-ae09-d75f6a3e6e96"/></td>
   </tr>
 </table>
 

@@ -547,7 +547,154 @@
 </table>
 
 ### ETAPA 3
-Criar casos de teste da etapa 3
+
+<table> 
+  <tr>
+    <th colspan="2" width="1000">CT-005 - I01<br>Cadastro de Colaborador com CPF inválido</th>
+  </tr>
+  <tr>
+    <td width="150"><strong>Descrição</strong></td>
+    <td>Verifica o bloqueio de cadastro quando o CPF não é válido ou já existe.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td width="430">Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-05, RF-06; RNF-02 (validação)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Abrir "Novo Colaborador".<br>
+      2. Informar CPF 000.000.000-00.<br>
+      3. Salvar.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>CPF inválido/formatação incorreta</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Cadastro negado com mensagem de CPF inválido; nenhum registro criado.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-006 - I02<br>Filtro de Colaboradores com parâmetros inconsistentes</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Garante mensagem adequada quando não há resultado ou quando parâmetros são mutuamente excludentes.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-07 (filtros); RNF-02 (usabilidade)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Abrir filtros de colaboradores.<br>
+      2. Selecionar "ASO Vencido" e intervalo de datas impossível.<br>
+      3. Aplicar filtro.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Status e período sem interseção</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Exibir "Nenhum resultado" sem erro técnico; permitir limpar filtros.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-007 - I03<br>Cadastro de ASO com datas inválidas</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Impede cadastro de ASO cujo fim &lt; início ou validade no passado sem justificativa.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-08: Cadastrar ASO; RNF-02 (validação)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Abrir "Novo ASO".<br>
+      2. Informar Emissão 01/06/2025 e Validade 01/05/2025.<br>
+      3. Salvar.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Datas inconsistentes</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Bloquear gravação; mensagem clara de inconsistência de datas.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-008 - I04<br>Anexo de ASO com vírus (simulado)</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Valida proteção ao upload de arquivos maliciosos (varredura/assinatura simulada).</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-12 (anexo de ASO); RNF-05 (segurança)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Selecionar arquivo com assinatura EICAR simulada.<br>
+      2. Tentar enviar.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Arquivo eicar.txt (assinatura de teste AV)</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Upload bloqueado; log de segurança registrado; alerta ao usuário sem detalhes técnicos sensíveis.</td>
+  </tr>
+</table>
 
 ### ETAPA 4
 Criar casos de teste da etapa 4

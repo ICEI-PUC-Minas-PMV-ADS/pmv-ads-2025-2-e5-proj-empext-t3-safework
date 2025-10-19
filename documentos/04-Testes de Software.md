@@ -392,6 +392,186 @@
   </tr> 
 </table>
 
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-011 - S<br>Recuperação de Senha</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir recuperar/alterar sua senha antiga.</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-03: Listagem e filtro de contratos</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Esqueceu sua senha?" na página de login.<br>
+      2. Informar o email da conta e clicar em "Enviar link de recuperação".<br>
+      3. Clicar em "Redefinir Senha".<br>
+      4. Preencher formulario com dados válidos<br>
+      5. Clicar no botão "Redefinir Senha"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Dados de teste</strong></td> 
+    <td>Email ja cadastrado no sistema</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>A senha do usuário é alterada com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-012 - S<br>Cadastro e Visualização de Empresas</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir cadastrar e visualizar as empresas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-01: Cadastro,edição e visualização de empresas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Empresas" no menu lateral para visualizar todas as empresas.<br>
+      2. Clicar no botão "Nova Empresa".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Salvar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Empresa cadastrada com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-013 - S<br>Cadastro e Visualização de Endereços</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir cadastrar e visualizar endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-17: Cadastro,edição e visualização de endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Endereços" no menu lateral para visualizar todas os endereços<br>
+      2. Clicar no botão "Novo Endereço".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Salvar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Endereço cadastrado com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-014 - S<br>Edição de Empresas</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir editar uma empresa</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-01: Cadastro,edição e visualização de empresas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Empresa" no menu lateral<br>
+      2. Selecionar uma empresa e clicar em "editar".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Atualizar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Empresa atualizada com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-015 - S<br>Edição de Endereços</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir editar os endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-17: Cadastro,edição e visualização de endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+       1. Acessar "Endereços" no menu lateral<br>
+      2. Selecionar um endereço e clicar em "editar".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Atualizar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Endereço atualizado com sucesso</td> 
+  </tr> 
+</table>
+
 
 
 #### Exemplo de Caso de Teste de Insucesso
@@ -870,7 +1050,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e5-proj-time-sheet/assets/82043220/2e3c1722-7adc-4bd4-8b4c-3abe9ddc1b48"/></td>
+    <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/a1a900a3-9e9e-4780-99da-8e76e5fa08a7"/></td>
   </tr>
 </table>
 
@@ -896,7 +1076,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e5-proj-time-sheet/assets/82043220/2e3c1722-7adc-4bd4-8b4c-3abe9ddc1b48"/></td>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
   </tr>
 </table>
 

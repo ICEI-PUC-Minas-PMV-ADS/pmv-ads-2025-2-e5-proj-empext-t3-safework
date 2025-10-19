@@ -696,8 +696,156 @@
   </tr>
 </table>
 
-### ETAPA 4
-Criar casos de teste da etapa 4
+### ETAPA 4 - Integração Governamental e Alertas
+
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-009 - I01<br>Falha na integração com sistema do Gov (timeout)</th>
+  </tr>
+  <tr>
+    <td width="150"><strong>Descrição</strong></td>
+    <td>Garante tratamento de indisponibilidade/timeout da API governamental ao validar ASO.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td width="430">Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-13 (validação automática); RF-14 (comprovante); RNF-03 (tempo de resposta)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Selecionar ASO e acionar "Validar no Gov".<br>
+      2. Simular timeout na chamada externa.<br>
+      3. Observar retorno ao usuário.</td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Delay &gt; 30s na API externa</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Mensagem "Serviço indisponível, tente novamente"; operação marcada como "Pendente"; nenhuma informação inconsistente gravada.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-010 - I02<br>Comprovante de validação indisponível/corrupção de screenshot</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Verifica reação do sistema quando o arquivo de comprovante não pode ser gerado ou está corrompido.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-14 (comprovante); RNF-05 (integridade/confidencialidade)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Executar validação exitosa simulada.<br>
+      2. Simular falha na geração/armazenamento do screenshot.<br>
+      3. Acessar comprovante.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Falha de I/O no storage de imagens</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Mensagem orientando nova tentativa de geração; registro do erro em log; manter status da ASO consistente.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-011 - I03<br>Alerta mensal não gerado (scheduler parado)</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Confere comportamento quando o job de alertas não executa no período esperado.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>Objetivo (alertas mensais); RNF-03 (confiabilidade/performance)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Desabilitar o scheduler/worker.<br>
+      2. Simular passagem do período.<br>
+      3. Verificar painel de alertas e logs.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>ASOs vencendo em 30 dias; worker parado</td>
+  </tr>
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Sinalização no dashboard (health check) indicando job indisponível; sem falha silenciosa.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-012 - I04<br>Acesso não autorizado a dados sensíveis (LGPD)</th>
+  </tr>
+  <tr> 
+    <td><strong>Descrição</strong></td>
+    <td>Garante que perfis sem permissão não visualizem dados médicos/ASO de colaboradores fora de seu escopo.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RNF-01 (LGPD); RF-04 (permissões); RNF-05 (segurança)</td>
+  </tr> 
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Logar como Colaborador de Empresa A.<br>
+      2. Tentar abrir ASO de colaborador da Empresa B.<br>
+      3. Tentar exportar relatório completo.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Dois tenants/empresas configurados; usuário com escopo restrito</td>
+  </tr> 
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Acesso negado; mensagem de permissão insuficiente; evento auditado.</td>
+  </tr>
+</table>
  
 # Evidências de Testes de Software
 

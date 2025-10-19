@@ -848,25 +848,49 @@ Apresente imagens e/ou vídeos que comprovam que um determinado teste foi execut
 ## Parte 1 - Testes de desenvolvimento
 Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, utilizando casos de teste, tanto de sucesso quanto de insucesso, elaborados por ele. Todos os testes devem ser evidenciados.
 
-### Exemplo
-
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-001<br>Login com credenciais válidas</th>
+    <th colspan="6" width="1000">CT-001 -S<br>Login com credenciais válidas</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do aplicativo após o login bem-sucedido.</td>
+    <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do sistema após o login bem-sucedido.</td>
   </tr>
     <tr>
-    <td><strong>Responsável pela funcionalidade (desenvolvimento e teste)</strong></td>
-    <td width="430">José da Silva </td>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
      <td width="100"><strong>Data do Teste</strong></td>
-    <td width="150">08/05/2024</td>
+    <td width="150">15/10/2025</td>
   </tr>
     <tr>
     <td width="170"><strong>Comentário</strong></td>
     <td colspan="5">O sistema está permitindo o login corretamente.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e5-proj-time-sheet/assets/82043220/2e3c1722-7adc-4bd4-8b4c-3abe9ddc1b48"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-002 -S<br>Logout com sessão ativa</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve encerrar a sessão do usuário e redirecionar para a página de login</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">15/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está efetuando o logout seguro com sucesso.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>

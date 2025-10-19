@@ -450,7 +450,7 @@
   </tr> 
   <tr> 
     <td><strong>Requisitos associados</strong></td> 
-    <td>RF-03: Listagem e filtro de contratos</td> 
+    <td>RF-01: Cadastro,edição e visualização de empresas</td> 
   </tr> 
   <tr> 
     <td><strong>Passos</strong></td> 
@@ -485,7 +485,7 @@
   </tr> 
   <tr> 
     <td><strong>Requisitos associados</strong></td> 
-    <td>RF-03: Listagem e filtro de contratos</td> 
+    <td>RF-17: Cadastro,edição e visualização de endereços</td> 
   </tr> 
   <tr> 
     <td><strong>Passos</strong></td> 
@@ -520,7 +520,7 @@
   </tr> 
   <tr> 
     <td><strong>Requisitos associados</strong></td> 
-    <td>RF-03: Listagem e filtro de contratos</td> 
+    <td>RF-01: Cadastro,edição e visualização de empresas</td> 
   </tr> 
   <tr> 
     <td><strong>Passos</strong></td> 
@@ -555,7 +555,7 @@
   </tr> 
   <tr> 
     <td><strong>Requisitos associados</strong></td> 
-    <td>RF-03: Listagem e filtro de contratos</td> 
+    <td>RF-17: Cadastro,edição e visualização de endereços</td> 
   </tr> 
   <tr> 
     <td><strong>Passos</strong></td> 

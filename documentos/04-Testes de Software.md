@@ -849,7 +849,7 @@ Apresente imagens e/ou vídeos que comprovam que um determinado teste foi execut
 Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, utilizando casos de teste, tanto de sucesso quanto de insucesso, elaborados por ele. Todos os testes devem ser evidenciados.
 
 ### Exemplo
-### ETAPA 2
+
 <table>
   <tr>
     <th colspan="6" width="1000">CT-001<br>Login com credenciais válidas</th>
@@ -876,16 +876,9 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
   </tr>
 </table>
 
-### ETAPA 3
-Colocar evidências de teste da etapa 3
-
-### ETAPA 4
-Colocar evidências de teste da etapa 4
-
 ## Parte 2 - Testes por pares
 A fim de aumentar a qualidade da aplicação desenvolvida, cada funcionalidade deve ser testada por um colega e os testes devem ser evidenciados. O colega "Tester" deve utilizar o caso de teste criado pelo desenvolvedor responsável pela funcionalidade (desenvolveu a funcionalidade e criou o caso de testes descrito no plano de testes) e caso perceba a necessidade de outros casos de teste, deve acrescentá-los na sessão "Plano de Testes".
 
-### ETAPA 2
 
 ### Exemplo
 <table>
@@ -915,10 +908,4 @@ A fim de aumentar a qualidade da aplicação desenvolvida, cada funcionalidade d
     <td colspan="6" align="center"><video src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e5-proj-time-sheet/assets/82043220/2e3c1722-7adc-4bd4-8b4c-3abe9ddc1b48"/></td>
   </tr>
 </table>
-
-### ETAPA 3
-Colocar evidências de teste da etapa 3
-
-### ETAPA 4
-Colocar evidências de teste da etapa 4
 

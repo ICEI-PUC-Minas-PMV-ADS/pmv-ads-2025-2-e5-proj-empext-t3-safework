@@ -22,11 +22,6 @@ namespace safeWorkApi.Controller
         private readonly AppDbContext _context;
         private readonly TempDataService? _tempData;
 
-        public LoginController(AppDbContext context)
-        {
-            _context = context;
-        }
-
         public LoginController(AppDbContext context, TempDataService tempData)
         {
             _context = context;

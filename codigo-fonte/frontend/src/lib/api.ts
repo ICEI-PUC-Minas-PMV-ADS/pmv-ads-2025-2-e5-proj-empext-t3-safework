@@ -58,7 +58,7 @@ class ApiClient {
       (error: AxiosError) => {
         if (error.response?.status === 401) {
           const isLoginRequest = error.config?.url?.includes('/Login') && error.config?.method === 'post'
-          
+
           if (isLoginRequest) {
             const backendMessage = (error.response?.data as any)?.message
             throw new Error(backendMessage || 'Email ou senha incorretos. Verifique suas credenciais.')
@@ -67,11 +67,11 @@ class ApiClient {
             throw new Error('Sessão expirada. Faça login novamente.')
           }
         }
-        
-        const errorMessage = (error.response?.data as any)?.message || 
-                           `Erro ${error.response?.status}: ${error.response?.statusText}` ||
-                           'Erro de conexão com o servidor'
-        
+
+        const errorMessage = (error.response?.data as any)?.message ||
+          `Erro ${error.response?.status}: ${error.response?.statusText}` ||
+          'Erro de conexão com o servidor'
+
         throw new Error(errorMessage)
       }
     )
@@ -125,7 +125,7 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
     })
-    
+
     const response = await axiosInstance.post<void>(`/Login/recoverPassword?email=${encodeURIComponent(email)}`)
     return response.data
   }
@@ -137,7 +137,7 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
     })
-    
+
     const response = await axiosInstance.post<void>('/Login/resetPassword', {
       email,
       tempPassword,

@@ -12,8 +12,8 @@ using safeWorkApi.Models;
 namespace safeWorkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250910140531_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20251030051901_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,15 +228,16 @@ namespace safeWorkApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("telefone");
 
-                    b.Property<int>("TipoPessoa")
-                        .HasColumnType("integer")
+                    b.Property<string>("TipoPessoa")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("tipo_pessoa");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IdEndereco");
 
-                    b.ToTable("EmpresasClientes");
+                    b.ToTable("empresa_cliente");
                 });
 
             modelBuilder.Entity("safeWorkApi.Models.EmpresaPrestadora", b =>
@@ -290,7 +291,7 @@ namespace safeWorkApi.Migrations
 
                     b.HasIndex("IdEndereco");
 
-                    b.ToTable("EmpresasPrestadoras");
+                    b.ToTable("empresa_prestadora");
 
                     b.HasData(
                         new
@@ -299,7 +300,7 @@ namespace safeWorkApi.Migrations
                             CpfCnpj = "99999999000199",
                             NomeRazao = "ScPrevenção",
                             Status = true,
-                            TipoPessoa = 2
+                            TipoPessoa = 1
                         });
                 });
 
@@ -366,7 +367,7 @@ namespace safeWorkApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Perfis");
+                    b.ToTable("perfis");
 
                     b.HasData(
                         new

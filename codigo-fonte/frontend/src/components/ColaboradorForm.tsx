@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Colaborador, ColaboradorFormData, TipoDocumentoColaborador } from '../types/colaborador'
+import { apiEmpresas } from '@/lib/api_empresas'
 
 interface ColaboradorFormProps {
   colaborador?: Colaborador | null
@@ -18,21 +19,18 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
     telefone: '',
     celular: '',
     email: '',
-    
+
     // Dados profissionais
     funcao: '',
-    cargo: '',
-    setor: '',
-    data_admissao: '',
     id_empresa_cliente: 0,
-    
+
     // Dados de saúde
     tipo_sanguineo: '',
     alergias: '',
     medicamentos_uso_continuo: '',
     historico_doencas: '',
     observacoes_medicas: '',
-    
+
     // Endereço
     endereco: {
       logradouro: '',
@@ -43,7 +41,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
       estado: '',
       cep: ''
     },
-    
+
     // Status
     status: true
   })
@@ -51,14 +49,8 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
 
-  // Mock data para empresas clientes
-  const empresasClientes = [
-    { id: 1, nome_razao: 'Empresa ABC Ltda', cpf_cnpj: '12.345.678/0001-90' },
-    { id: 2, nome_razao: 'XYZ Serviços S.A.', cpf_cnpj: '98.765.432/0001-10' },
-    { id: 3, nome_razao: 'Tech Solutions Ltda', cpf_cnpj: '11.222.333/0001-44' }
-  ]
-
-  const tiposSanguineos = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+  // Request para empresas
+  const empresasClientes = async () => apiEmpresas.getEmpresas()
 
   useEffect(() => {
     if (colaborador) {
@@ -70,10 +62,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
         celular: colaborador.celular || '',
         email: colaborador.email || '',
         funcao: colaborador.funcao || '',
-        cargo: colaborador.cargo || '',
-        setor: colaborador.setor || '',
-        data_admissao: colaborador.data_admissao || '',
-        id_empresa_cliente: colaborador.id_empresa_cliente || 0,
+        id_empresa_cliente: colaborador.id_empresa_cliente || 1,
         tipo_sanguineo: colaborador.tipo_sanguineo || '',
         alergias: colaborador.alergias || '',
         medicamentos_uso_continuo: colaborador.medicamentos_uso_continuo || '',
@@ -96,10 +85,10 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
   const validateCPF = (cpf: string): boolean => {
     const cleanCPF = cpf.replace(/\D/g, '')
     if (cleanCPF.length !== 11) return false
-    
+
     // Validação básica de CPF
     if (/^(\d)\1{10}$/.test(cleanCPF)) return false
-    
+
     return true
   }
 
@@ -130,10 +119,6 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
       newErrors.funcao = 'Função é obrigatória'
     }
 
-    if (!formData.cargo.trim()) {
-      newErrors.cargo = 'Cargo é obrigatório'
-    }
-
     if (!formData.id_empresa_cliente) {
       newErrors.id_empresa_cliente = 'Empresa cliente é obrigatória'
     }
@@ -148,7 +133,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (validateForm()) {
       onSave(formData)
     }
@@ -159,7 +144,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
       ...prev,
       [field]: value
     }))
-    
+
     // Limpar erro do campo quando o usuário começar a digitar
     if (errors[field]) {
       setErrors(prev => ({
@@ -213,7 +198,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
         {/* Dados Pessoais */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Dados Pessoais</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -223,9 +208,8 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
                 type="text"
                 value={formData.nome_razao}
                 onChange={(e) => handleInputChange('nome_razao', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.nome_razao ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.nome_razao ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="Digite o nome completo"
               />
               {errors.nome_razao && (
@@ -241,9 +225,8 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
                 type="text"
                 value={formatCPF(formData.cpf_cnpj)}
                 onChange={(e) => handleInputChange('cpf_cnpj', e.target.value.replace(/\D/g, ''))}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.cpf_cnpj ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cpf_cnpj ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="000.000.000-00"
                 maxLength={14}
               />
@@ -260,9 +243,8 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
                 type="date"
                 value={formData.data_nascimento}
                 onChange={(e) => handleInputChange('data_nascimento', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.data_nascimento ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.data_nascimento ? 'border-red-500' : 'border-gray-300'
+                  }`}
               />
               {errors.data_nascimento && (
                 <p className="mt-1 text-sm text-red-600">{errors.data_nascimento}</p>
@@ -303,9 +285,8 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.email ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="email@exemplo.com"
               />
               {errors.email && (
@@ -318,7 +299,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
         {/* Dados Profissionais */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Dados Profissionais</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -327,9 +308,8 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
               <select
                 value={formData.id_empresa_cliente}
                 onChange={(e) => handleInputChange('id_empresa_cliente', parseInt(e.target.value))}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.id_empresa_cliente ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.id_empresa_cliente ? 'border-red-500' : 'border-gray-300'
+                  }`}
               >
                 <option value={0}>Selecione uma empresa</option>
                 {empresasClientes.map(empresa => (
@@ -351,57 +331,13 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
                 type="text"
                 value={formData.funcao}
                 onChange={(e) => handleInputChange('funcao', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.funcao ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.funcao ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="Ex: Analista, Operador, Técnico"
               />
               {errors.funcao && (
                 <p className="mt-1 text-sm text-red-600">{errors.funcao}</p>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cargo *
-              </label>
-              <input
-                type="text"
-                value={formData.cargo}
-                onChange={(e) => handleInputChange('cargo', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.cargo ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder="Ex: Analista de Sistemas Jr."
-              />
-              {errors.cargo && (
-                <p className="mt-1 text-sm text-red-600">{errors.cargo}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Setor
-              </label>
-              <input
-                type="text"
-                value={formData.setor}
-                onChange={(e) => handleInputChange('setor', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ex: TI, Administrativo, Produção"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data de Admissão
-              </label>
-              <input
-                type="date"
-                value={formData.data_admissao}
-                onChange={(e) => handleInputChange('data_admissao', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
             </div>
 
             <div>
@@ -423,7 +359,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
         {/* Dados de Saúde */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Dados de Saúde (para ASO)</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -498,7 +434,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
         {/* Endereço */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Endereço</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -624,7 +560,7 @@ export default function ColaboradorForm({ colaborador, onSave, onCancel }: Colab
         {/* Upload de Documentos */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Documentos</h2>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

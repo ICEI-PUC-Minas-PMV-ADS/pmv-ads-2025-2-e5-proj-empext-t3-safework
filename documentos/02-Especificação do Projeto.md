@@ -129,6 +129,11 @@ A arquitetura em contêineres permite implantação simplificada, escalabilidade
 <td>Permite ao usuários efetuar o processo de Logout no sistema</td>
 <td>Alta</td>
 </tr>
+<tr>
+<td>RF-17</td>
+<td>Permitir ao usuário cadastrar, atualizar, editar e deletar endereços</td>
+<td>Alta</td>
+</tr>
 </tbody>
 </table>
 

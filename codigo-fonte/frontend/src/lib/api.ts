@@ -138,7 +138,11 @@ class ApiClient {
       },
     })
     
-    const response = await axiosInstance.post<void>(`/Login/resetPassword?email=${encodeURIComponent(email)}&tempPassword=${encodeURIComponent(tempPassword)}&newPassword=${encodeURIComponent(newPassword)}`)
+    const response = await axiosInstance.post<void>('/Login/resetPassword', {
+      email,
+      tempPassword,
+      newPassword
+    })
     return response.data
   }
 

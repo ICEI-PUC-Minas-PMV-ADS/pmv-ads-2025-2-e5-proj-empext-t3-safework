@@ -392,11 +392,189 @@
   </tr> 
 </table>
 
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-011 - S<br>Recuperação de Senha</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir recuperar/alterar sua senha antiga.</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-03: Listagem e filtro de contratos</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Esqueceu sua senha?" na página de login.<br>
+      2. Informar o email da conta e clicar em "Enviar link de recuperação".<br>
+      3. Clicar em "Redefinir Senha".<br>
+      4. Preencher formulario com dados válidos<br>
+      5. Clicar no botão "Redefinir Senha"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Dados de teste</strong></td> 
+    <td>Email ja cadastrado no sistema</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>A senha do usuário é alterada com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-012 - S<br>Cadastro e Visualização de Empresas</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir cadastrar e visualizar as empresas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-01: Cadastro,edição e visualização de empresas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Empresas" no menu lateral para visualizar todas as empresas.<br>
+      2. Clicar no botão "Nova Empresa".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Salvar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Empresa cadastrada com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-013 - S<br>Cadastro e Visualização de Endereços</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir cadastrar e visualizar endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-17: Cadastro,edição e visualização de endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Endereços" no menu lateral para visualizar todas os endereços<br>
+      2. Clicar no botão "Novo Endereço".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Salvar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Endereço cadastrado com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-014 - S<br>Edição de Empresas</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir editar uma empresa</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-01: Cadastro,edição e visualização de empresas</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+      1. Acessar "Empresa" no menu lateral<br>
+      2. Selecionar uma empresa e clicar em "editar".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Atualizar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Empresa atualizada com sucesso</td> 
+  </tr> 
+</table>
+
+<table> 
+  <tr> 
+    <th colspan="2" width="1000">CT-015 - S<br>Edição de Endereços</th> 
+  </tr> 
+  <tr> 
+    <td><strong>Descrição</strong></td> 
+    <td>O usuário deve conseguir editar os endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Tipo do Teste</strong></td> 
+    <td>Sucesso</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Requisitos associados</strong></td> 
+    <td>RF-17: Cadastro,edição e visualização de endereços</td> 
+  </tr> 
+  <tr> 
+    <td><strong>Passos</strong></td> 
+    <td>
+       1. Acessar "Endereços" no menu lateral<br>
+      2. Selecionar um endereço e clicar em "editar".<br>
+      3. Preencher formulario com dados válidos<br>
+      4. Clicar no botão "Atualizar"
+    </td> 
+  </tr> 
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td> 
+    <td>Endereço atualizado com sucesso</td> 
+  </tr> 
+</table>
+
 
 
 #### Exemplo de Caso de Teste de Insucesso
-
-### ETAPA 2 - Autenticação, Gestão de Usuários e Empresas
 
 <table> 
   <tr> 
@@ -546,11 +724,302 @@
   </tr> 
 </table>
 
-### ETAPA 3
-Criar casos de teste da etapa 3
+<table> 
+  <tr>
+    <th colspan="2" width="1000">CT-005 - I01<br>Cadastro de Colaborador com CPF inválido</th>
+  </tr>
+  <tr>
+    <td width="150"><strong>Descrição</strong></td>
+    <td>Verifica o bloqueio de cadastro quando o CPF não é válido ou já existe.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td width="430">Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-05, RF-06; RNF-02 (validação)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Abrir "Novo Colaborador".<br>
+      2. Informar CPF 000.000.000-00.<br>
+      3. Salvar.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>CPF inválido/formatação incorreta</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Cadastro negado com mensagem de CPF inválido; nenhum registro criado.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-006 - I02<br>Filtro de Colaboradores com parâmetros inconsistentes</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Garante mensagem adequada quando não há resultado ou quando parâmetros são mutuamente excludentes.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-07 (filtros); RNF-02 (usabilidade)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Abrir filtros de colaboradores.<br>
+      2. Selecionar "ASO Vencido" e intervalo de datas impossível.<br>
+      3. Aplicar filtro.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Status e período sem interseção</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Exibir "Nenhum resultado" sem erro técnico; permitir limpar filtros.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-007 - I03<br>Cadastro de ASO com datas inválidas</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Impede cadastro de ASO cujo fim &lt; início ou validade no passado sem justificativa.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-08: Cadastrar ASO; RNF-02 (validação)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Abrir "Novo ASO".<br>
+      2. Informar Emissão 01/06/2025 e Validade 01/05/2025.<br>
+      3. Salvar.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Datas inconsistentes</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Bloquear gravação; mensagem clara de inconsistência de datas.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-008 - I04<br>Anexo de ASO com vírus (simulado)</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Valida proteção ao upload de arquivos maliciosos (varredura/assinatura simulada).</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-12 (anexo de ASO); RNF-05 (segurança)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Selecionar arquivo com assinatura EICAR simulada.<br>
+      2. Tentar enviar.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Arquivo eicar.txt (assinatura de teste AV)</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Upload bloqueado; log de segurança registrado; alerta ao usuário sem detalhes técnicos sensíveis.</td>
+  </tr>
+</table>
 
-### ETAPA 4
-Criar casos de teste da etapa 4
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-009 - I01<br>Falha na integração com sistema do Gov (timeout)</th>
+  </tr>
+  <tr>
+    <td width="150"><strong>Descrição</strong></td>
+    <td>Garante tratamento de indisponibilidade/timeout da API governamental ao validar ASO.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td width="430">Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-13 (validação automática); RF-14 (comprovante); RNF-03 (tempo de resposta)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Selecionar ASO e acionar "Validar no Gov".<br>
+      2. Simular timeout na chamada externa.<br>
+      3. Observar retorno ao usuário.</td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Delay &gt; 30s na API externa</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Mensagem "Serviço indisponível, tente novamente"; operação marcada como "Pendente"; nenhuma informação inconsistente gravada.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-010 - I02<br>Comprovante de validação indisponível/corrupção de screenshot</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Verifica reação do sistema quando o arquivo de comprovante não pode ser gerado ou está corrompido.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RF-14 (comprovante); RNF-05 (integridade/confidencialidade)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Executar validação exitosa simulada.<br>
+      2. Simular falha na geração/armazenamento do screenshot.<br>
+      3. Acessar comprovante.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Falha de I/O no storage de imagens</td>
+  </tr>
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Mensagem orientando nova tentativa de geração; registro do erro em log; manter status da ASO consistente.</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-011 - I03<br>Alerta mensal não gerado (scheduler parado)</th>
+  </tr>
+  <tr>
+    <td><strong>Descrição</strong></td>
+    <td>Confere comportamento quando o job de alertas não executa no período esperado.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td>
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>Objetivo (alertas mensais); RNF-03 (confiabilidade/performance)</td>
+  </tr>
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Desabilitar o scheduler/worker.<br>
+      2. Simular passagem do período.<br>
+      3. Verificar painel de alertas e logs.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>ASOs vencendo em 30 dias; worker parado</td>
+  </tr>
+  <tr> 
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Sinalização no dashboard (health check) indicando job indisponível; sem falha silenciosa.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2" width="1000">CT-012 - I04<br>Acesso não autorizado a dados sensíveis (LGPD)</th>
+  </tr>
+  <tr> 
+    <td><strong>Descrição</strong></td>
+    <td>Garante que perfis sem permissão não visualizem dados médicos/ASO de colaboradores fora de seu escopo.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável Caso de Teste</strong></td> 
+    <td>Equipe de Testes SafeWork</td>
+  </tr>
+  <tr>
+    <td><strong>Tipo do Teste</strong></td>
+    <td>Insucesso</td>
+  </tr>
+  <tr>
+    <td><strong>Requisitos associados</strong></td>
+    <td>RNF-01 (LGPD); RF-04 (permissões); RNF-05 (segurança)</td>
+  </tr> 
+  <tr>
+    <td><strong>Passos</strong></td>
+    <td>
+      1. Logar como Colaborador de Empresa A.<br>
+      2. Tentar abrir ASO de colaborador da Empresa B.<br>
+      3. Tentar exportar relatório completo.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Dados de teste</strong></td>
+    <td>Dois tenants/empresas configurados; usuário com escopo restrito</td>
+  </tr> 
+  <tr>
+    <td><strong>Critérios de êxito</strong></td>
+    <td>Acesso negado; mensagem de permissão insuficiente; evento auditado.</td>
+  </tr>
+</table>
  
 # Evidências de Testes de Software
 
@@ -559,21 +1028,19 @@ Apresente imagens e/ou vídeos que comprovam que um determinado teste foi execut
 ## Parte 1 - Testes de desenvolvimento
 Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, utilizando casos de teste, tanto de sucesso quanto de insucesso, elaborados por ele. Todos os testes devem ser evidenciados.
 
-### Exemplo
-### ETAPA 2
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-001<br>Login com credenciais válidas</th>
+    <th colspan="6" width="1000">CT-001 -S<br>Login com credenciais válidas</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do aplicativo após o login bem-sucedido.</td>
+    <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do sistema após o login bem-sucedido.</td>
   </tr>
     <tr>
-    <td><strong>Responsável pela funcionalidade (desenvolvimento e teste)</strong></td>
-    <td width="430">José da Silva </td>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
      <td width="100"><strong>Data do Teste</strong></td>
-    <td width="150">08/05/2024</td>
+    <td width="150">15/10/2025</td>
   </tr>
     <tr>
     <td width="170"><strong>Comentário</strong></td>
@@ -583,37 +1050,184 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e5-proj-time-sheet/assets/82043220/2e3c1722-7adc-4bd4-8b4c-3abe9ddc1b48"/></td>
+    <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/a1a900a3-9e9e-4780-99da-8e76e5fa08a7"/></td>
   </tr>
 </table>
 
-### ETAPA 3
-Colocar evidências de teste da etapa 3
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-002 -S<br>Logout com sessão ativa</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve encerrar a sessão do usuário e redirecionar para a página de login</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">15/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está efetuando o logout seguro com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/4b2c893b-7d98-4184-a5fe-829f61cc92c9"/></td>
+  </tr>
+</table>
 
-### ETAPA 4
-Colocar evidências de teste da etapa 4
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-011 -S<br>Recuperação de senha</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario receba um codigo para recuperar sua senha</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está recuperando a senha com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/ff415b01-85d0-459a-b209-5869ccdbf8ec"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-012 -S<br>Cadastro e Visualização de Empresas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario cadastre e visualize empresas</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">16/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está cadastrando as empresas com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/b400bc83-a94d-44e3-9f4c-bce7f62332c8"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-013 -S<br>Cadastro e Visualização de Endereços</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario cadastre e visualize endereços</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">16/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está cadastrando os endereços com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/660e194e-de47-47ed-acc2-6e12f077b126"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-014 -S<br>Edição de Empresas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario edite as empresas</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">16/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está editando as empresas com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/5043711d-4ef3-4a5f-8ab4-d639d7f41203"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-015 -S<br>Edição de Endereços</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario edite os endereços</td>
+  </tr>
+    <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+     <td width="100"><strong>Data do Teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está editando os endereços com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+     <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/47936393-d4af-4a76-ae09-d75f6a3e6e96"/></td>
+  </tr>
+</table>
 
 ## Parte 2 - Testes por pares
 A fim de aumentar a qualidade da aplicação desenvolvida, cada funcionalidade deve ser testada por um colega e os testes devem ser evidenciados. O colega "Tester" deve utilizar o caso de teste criado pelo desenvolvedor responsável pela funcionalidade (desenvolveu a funcionalidade e criou o caso de testes descrito no plano de testes) e caso perceba a necessidade de outros casos de teste, deve acrescentá-los na sessão "Plano de Testes".
 
-### ETAPA 2
-
-### Exemplo
 <table>
   <tr>
     <th colspan="6" width="1000">CT-001<br>Login com credenciais válidas</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do aplicativo após o login bem-sucedido.</td>
+    <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do sistema após o login bem-sucedido.</td>
   </tr>
     <tr>
       <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">José da Silva </td>
+    <td width="430">Pedro Nogueira </td>
       <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Maria Oliveira </td>
+    <td width="430">Vitor Galinari </td>
      <td width="100"><strong>Data do teste</strong></td>
-    <td width="150">08/05/2024</td>
+    <td width="150">19/10/2025</td>
   </tr>
     <tr>
     <td width="170"><strong>Comentário</strong></td>
@@ -623,13 +1237,174 @@ A fim de aumentar a qualidade da aplicação desenvolvida, cada funcionalidade d
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src="https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e5-proj-time-sheet/assets/82043220/2e3c1722-7adc-4bd4-8b4c-3abe9ddc1b48"/></td>
+    <td colspan="6" align="center"><video src=""/></td>
   </tr>
 </table>
 
-### ETAPA 3
-Colocar evidências de teste da etapa 3
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-002<br>Logout com sessão ativa</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve encerrar a sessão do usuário e redirecionar para a página de login</td>
+  </tr>
+    <tr>
+      <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira </td>
+      <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari </td>
+     <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está efetuando o logout seguro com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src=""/></td>
+  </tr>
+</table>
 
-### ETAPA 4
-Colocar evidências de teste da etapa 4
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-003<br>Recuperação de senha</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario receba um codigo para recuperar sua senha</td>
+  </tr>
+    <tr>
+      <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira </td>
+      <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari </td>
+     <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está recuperando a senha com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src=""/></td>
+  </tr>
+</table>
 
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-004<br>Cadastro e Visualização de Empresas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario cadastre e visualize empresas</td>
+  </tr>
+    <tr>
+      <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix </td>
+      <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari </td>
+     <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está cadastrando as empresas com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src=""/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-005<br>Cadastro e Visualização de Endereços</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario cadastre e visualize endereços</td>
+  </tr>
+    <tr>
+      <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix </td>
+      <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari </td>
+     <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está cadastrando os endereços com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src=""/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-006<br>Edição de Empresas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario edite as empresas</td>
+  </tr>
+    <tr>
+      <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix </td>
+      <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari </td>
+     <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está editando as empresas com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src=""/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-006<br>Edição de Endereços</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuario edite os endereços</td>
+  </tr>
+    <tr>
+      <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix </td>
+      <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari </td>
+     <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">19/10/2025</td>
+  </tr>
+    <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O sistema está editando os endereços com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><video src=""/></td>
+  </tr>
+</table>

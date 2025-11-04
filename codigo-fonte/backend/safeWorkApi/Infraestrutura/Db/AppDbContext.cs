@@ -88,6 +88,7 @@ namespace safeWorkApi.Models
         public DbSet<Colaborador> Colaboradores { get; set; }
         public DbSet<Endereco> Enderecos { get; set; }
         public DbSet<Aso> Asos { get; set; }
+        public DbSet<Contrato> Contratos { get; set; }
 
     }
 

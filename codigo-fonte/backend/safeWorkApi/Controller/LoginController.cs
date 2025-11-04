@@ -20,7 +20,7 @@ namespace safeWorkApi.Controller
     public class LoginController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly TempDataService _tempData;
+        private readonly TempDataService? _tempData;
 
         public LoginController(AppDbContext context, TempDataService tempData)
         {

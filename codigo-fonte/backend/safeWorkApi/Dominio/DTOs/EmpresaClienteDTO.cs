@@ -1,58 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using safeWorkApi.Models;
 
-namespace safeWorkApi.Models
+namespace safeWorkApi.Dominio.DTOs
 {
-    public enum TipoPessoa
+    public class EmpresaClienteDTO
     {
-        Fisica,
-        Juridica
-    }
-
-    public abstract class DadosCadastrais
-    {
-        [Key]
         public int Id { get; set; }
 
         [Required]
-        [Column("tipo_pessoa")]
         [RegularExpression("^(Fisica|Juridica)$", ErrorMessage = "O tipo de pessoa deve ser 'Fisica' ou 'Juridica'.")]
         public TipoPessoa TipoPessoa { get; set; }
 
         [Required]
-        [Column("cpf_cnpj")]
-        [MaxLength(14)]
-        [MinLength(11)]
         public string CpfCnpj { get; set; } = string.Empty;
 
         [Required]
-        [Column("nome_razao")]
         public string NomeRazao { get; set; } = string.Empty;
-
-        [Column("nome_fantasia")]
         public string? NomeFantasia { get; set; }
-
-        [Column("telefone")]
         public string? Telefone { get; set; }
-
-        [Column("celular")]
         public string? Celular { get; set; }
-
-        [Column("email")]
         public string? Email { get; set; }
 
         [Required]
-        [Column("status")]
         public bool Status { get; set; }
-
-        [Column("id_endereco")]
         public int? IdEndereco { get; set; }
-
-        public Endereco? Endereco { get; set; }
-
     }
 }

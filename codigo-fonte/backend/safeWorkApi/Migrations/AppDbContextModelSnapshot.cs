@@ -225,15 +225,16 @@ namespace safeWorkApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("telefone");
 
-                    b.Property<int>("TipoPessoa")
-                        .HasColumnType("integer")
+                    b.Property<string>("TipoPessoa")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("tipo_pessoa");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IdEndereco");
 
-                    b.ToTable("EmpresasClientes");
+                    b.ToTable("empresa_cliente");
                 });
 
             modelBuilder.Entity("safeWorkApi.Models.EmpresaPrestadora", b =>
@@ -287,7 +288,7 @@ namespace safeWorkApi.Migrations
 
                     b.HasIndex("IdEndereco");
 
-                    b.ToTable("EmpresasPrestadoras");
+                    b.ToTable("empresa_prestadora");
 
                     b.HasData(
                         new
@@ -296,7 +297,7 @@ namespace safeWorkApi.Migrations
                             CpfCnpj = "99999999000199",
                             NomeRazao = "ScPrevenção",
                             Status = true,
-                            TipoPessoa = 2
+                            TipoPessoa = 1
                         });
                 });
 
@@ -363,7 +364,7 @@ namespace safeWorkApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Perfis");
+                    b.ToTable("perfis");
 
                     b.HasData(
                         new

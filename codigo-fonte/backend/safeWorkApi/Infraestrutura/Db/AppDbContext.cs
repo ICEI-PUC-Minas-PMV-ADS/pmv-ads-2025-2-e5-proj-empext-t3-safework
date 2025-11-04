@@ -61,6 +61,10 @@ namespace safeWorkApi.Models
                 .WithMany(e => e.EmpresaCliente)
                 .HasForeignKey(ec => ec.IdEndereco);
 
+            modelBuilder.Entity<EmpresaCliente>()
+                .Property(e => e.TipoPessoa)
+                .HasConversion<string>();
+
             modelBuilder.Entity<EmpresaPrestadora>()
                 .HasOne(ep => ep.Endereco)
                 .WithMany(e => e.EmpresaPrestadora)

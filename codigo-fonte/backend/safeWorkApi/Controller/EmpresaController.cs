@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
 
 namespace safeWorkApi.Controller
@@ -17,43 +19,108 @@ namespace safeWorkApi.Controller
 
         // GET: api/Empresa
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<ActionResult<EmpresaClienteDTO>> GetAll()
         {
             var model = await _context.EmpresasClientes.ToListAsync();
-            return Ok(model);
+
+            List<EmpresaClienteDTO> empresaClienteDTO = model.Select(m => new EmpresaClienteDTO
+            {
+                Id = m.Id,
+                TipoPessoa = m.TipoPessoa,
+                CpfCnpj = m.CpfCnpj,
+                NomeRazao = m.NomeRazao,
+                NomeFantasia = m.NomeFantasia,
+                Telefone = m.Telefone,
+                Celular = m.Celular,
+                Email = m.Email,
+                Status = m.Status,
+                IdEndereco = m.IdEndereco
+
+            }).ToList();
+
+            return Ok(empresaClienteDTO);
         }
 
         // GET api/Empresa/5
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<ActionResult<EmpresaClienteDTO>> GetById(int id)
         {
+
             var model = await _context.EmpresasClientes.FindAsync(id);
+
+
 
             if (model == null) return NotFound();
 
-            return Ok(model);
+            EmpresaClienteDTO empresaClienteDTO = new EmpresaClienteDTO
+            {
+                Id = model.Id,
+                TipoPessoa = model.TipoPessoa,
+                CpfCnpj = model.CpfCnpj,
+                NomeRazao = model.NomeRazao,
+                NomeFantasia = model.NomeFantasia,
+                Telefone = model.Telefone,
+                Celular = model.Celular,
+                Email = model.Email,
+                Status = model.Status,
+                IdEndereco = model.IdEndereco
+            };
+
+            return Ok(empresaClienteDTO);
         }
 
         // POST api/Empresa
         [HttpPost]
-        public async Task<ActionResult<EmpresaCliente>> Create(EmpresaCliente model)
+        public async Task<ActionResult<EmpresaClienteCreateDTO>> Create(EmpresaClienteCreateDTO model)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _context.EmpresasClientes.Add(model);
+
+            if (model.IdEndereco == 0)
+                model.IdEndereco = null;
+
+            EmpresaCliente empresaCliente = new EmpresaCliente
+            {
+                TipoPessoa = model.TipoPessoa,
+                CpfCnpj = model.CpfCnpj,
+                NomeRazao = model.NomeRazao,
+                NomeFantasia = model.NomeFantasia,
+                Telefone = model.Telefone,
+                Celular = model.Celular,
+                Email = model.Email,
+                Status = model.Status,
+                IdEndereco = model.IdEndereco
+            };
+
+
+            _context.EmpresasClientes.Add(empresaCliente);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
+            return CreatedAtAction(nameof(GetById), new { id = empresaCliente.Id }, model);
         }
 
         // PUT api/<AsoController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<EmpresaCliente>> Update(int id, EmpresaCliente model)
+        public async Task<ActionResult<EmpresaClienteDTO>> Update(int id, EmpresaClienteDTO model)
         {
             if (id != model.Id) return BadRequest();
 
-            _context.EmpresasClientes.Update(model);
+            EmpresaCliente empresaCliente = new EmpresaCliente
+            {
+                TipoPessoa = model.TipoPessoa,
+                CpfCnpj = model.CpfCnpj,
+                NomeRazao = model.NomeRazao,
+                NomeFantasia = model.NomeFantasia,
+                Telefone = model.Telefone,
+                Celular = model.Celular,
+                Email = model.Email,
+                Status = model.Status,
+                IdEndereco = model.IdEndereco
+            };
+
+            _context.EmpresasClientes.Update(empresaCliente);
             try
             {
                 await _context.SaveChangesAsync();

@@ -1,66 +1,31 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Endereco, EnderecoFormData } from '../../../types/endereco'
 import { EnderecoForm } from '../../../components/EnderecoForm'
+import { apiEnderecos } from '@/lib/api_enderecos'
 
 export default function EnderecosPage() {
   // Mock data para endereços
-  const [enderecos, setEnderecos] = useState<Endereco[]>([
-    {
-      id: 1,
-      logradouro: 'Rua das Flores',
-      numero: '123',
-      complemento: 'Apto 45',
-      bairro: 'Centro',
-      municipio: 'São Paulo',
-      uf: 'SP',
-      cep: '01234-567'
-    },
-    {
-      id: 2,
-      logradouro: 'Avenida Paulista',
-      numero: '1000',
-      complemento: 'Sala 1001',
-      bairro: 'Bela Vista',
-      municipio: 'São Paulo',
-      uf: 'SP',
-      cep: '01310-100'
-    },
-    {
-      id: 3,
-      logradouro: 'Rua da Consolação',
-      numero: '500',
-      bairro: 'Consolação',
-      municipio: 'São Paulo',
-      uf: 'SP',
-      cep: '01302-000'
-    },
-    {
-      id: 4,
-      logradouro: 'Rua XV de Novembro',
-      numero: '250',
-      complemento: 'Loja 2',
-      bairro: 'Centro',
-      municipio: 'Campinas',
-      uf: 'SP',
-      cep: '13015-000'
-    },
-    {
-      id: 5,
-      logradouro: 'Avenida Afonso Pena',
-      numero: '1500',
-      bairro: 'Centro',
-      municipio: 'Belo Horizonte',
-      uf: 'MG',
-      cep: '30130-002'
-    }
-  ])
+  const [enderecos, setEnderecos] = useState<Endereco[]>([])
 
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedUf, setSelectedUf] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingEndereco, setEditingEndereco] = useState<Endereco | null>(null)
+
+  useEffect(() => {
+      const initializeEnderecos = async () => {
+        try {
+          const enderecosData = await apiEnderecos.getEnderecos()
+          setEnderecos(enderecosData)
+        } catch (error) {
+          console.error('Erro ao inicializar endereços:', error)
+        } 
+      }
+
+      initializeEnderecos()
+    }, [])
 
   // Filtros e estatísticas
   const filteredEnderecos = useMemo(() => {
@@ -94,18 +59,20 @@ export default function EnderecosPage() {
   const handleSaveEndereco = (enderecoData: EnderecoFormData) => {
     if (editingEndereco) {
       // Editar endereço existente
-      setEnderecos(prev => prev.map(endereco => 
-        endereco.id === editingEndereco.id 
-          ? { ...endereco, ...enderecoData }
-          : endereco
-      ))
+      apiEnderecos.updateEndereco(editingEndereco.id, enderecoData as Endereco).then((updatedEndereco) => {
+        setEnderecos(prev => prev.map(endereco => 
+          endereco.id === updatedEndereco.id ? updatedEndereco : endereco
+        ))
+      }).catch((error) => {
+        console.error('Erro ao atualizar endereço:', error)
+      })
     } else {
       // Criar novo endereço
-      const newEndereco: Endereco = {
-        id: Math.max(...enderecos.map(e => e.id || 0)) + 1,
-        ...enderecoData
-      }
-      setEnderecos(prev => [...prev, newEndereco])
+      apiEnderecos.createEndereco(enderecoData as Endereco).then((newEndereco) => {
+        setEnderecos(prev => [...prev, newEndereco])
+      }).catch((error) => {
+        console.error('Erro ao criar endereço:', error)
+      })
     }
     
     setShowForm(false)
@@ -119,7 +86,11 @@ export default function EnderecosPage() {
 
   const handleDeleteEndereco = (id: number) => {
     if (confirm('Tem certeza que deseja excluir este endereço?')) {
-      setEnderecos(prev => prev.filter(endereco => endereco.id !== id))
+      apiEnderecos.deleteEndereco(id).then(() => {
+        setEnderecos(prev => prev.filter(endereco => endereco.id !== id))
+      }).catch((error) => {
+        console.error('Erro ao excluir endereço:', error)
+      })
     }
   }
 

@@ -11,23 +11,23 @@ export interface Colaborador {
   email?: string
   status: boolean
   id_endereco?: number
-  
+
   // Dados específicos para colaboradores
   data_nascimento?: string
   cargo?: string
   setor?: string
   data_admissao?: string
-  
+
   // Dados de saúde para ASO
   tipo_sanguineo?: string
   alergias?: string
   medicamentos_uso_continuo?: string
   historico_doencas?: string
   observacoes_medicas?: string
-  
+
   // Documentos
   documentos?: ColaboradorDocumento[]
-  
+
   // Relacionamentos
   empresa_cliente?: {
     id: number
@@ -79,21 +79,18 @@ export interface ColaboradorFormData {
   telefone: string
   celular: string
   email: string
-  
+
   // Dados profissionais
   funcao: string
-  cargo: string
-  setor: string
-  data_admissao: string
   id_empresa_cliente: number
-  
+
   // Dados de saúde
   tipo_sanguineo: string
   alergias: string
   medicamentos_uso_continuo: string
   historico_doencas: string
   observacoes_medicas: string
-  
+
   // Endereço
   endereco: {
     logradouro: string
@@ -104,7 +101,7 @@ export interface ColaboradorFormData {
     estado: string
     cep: string
   }
-  
+
   // Status
   status: boolean
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace safeWorkApi.Models
 {
-    [Table("Perfis")]
+    [Table("perfis")]
     public class Perfil
     {
         [Key]

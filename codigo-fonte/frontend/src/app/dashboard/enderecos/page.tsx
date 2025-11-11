@@ -15,22 +15,22 @@ export default function EnderecosPage() {
   const [editingEndereco, setEditingEndereco] = useState<Endereco | null>(null)
 
   useEffect(() => {
-      const initializeEnderecos = async () => {
-        try {
-          const enderecosData = await apiEnderecos.getEnderecos()
-          setEnderecos(enderecosData)
-        } catch (error) {
-          console.error('Erro ao inicializar endereços:', error)
-        } 
+    const initializeEnderecos = async () => {
+      try {
+        const enderecosData = await apiEnderecos.getEnderecos()
+        setEnderecos(enderecosData)
+      } catch (error) {
+        console.error('Erro ao inicializar endereços:', error)
       }
+    }
 
-      initializeEnderecos()
-    }, [])
+    initializeEnderecos()
+  }, [])
 
   // Filtros e estatísticas
   const filteredEnderecos = useMemo(() => {
     return enderecos.filter(endereco => {
-      const matchesSearch = searchTerm === '' || 
+      const matchesSearch = searchTerm === '' ||
         endereco.logradouro.toLowerCase().includes(searchTerm.toLowerCase()) ||
         endereco.bairro.toLowerCase().includes(searchTerm.toLowerCase()) ||
         endereco.municipio.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -60,7 +60,7 @@ export default function EnderecosPage() {
     if (editingEndereco) {
       // Editar endereço existente
       apiEnderecos.updateEndereco(editingEndereco.id, enderecoData as Endereco).then((updatedEndereco) => {
-        setEnderecos(prev => prev.map(endereco => 
+        setEnderecos(prev => prev.map(endereco =>
           endereco.id === updatedEndereco.id ? updatedEndereco : endereco
         ))
       }).catch((error) => {
@@ -74,7 +74,7 @@ export default function EnderecosPage() {
         console.error('Erro ao criar endereço:', error)
       })
     }
-    
+
     setShowForm(false)
     setEditingEndereco(null)
   }
@@ -209,7 +209,7 @@ export default function EnderecosPage() {
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
             </div>
           </div>
-          
+
           <div className="w-full md:w-48">
             <select
               value={selectedUf}

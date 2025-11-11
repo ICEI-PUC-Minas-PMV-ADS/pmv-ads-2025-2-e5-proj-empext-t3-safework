@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import { EnderecoFormData, ESTADOS_BRASILEIROS } from '../types/endereco'
 
@@ -50,7 +48,7 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -68,19 +66,19 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
   const formatCep = (value: string) => {
     // Remove tudo que não é dígito
     const numbers = value.replace(/\D/g, '')
-    
+
     // Aplica a máscara 00000-000
     if (numbers.length <= 8) {
       return numbers.replace(/(\d{5})(\d{3})/, '$1-$2')
     }
-    
+
     return numbers.slice(0, 8).replace(/(\d{5})(\d{3})/, '$1-$2')
   }
 
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const formattedCep = formatCep(value)
-    
+
     setFormData(prev => ({
       ...prev,
       cep: formattedCep
@@ -101,7 +99,7 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
       try {
         const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`)
         const data = await response.json()
-        
+
         if (!data.erro) {
           setFormData(prev => ({
             ...prev,
@@ -154,7 +152,7 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) {
       return
     }
@@ -189,9 +187,8 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
                 value={formData.cep}
                 onChange={handleCepChange}
                 maxLength={9}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                  errors.cep ? 'border-red-300' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.cep ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="00000-000"
               />
               {isLoadingCep && (
@@ -215,9 +212,8 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
               name="uf"
               value={formData.uf}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${
-                errors.uf ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${errors.uf ? 'border-red-300' : 'border-gray-300'
+                }`}
             >
               <option value="">Selecione o estado</option>
               {ESTADOS_BRASILEIROS.map(estado => (
@@ -242,9 +238,8 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
               name="municipio"
               value={formData.municipio}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.municipio ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.municipio ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder="Digite o município"
             />
             {errors.municipio && (
@@ -263,9 +258,8 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
               name="bairro"
               value={formData.bairro}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.bairro ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.bairro ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder="Digite o bairro"
             />
             {errors.bairro && (
@@ -284,9 +278,8 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
               name="logradouro"
               value={formData.logradouro}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.logradouro ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.logradouro ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder="Digite o logradouro (rua, avenida, etc.)"
             />
             {errors.logradouro && (
@@ -305,9 +298,8 @@ export function EnderecoForm({ endereco, onSave, onCancel }: EnderecoFormProps) 
               name="numero"
               value={formData.numero}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.numero ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.numero ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder="Digite o número"
             />
             {errors.numero && (

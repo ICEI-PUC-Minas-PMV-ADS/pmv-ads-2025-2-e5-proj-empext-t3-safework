@@ -1,61 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { EmpresaForm } from '../../../components/EmpresaForm'
+import { apiEmpresas } from '@/lib/api_empresas'
+import { Empresa, EmpresaFormData } from '@/types/empresas'
 
-export interface Empresa {
-  id?: number
-  tipo_pessoa: number
-  cpf_cnpj: string
-  nome_razao: string
-  nome_fantasia?: string
-  telefone?: string
-  celular?: string
-  email?: string
-  status: boolean
-  id_endereco?: number
-}
 
 export default function EmpresasPage() {
-  const [empresas, setEmpresas] = useState<Empresa[]>([
-    {
-      id: 1,
-      tipo_pessoa: 2,
-      cpf_cnpj: '12.345.678/0001-90',
-      nome_razao: 'Empresa ABC Ltda',
-      nome_fantasia: 'ABC Tech',
-      telefone: '(11) 3456-7890',
-      celular: '(11) 98765-4321',
-      email: 'contato@abctech.com',
-      status: true,
-      id_endereco: 1
-    },
-    {
-      id: 2,
-      tipo_pessoa: 1,
-      cpf_cnpj: '123.456.789-00',
-      nome_razao: 'João Silva',
-      nome_fantasia: 'Silva Consultoria',
-      telefone: '(11) 2345-6789',
-      celular: '(11) 87654-3210',
-      email: 'joao@silva.com',
-      status: true,
-      id_endereco: 2
-    },
-    {
-      id: 3,
-      tipo_pessoa: 2,
-      cpf_cnpj: '98.765.432/0001-10',
-      nome_razao: 'XYZ Serviços S.A.',
-      nome_fantasia: 'XYZ Corp',
-      telefone: '(11) 4567-8901',
-      celular: '(11) 76543-2109',
-      email: 'info@xyzcorp.com',
-      status: false,
-      id_endereco: 3
-    }
-  ])
-  const [filteredEmpresas, setFilteredEmpresas] = useState<Empresa[]>([])
+  const [empresas, setEmpresas] = useState<Empresa[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null)
@@ -63,23 +15,31 @@ export default function EmpresasPage() {
 
   // Inicializar empresas filtradas
   useEffect(() => {
-    setFilteredEmpresas(empresas)
-  }, [empresas])
-
-  // Filtrar empresas em tempo real
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredEmpresas(empresas)
-    } else {
-      const filtered = empresas.filter(empresa =>
-        empresa.nome_razao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        empresa.nome_fantasia?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        empresa.cpf_cnpj.includes(searchTerm) ||
-        empresa.email?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      setFilteredEmpresas(filtered)
+    const initializeEnderecos = async () => {
+      try {
+        const empresasData = await apiEmpresas.getEmpresas();
+        console.log(empresasData)
+        setEmpresas(empresasData)
+      } catch (error) {
+        console.error('Erro ao inicializar empresas:', error)
+      }
     }
-  }, [searchTerm, empresas])
+
+    initializeEnderecos()
+
+  }, [])
+
+  const filteredEmpresas = useMemo(() => {
+    return empresas.filter(empresa => {
+      const matchesSearch = searchTerm === '' ||
+        empresa.nomeRazao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        empresa.nomeFantasia?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        empresa.cpfCnpj.includes(searchTerm) ||
+        empresa.email?.toLowerCase().includes(searchTerm.toLowerCase())
+
+      return matchesSearch
+    })
+  }, [empresas, searchTerm,])
 
   // Calcular estatísticas das empresas
   const totalEmpresas = empresas.length
@@ -90,48 +50,70 @@ export default function EmpresasPage() {
     setSearchTerm(value)
   }
 
-  const handleAddEmpresa = () => {
-    setEditingEmpresa(null)
-    setShowForm(true)
-  }
-
   const handleEditEmpresa = (empresa: Empresa) => {
     setEditingEmpresa(empresa)
     setShowForm(true)
   }
 
-  const handleCloseForm = () => {
-    setShowForm(false)
-    setEditingEmpresa(null)
-  }
-
-  const handleSaveEmpresa = (empresa: Empresa) => {
+  const handleSaveEmpresa = (empresaData: EmpresaFormData) => {
     if (editingEmpresa) {
-      setEmpresas(prevEmpresas => 
-        prevEmpresas.map(emp => 
-          emp.id === editingEmpresa.id 
-            ? { ...empresa, id: editingEmpresa.id }
-            : emp
-        )
-      )
+      // Editar empresa existente
+      apiEmpresas.updateEmpresas(editingEmpresa.id, empresaData as Empresa).then((updateEmpresa) => {
+        setEmpresas(prev => prev.map(empresa =>
+          empresa.id === updateEmpresa.id ? updateEmpresa : empresa
+        ))
+      }).catch((error) => {
+        console.error('Erro ao atualizar empresa:', error)
+      })
     } else {
-      const novaEmpresa = {
-        ...empresa,
-        id: Math.max(...empresas.map(e => e.id || 0)) + 1
-      }
-      setEmpresas(prevEmpresas => [...prevEmpresas, novaEmpresa])
+      // Criar nova empresa
+      apiEmpresas.createEmpresas(empresaData as Empresa).then((newEmpresa) => {
+        setEmpresas(prev => [...prev, newEmpresa])
+      }).catch((error) => {
+        console.error('Erro ao criar empresa:', error)
+      })
     }
-    
+
     setShowForm(false)
     setEditingEmpresa(null)
   }
 
-  const handleDeleteEmpresa = (empresa: Empresa) => {
-    if (window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome_razao}"?`)) {
-      setEmpresas(prevEmpresas => 
-        prevEmpresas.filter(emp => emp.id !== empresa.id)
-      )
+  const handleDeleteEmpresa = (id: number) => {
+    if (window.confirm(`Tem certeza que deseja excluir a empresa?`)) {
+      apiEmpresas.deleteEmpresas(id).then(() => {
+        setEmpresas(prev => prev.filter(empresa => empresa.id !== id))
+      }).catch((error) => {
+        console.error('Erro ao excluir empresa:', error)
+      })
     }
+  }
+
+  const handleCancelForm = () => {
+    setShowForm(false)
+    setEditingEmpresa(null)
+  }
+
+  if (showForm) {
+    return (
+      <div className="p-6">
+        <div className="mb-6">
+          <button
+            onClick={handleCancelForm}
+            className="text-blue-600 hover:text-blue-800 mb-4"
+          >
+            ← Voltar para lista
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {editingEmpresa ? 'Editar Empresa' : 'Nova Empresa'}
+          </h1>
+        </div>
+        <EmpresaForm
+          empresa={editingEmpresa}
+          onSave={handleSaveEmpresa}
+          onCancel={handleCancelForm}
+        />
+      </div>
+    )
   }
 
   return (
@@ -139,7 +121,7 @@ export default function EmpresasPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-gray-900">Empresas</h1>
         <button
-          onClick={handleAddEmpresa}
+          onClick={() => setShowForm(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           Nova Empresa
@@ -229,15 +211,6 @@ export default function EmpresasPage() {
         </div>
       </div>
 
-      {showForm && (
-        <div className="mb-6">
-          <EmpresaForm
-            empresa={editingEmpresa}
-            onSave={handleSaveEmpresa}
-            onCancel={handleCloseForm}
-          />
-        </div>
-      )}
 
       <div className="bg-white rounded-lg shadow">
         <div className="p-6">
@@ -284,36 +257,34 @@ export default function EmpresasPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {empresa.nome_razao}
+                            {empresa.nomeRazao}
                           </div>
-                          {empresa.nome_fantasia && (
+                          {empresa.nomeFantasia && (
                             <div className="text-sm text-gray-500">
-                              {empresa.nome_fantasia}
+                              {empresa.nomeFantasia}
                             </div>
                           )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${
-                          empresa.tipo_pessoa === 1 
-                            ? 'bg-purple-50 text-purple-800 border-purple-200' 
-                            : 'bg-blue-50 text-blue-800 border-blue-200'
-                        }`}>
-                          {empresa.tipo_pessoa === 1 ? 'PF' : 'PJ'}
+                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${empresa.tipoPessoa === 'Fisica'
+                          ? 'bg-purple-50 text-purple-800 border-purple-200'
+                          : 'bg-blue-50 text-blue-800 border-blue-200'
+                          }`}>
+                          {empresa.tipoPessoa === 'Fisica' ? 'PF' : 'PJ'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {empresa.cpf_cnpj}
+                        {empresa.cpfCnpj}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {empresa.email || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          empresa.status 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${empresa.status
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
                           {empresa.status ? 'Ativo' : 'Inativo'}
                         </span>
                       </td>
@@ -325,7 +296,7 @@ export default function EmpresasPage() {
                           Editar
                         </button>
                         <button
-                          onClick={() => handleDeleteEmpresa(empresa)}
+                          onClick={() => handleDeleteEmpresa(empresa.id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Excluir

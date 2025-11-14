@@ -1,439 +1,438 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import AsoForm, { Aso, TipoAso, StatusAso } from '../../../components/AsoForm';
+import { useEffect, useMemo, useState } from 'react'
 
-// Interface para colaborador (dados mockados)
-interface Colaborador {
-  id: number;
-  nome: string;
-  empresa: string;
-  funcao: string;
+import { Aso, AsoFormValues, StatusAso, TipoAso } from '@/types/aso'
+import { Colaborador } from '@/types/colaborador'
+import {
+  createAso,
+  deleteAso,
+  getAsos,
+  getColaboradores,
+  updateAso
+} from '@/lib/api'
+import AsoForm from '@/components/AsoForm'
+
+type RequestState = 'idle' | 'loading' | 'saving'
+
+const getTipoLabel = (tipo: TipoAso) => {
+  switch (tipo) {
+    case TipoAso.Admissional:
+      return 'Admissional'
+    case TipoAso.Periodico:
+      return 'Periódico'
+    case TipoAso.RetornoAoTrabalho:
+      return 'Retorno ao Trabalho'
+    case TipoAso.MudancaDeFuncao:
+      return 'Mudança de Função'
+    case TipoAso.Demissional:
+      return 'Demissional'
+    default:
+      return 'Desconhecido'
+  }
 }
 
-// Dados mockados para colaboradores
-const colaboradoresMock: Colaborador[] = [
-  { id: 1, nome: 'João Silva', empresa: 'Empresa Alpha Ltda', funcao: 'Operador' },
-  { id: 2, nome: 'Maria Santos', empresa: 'Beta Construções S.A.', funcao: 'Técnica de Segurança' },
-  { id: 3, nome: 'Pedro Oliveira', empresa: 'Gamma Indústria', funcao: 'Soldador' },
-  { id: 4, nome: 'Ana Costa', empresa: 'Delta Serviços', funcao: 'Supervisora' },
-  { id: 5, nome: 'Carlos Ferreira', empresa: 'Epsilon Engenharia', funcao: 'Eletricista' },
-];
+const getStatusLabel = (status: StatusAso) => {
+  switch (status) {
+    case StatusAso.Valido:
+      return 'Válido'
+    case StatusAso.Vencido:
+      return 'Vencido'
+    case StatusAso.Aguardando:
+      return 'Aguardando'
+    case StatusAso.Cancelado:
+      return 'Cancelado'
+    default:
+      return 'Desconhecido'
+  }
+}
 
-// Dados mockados para ASOs
-const asosMock: Aso[] = [
-  {
-    id: 1,
-    tipo_aso: TipoAso.Admissional,
-    data_solicitacao: '2024-01-15',
-    data_validade: '2025-01-15',
-    status: StatusAso.Valido,
-    path_file: '/docs/aso_001.pdf',
-    observacoes: 'ASO admissional realizada sem restrições',
-    id_colaborador: 1,
-  },
-  {
-    id: 2,
-    tipo_aso: TipoAso.Periodico,
-    data_solicitacao: '2024-06-10',
-    data_validade: '2025-06-10',
-    status: StatusAso.Valido,
-    path_file: '/docs/aso_002.pdf',
-    observacoes: 'Exame periódico anual',
-    id_colaborador: 2,
-  },
-  {
-    id: 3,
-    tipo_aso: TipoAso.Demissional,
-    data_solicitacao: '2024-12-01',
-    data_validade: '2024-12-01',
-    status: StatusAso.Aguardando,
-    path_file: '',
-    observacoes: 'Aguardando resultado dos exames',
-    id_colaborador: 3,
-  },
-  {
-    id: 4,
-    tipo_aso: TipoAso.MudancaDeFuncao,
-    data_solicitacao: '2024-03-20',
-    data_validade: '2025-03-20',
-    status: StatusAso.Vencido,
-    path_file: '/docs/aso_004.pdf',
-    observacoes: 'ASO para mudança de função - vencida',
-    id_colaborador: 4,
-  },
-  {
-    id: 5,
-    tipo_aso: TipoAso.RetornoAoTrabalho,
-    data_solicitacao: '2024-11-05',
-    data_validade: '2025-11-05',
-    status: StatusAso.Valido,
-    path_file: '/docs/aso_005.pdf',
-    observacoes: 'Retorno após afastamento médico',
-    id_colaborador: 5,
-  },
-];
+const getStatusBadgeClass = (status: StatusAso) => {
+  switch (status) {
+    case StatusAso.Valido:
+      return 'bg-green-100 text-green-800'
+    case StatusAso.Vencido:
+      return 'bg-red-100 text-red-800'
+    case StatusAso.Aguardando:
+      return 'bg-yellow-100 text-yellow-800'
+    case StatusAso.Cancelado:
+      return 'bg-gray-100 text-gray-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const formatDate = (value: string) =>
+  value ? new Date(value).toLocaleDateString('pt-BR') : '-'
 
 export default function AsosPage() {
-  const [asos, setAsos] = useState<Aso[]>(asosMock);
-  const [filteredAsos, setFilteredAsos] = useState<Aso[]>(asosMock);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<number | ''>('');
-  const [tipoFilter, setTipoFilter] = useState<number | ''>('');
-  const [showForm, setShowForm] = useState(false);
-  const [editingAso, setEditingAso] = useState<Aso | undefined>(undefined);
+  const [asos, setAsos] = useState<Aso[]>([])
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusAso | 'all'>('all')
+  const [tipoFilter, setTipoFilter] = useState<TipoAso | 'all'>('all')
+  const [showForm, setShowForm] = useState(false)
+  const [editingAso, setEditingAso] = useState<Aso | null>(null)
+  const [state, setState] = useState<RequestState>('idle')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Função para buscar colaborador por ID
-  const getColaboradorById = (id: number): Colaborador | undefined => {
-    return colaboradoresMock.find(col => col.id === id);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      setState('loading')
+      try {
+        const [asosData, colaboradoresData] = await Promise.all([
+          getAsos(),
+          getColaboradores()
+        ])
 
-  // Função para obter label do tipo de ASO
-  const getTipoAsoLabel = (tipo: number): string => {
-    switch (tipo) {
-      case TipoAso.Admissional: return 'Admissional';
-      case TipoAso.Periodico: return 'Periódico';
-      case TipoAso.RetornoAoTrabalho: return 'Retorno ao Trabalho';
-      case TipoAso.MudancaDeFuncao: return 'Mudança de Função';
-      case TipoAso.Demissional: return 'Demissional';
-      default: return 'Desconhecido';
-    }
-  };
-
-  // Função para obter label do status
-  const getStatusAsoLabel = (status: number): string => {
-    switch (status) {
-      case StatusAso.Valido: return 'Válido';
-      case StatusAso.Vencido: return 'Vencido';
-      case StatusAso.Aguardando: return 'Aguardando';
-      case StatusAso.Cancelado: return 'Cancelado';
-      default: return 'Desconhecido';
-    }
-  };
-
-  // Função para obter cor do badge de status
-  const getStatusBadgeColor = (status: number): string => {
-    switch (status) {
-      case StatusAso.Valido: return 'bg-green-100 text-green-800';
-      case StatusAso.Vencido: return 'bg-red-100 text-red-800';
-      case StatusAso.Aguardando: return 'bg-yellow-100 text-yellow-800';
-      case StatusAso.Cancelado: return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // Função para filtrar ASOs
-  const handleSearch = (term: string, status: number | '', tipo: number | '') => {
-    let filtered = asos;
-
-    if (term) {
-      filtered = filtered.filter(aso => {
-        const colaborador = getColaboradorById(aso.id_colaborador);
-        return colaborador?.nome.toLowerCase().includes(term.toLowerCase()) ||
-               colaborador?.empresa.toLowerCase().includes(term.toLowerCase()) ||
-               getTipoAsoLabel(aso.tipo_aso).toLowerCase().includes(term.toLowerCase());
-      });
+        setAsos(asosData)
+        setColaboradores(colaboradoresData)
+        setErrorMessage(null)
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Não foi possível carregar os dados de ASO.'
+        setErrorMessage(message)
+      } finally {
+        setState('idle')
+      }
     }
 
-    if (status !== '') {
-      filtered = filtered.filter(aso => aso.status === status);
+    fetchData()
+  }, [])
+
+  const colaboradoresById = useMemo(() => {
+    const map = new Map<number, Colaborador>()
+    colaboradores.forEach(colaborador => {
+      map.set(colaborador.id, colaborador)
+    })
+    return map
+  }, [colaboradores])
+
+  const filteredAsos = useMemo(() => {
+    return asos.filter(aso => {
+      const colaborador = colaboradoresById.get(aso.idColaborador)
+      const matchesStatus =
+        statusFilter === 'all' || aso.status === statusFilter
+      const matchesTipo = tipoFilter === 'all' || aso.tipoAso === tipoFilter
+
+      const query = searchTerm.trim().toLowerCase()
+      const matchesSearch =
+        query.length === 0 ||
+        colaborador?.nomeRazao.toLowerCase().includes(query) ||
+        (colaborador?.empresaClienteNome ?? '')
+          .toLowerCase()
+          .includes(query) ||
+        (colaborador?.funcao ?? '').toLowerCase().includes(query) ||
+        getTipoLabel(aso.tipoAso).toLowerCase().includes(query)
+
+      return matchesStatus && matchesTipo && matchesSearch
+    })
+  }, [asos, colaboradoresById, searchTerm, statusFilter, tipoFilter])
+
+  const stats = useMemo(() => {
+    const total = asos.length
+    const validas = asos.filter(aso => aso.status === StatusAso.Valido).length
+    const vencidas = asos.filter(aso => aso.status === StatusAso.Vencido).length
+    const aguardando = asos.filter(
+      aso => aso.status === StatusAso.Aguardando
+    ).length
+
+    return { total, validas, vencidas, aguardando }
+  }, [asos])
+
+  const handleSave = async (data: AsoFormValues) => {
+    try {
+      setState('saving')
+      setErrorMessage(null)
+
+      if (editingAso) {
+        const updated = await updateAso(editingAso.id, data)
+        setAsos(prev =>
+          prev.map(item => (item.id === updated.id ? updated : item))
+        )
+      } else {
+        const created = await createAso(data)
+        setAsos(prev => [...prev, created])
+      }
+
+      setShowForm(false)
+      setEditingAso(null)
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível salvar a ASO.'
+      setErrorMessage(message)
+    } finally {
+      setState('idle')
     }
+  }
 
-    if (tipo !== '') {
-      filtered = filtered.filter(aso => aso.tipo_aso === tipo);
+  const handleDelete = async (aso: Aso) => {
+    const confirmed = window.confirm(
+      `Deseja realmente excluir a ASO do colaborador ${colaboradoresById.get(aso.idColaborador)?.nomeRazao ?? ''}?`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setState('saving')
+      setErrorMessage(null)
+
+      await deleteAso(aso.id)
+      setAsos(prev => prev.filter(item => item.id !== aso.id))
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível excluir a ASO.'
+      setErrorMessage(message)
+    } finally {
+      setState('idle')
     }
+  }
 
-    setFilteredAsos(filtered);
-  };
-
-  // Handlers para filtros
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    handleSearch(term, statusFilter, tipoFilter);
-  };
-
-  const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const status = e.target.value === '' ? '' : parseInt(e.target.value);
-    setStatusFilter(status);
-    handleSearch(searchTerm, status, tipoFilter);
-  };
-
-  const handleTipoFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const tipo = e.target.value === '' ? '' : parseInt(e.target.value);
-    setTipoFilter(tipo);
-    handleSearch(searchTerm, statusFilter, tipo);
-  };
-
-  // Função para adicionar nova ASO
-  const handleAddAso = () => {
-    setEditingAso(undefined);
-    setShowForm(true);
-  };
-
-  // Função para editar ASO
-  const handleEditAso = (aso: Aso) => {
-    setEditingAso(aso);
-    setShowForm(true);
-  };
-
-  // Função para deletar ASO
-  const handleDeleteAso = (id: number) => {
-    if (window.confirm('Tem certeza que deseja excluir esta ASO?')) {
-      const updatedAsos = asos.filter(aso => aso.id !== id);
-      setAsos(updatedAsos);
-      setFilteredAsos(updatedAsos);
-    }
-  };
-
-  // Função para submeter formulário
-  const handleFormSubmit = (asoData: Aso) => {
-    if (editingAso) {
-      // Editar ASO existente
-      const updatedAsos = asos.map(aso => 
-        aso.id === editingAso.id ? { ...asoData, id: editingAso.id } : aso
-      );
-      setAsos(updatedAsos);
-      setFilteredAsos(updatedAsos);
-    } else {
-      // Adicionar nova ASO
-      const newAso = { ...asoData, id: Math.max(...asos.map(a => a.id || 0)) + 1 };
-      const updatedAsos = [...asos, newAso];
-      setAsos(updatedAsos);
-      setFilteredAsos(updatedAsos);
-    }
-    setShowForm(false);
-    setEditingAso(undefined);
-  };
-
-  // Função para cancelar formulário
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setEditingAso(undefined);
-  };
-
-  // Calcular estatísticas
-  const totalAsos = asos.length;
-  const asosValidas = asos.filter(aso => aso.status === StatusAso.Valido).length;
-  const asosVencidas = asos.filter(aso => aso.status === StatusAso.Vencido).length;
-  const asosAguardando = asos.filter(aso => aso.status === StatusAso.Aguardando).length;
+  const isLoading = state === 'loading'
+  const isSaving = state === 'saving'
 
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gerenciamento de ASOs</h1>
-        <p className="text-gray-600">Gerencie os Atestados de Saúde Ocupacional dos colaboradores</p>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          Gerenciamento de ASOs
+        </h1>
+        <p className="text-gray-600">
+          Acompanhe e mantenha os atestados de saúde ocupacional dos
+          colaboradores atualizados.
+        </p>
       </div>
 
-      {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total de ASOs</p>
-              <p className="text-2xl font-bold text-gray-900">{totalAsos}</p>
-            </div>
-          </div>
+      {errorMessage && (
+        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
         </div>
+      )}
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">ASOs Válidas</p>
-              <p className="text-2xl font-bold text-green-600">{asosValidas}</p>
-            </div>
-          </div>
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="rounded-lg border border-blue-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">Total de ASOs</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
+            {isLoading ? '-' : stats.total}
+          </p>
         </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">ASOs Vencidas</p>
-              <p className="text-2xl font-bold text-red-600">{asosVencidas}</p>
-            </div>
-          </div>
+        <div className="rounded-lg border border-green-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">ASOs Válidas</p>
+          <p className="mt-2 text-2xl font-bold text-green-600">
+            {isLoading ? '-' : stats.validas}
+          </p>
         </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Aguardando</p>
-              <p className="text-2xl font-bold text-yellow-600">{asosAguardando}</p>
-            </div>
-          </div>
+        <div className="rounded-lg border border-red-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">ASOs Vencidas</p>
+          <p className="mt-2 text-2xl font-bold text-red-600">
+            {isLoading ? '-' : stats.vencidas}
+          </p>
+        </div>
+        <div className="rounded-lg border border-yellow-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">Aguardando</p>
+          <p className="mt-2 text-2xl font-bold text-yellow-600">
+            {isLoading ? '-' : stats.aguardando}
+          </p>
         </div>
       </div>
 
-      {/* Filtros e Busca */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
+      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Buscar por colaborador, empresa ou tipo de ASO..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-600"
-            />
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+                🔍
+              </span>
+              <input
+                type="text"
+                placeholder="Buscar por colaborador, empresa ou tipo de ASO..."
+                value={searchTerm}
+                onChange={event => setSearchTerm(event.target.value)}
+                className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
           </div>
-          <div className="flex gap-4">
-            <select
-              value={statusFilter}
-              onChange={handleStatusFilterChange}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            >
-              <option value="">Todos os Status</option>
-              <option value={StatusAso.Valido}>Válido</option>
-              <option value={StatusAso.Vencido}>Vencido</option>
-              <option value={StatusAso.Aguardando}>Aguardando</option>
-              <option value={StatusAso.Cancelado}>Cancelado</option>
-            </select>
-            <select
-              value={tipoFilter}
-              onChange={handleTipoFilterChange}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            >
-              <option value="">Todos os Tipos</option>
-              <option value={TipoAso.Admissional}>Admissional</option>
-              <option value={TipoAso.Periodico}>Periódico</option>
-              <option value={TipoAso.RetornoAoTrabalho}>Retorno ao Trabalho</option>
-              <option value={TipoAso.MudancaDeFuncao}>Mudança de Função</option>
-              <option value={TipoAso.Demissional}>Demissional</option>
-            </select>
-            <button
-              onClick={handleAddAso}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-nowrap"
-            >
-              Nova ASO
-            </button>
-          </div>
+
+          <select
+            value={statusFilter}
+            onChange={event =>
+              setStatusFilter(
+                event.target.value === 'all'
+                  ? 'all'
+                  : (Number(event.target.value) as StatusAso)
+              )
+            }
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="all">Todos os status</option>
+            {Object.values(StatusAso)
+              .filter(value => typeof value === 'number')
+              .map(value => (
+                <option key={value} value={value}>
+                  {getStatusLabel(value as StatusAso)}
+                </option>
+              ))}
+          </select>
+
+          <select
+            value={tipoFilter}
+            onChange={event =>
+              setTipoFilter(
+                event.target.value === 'all'
+                  ? 'all'
+                  : (Number(event.target.value) as TipoAso)
+              )
+            }
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="all">Todos os tipos</option>
+            {Object.values(TipoAso)
+              .filter(value => typeof value === 'number')
+              .map(value => (
+                <option key={value} value={value}>
+                  {getTipoLabel(value as TipoAso)}
+                </option>
+              ))}
+          </select>
+
+          <button
+            onClick={() => {
+              setEditingAso(null)
+              setShowForm(true)
+            }}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isSaving}
+          >
+            Nova ASO
+          </button>
         </div>
       </div>
 
-      {/* Tabela de ASOs */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Colaborador
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Tipo
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Data Solicitação
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Solicitação
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Data Validade
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Validade
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredAsos.map((aso) => {
-                const colaborador = getColaboradorById(aso.id_colaborador);
-                return (
-                  <tr key={aso.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {colaborador?.nome || 'Colaborador não encontrado'}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {colaborador?.empresa} - {colaborador?.funcao}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{getTipoAsoLabel(aso.tipo_aso)}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {new Date(aso.data_solicitacao).toLocaleDateString('pt-BR')}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {new Date(aso.data_validade).toLocaleDateString('pt-BR')}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor(aso.status)}`}>
-                        {getStatusAsoLabel(aso.status)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => handleEditAso(aso)}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDeleteAso(aso.id!)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
+                    Carregando ASOs...
+                  </td>
+                </tr>
+              ) : filteredAsos.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
+                    {searchTerm || statusFilter !== 'all' || tipoFilter !== 'all'
+                      ? 'Nenhuma ASO encontrada com os filtros aplicados.'
+                      : 'Nenhuma ASO cadastrada até o momento.'}
+                  </td>
+                </tr>
+              ) : (
+                filteredAsos.map(aso => {
+                  const colaborador = colaboradoresById.get(aso.idColaborador)
+
+                  return (
+                    <tr key={aso.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <div className="font-medium">
+                          {colaborador?.nomeRazao ?? 'Colaborador não encontrado'}
+                        </div>
+                        <div className="text-gray-500">
+                          {colaborador?.empresaClienteNome ?? ''}
+                          {colaborador?.funcao ? ` • ${colaborador.funcao}` : ''}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {getTipoLabel(aso.tipoAso)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {formatDate(aso.dataSolicitacao)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {formatDate(aso.dataValidade)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
+                            aso.status
+                          )}`}
+                        >
+                          {getStatusLabel(aso.status)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium">
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => {
+                              setEditingAso(aso)
+                              setShowForm(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={isSaving}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => handleDelete(aso)}
+                            className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={isSaving}
+                          >
+                            Excluir
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
             </tbody>
           </table>
         </div>
-
-        {filteredAsos.length === 0 && (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhuma ASO encontrada</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Não há ASOs que correspondam aos filtros aplicados.
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* Modal do formulário */}
       {showForm && (
         <AsoForm
           aso={editingAso}
-          onSubmit={handleFormSubmit}
-          onCancel={handleFormCancel}
-          colaboradores={colaboradoresMock.map(col => ({
-            id: col.id,
-            nome: col.nome,
-            empresa: col.empresa
+          colaboradores={colaboradores.map(colaborador => ({
+            id: colaborador.id,
+            nome: colaborador.nomeRazao,
+            empresa: colaborador.empresaClienteNome ?? ''
           }))}
+          onSave={handleSave}
+          onCancel={() => {
+            setShowForm(false)
+            setEditingAso(null)
+          }}
         />
       )}
     </div>
-  );
+  )
 }
+

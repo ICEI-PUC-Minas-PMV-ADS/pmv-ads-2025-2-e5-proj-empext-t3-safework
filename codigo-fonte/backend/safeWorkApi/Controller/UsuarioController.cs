@@ -22,24 +22,30 @@ namespace safeWorkApi.Controller
 
         // GET: api/Usuario
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetAll()
+        public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetAll()
         {
-            var usuarios = await _context.Usuarios.ToListAsync();
-            return Ok(usuarios);
+            var usuarios = await _context.Usuarios
+                .AsNoTracking()
+                .ToListAsync();
+
+            var result = usuarios.Select(MapToDto).ToList();
+            return Ok(result);
         }
 
         // GET: api/Usuario/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetById(int id)
+        public async Task<ActionResult<UsuarioDto>> GetById(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
+            var usuario = await _context.Usuarios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (usuario == null)
             {
                 return NotFound();
             }
 
-            return Ok(usuario);
+            return Ok(MapToDto(usuario));
         }
 
         // POST: api/Usuario
@@ -85,7 +91,7 @@ namespace safeWorkApi.Controller
             {
                 _context.Usuarios.Add(newUsuario);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetById), new { id = newUsuario.Id }, usuario);
+                return CreatedAtAction(nameof(GetById), new { id = newUsuario.Id }, MapToDto(newUsuario));
             }
             catch (Exception e)
             {
@@ -99,17 +105,19 @@ namespace safeWorkApi.Controller
         {
             try
             {
-                var modelDb = await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
-                if (modelDb == null) return NotFound();
+                var usuarioDb = await _context.Usuarios.FirstOrDefaultAsync(c => c.Id == id);
+                if (usuarioDb == null) return NotFound();
 
-                modelDb.NomeCompleto = model.NomeCompleto;
-                modelDb.Email = model.Email;
-                modelDb.Senha = BCrypt.Net.BCrypt.HashPassword(model.Senha);
-                modelDb.IdPerfil = model.IdPerfil;
+                usuarioDb.NomeCompleto = model.NomeCompleto;
+                usuarioDb.Email = model.Email;
+                if (!string.IsNullOrWhiteSpace(model.Senha))
+                {
+                    usuarioDb.Senha = BCrypt.Net.BCrypt.HashPassword(model.Senha);
+                }
+                usuarioDb.IdPerfil = model.IdPerfil;
 
-                _context.Usuarios.Update(modelDb);
                 await _context.SaveChangesAsync();
-                return Ok(new { model.NomeCompleto, model.Email, model.IdPerfil });
+                return Ok(MapToDto(usuarioDb));
             }
             catch (Exception e)
             {
@@ -130,9 +138,16 @@ namespace safeWorkApi.Controller
             return NoContent();
         }
 
-
-
-
-
+        private static UsuarioDto MapToDto(Usuario usuario)
+        {
+            return new UsuarioDto
+            {
+                Id = usuario.Id,
+                NomeCompleto = usuario.NomeCompleto ?? string.Empty,
+                Email = usuario.Email,
+                IdPerfil = usuario.IdPerfil,
+                IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
+            };
+        }
     }
 }

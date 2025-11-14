@@ -1,4 +1,4 @@
-using System.Security.Cryptography;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
@@ -19,9 +19,12 @@ namespace safeWorkApi.Controller
 
         // GET: api/Empresa
         [HttpGet]
-        public async Task<ActionResult<EmpresaClienteDTO>> GetAll()
+        public async Task<ActionResult<IEnumerable<EmpresaClienteDTO>>> GetAll()
         {
-            var model = await _context.EmpresasClientes.ToListAsync();
+            var model = await _context.EmpresasClientes
+                .AsNoTracking()
+                .Include(e => e.Endereco)
+                .ToListAsync();
 
             List<EmpresaClienteDTO> empresaClienteDTO = model.Select(m => new EmpresaClienteDTO
             {
@@ -46,9 +49,10 @@ namespace safeWorkApi.Controller
         public async Task<ActionResult<EmpresaClienteDTO>> GetById(int id)
         {
 
-            var model = await _context.EmpresasClientes.FindAsync(id);
-
-
+            var model = await _context.EmpresasClientes
+                .AsNoTracking()
+                .Include(e => e.Endereco)
+                .FirstOrDefaultAsync(e => e.Id == id);
 
             if (model == null) return NotFound();
 
@@ -79,9 +83,6 @@ namespace safeWorkApi.Controller
                 return BadRequest(ModelState);
             }
 
-            if (model.IdEndereco == 0)
-                model.IdEndereco = null;
-
             EmpresaCliente empresaCliente = new EmpresaCliente
             {
                 TipoPessoa = model.TipoPessoa,
@@ -98,7 +99,19 @@ namespace safeWorkApi.Controller
 
             _context.EmpresasClientes.Add(empresaCliente);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = empresaCliente.Id }, model);
+            return CreatedAtAction(nameof(GetById), new { id = empresaCliente.Id }, new EmpresaClienteDTO
+            {
+                Id = empresaCliente.Id,
+                TipoPessoa = empresaCliente.TipoPessoa,
+                CpfCnpj = empresaCliente.CpfCnpj,
+                NomeRazao = empresaCliente.NomeRazao,
+                NomeFantasia = empresaCliente.NomeFantasia,
+                Telefone = empresaCliente.Telefone,
+                Celular = empresaCliente.Celular,
+                Email = empresaCliente.Email,
+                Status = empresaCliente.Status,
+                IdEndereco = empresaCliente.IdEndereco
+            });
         }
 
         // PUT api/<AsoController>/5
@@ -107,36 +120,22 @@ namespace safeWorkApi.Controller
         {
             if (id != model.Id) return BadRequest();
 
-            EmpresaCliente empresaCliente = new EmpresaCliente
-            {
-                TipoPessoa = model.TipoPessoa,
-                CpfCnpj = model.CpfCnpj,
-                NomeRazao = model.NomeRazao,
-                NomeFantasia = model.NomeFantasia,
-                Telefone = model.Telefone,
-                Celular = model.Celular,
-                Email = model.Email,
-                Status = model.Status,
-                IdEndereco = model.IdEndereco
-            };
+            var empresaCliente = await _context.EmpresasClientes.FirstOrDefaultAsync(e => e.Id == id);
+            if (empresaCliente == null) return NotFound();
 
-            _context.EmpresasClientes.Update(empresaCliente);
-            try
-            {
-                await _context.SaveChangesAsync();
-                return Ok(model);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.EmpresasClientes.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Conflict("Conflito na update do registro, tente novamente");
-                }
-            }
+            empresaCliente.TipoPessoa = model.TipoPessoa;
+            empresaCliente.CpfCnpj = model.CpfCnpj;
+            empresaCliente.NomeRazao = model.NomeRazao;
+            empresaCliente.NomeFantasia = model.NomeFantasia;
+            empresaCliente.Telefone = model.Telefone;
+            empresaCliente.Celular = model.Celular;
+            empresaCliente.Email = model.Email;
+            empresaCliente.Status = model.Status;
+            empresaCliente.IdEndereco = model.IdEndereco;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(model);
         }
 
         // DELETE api/<AsoController>/5

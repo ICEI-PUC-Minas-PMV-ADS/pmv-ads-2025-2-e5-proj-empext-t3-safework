@@ -9,6 +9,7 @@ using Xunit;
 using safeWorkApi.Controller;
 using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
+using safeWorkApi.service;
 using Moq;
 using Castle.Core.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace safeWorkTests.Controller
 {
@@ -67,7 +69,9 @@ namespace safeWorkTests.Controller
 
         private LoginController CreateController()
         {
-            return new LoginController(_context);
+            var memoryCache = new MemoryCache(new MemoryCacheOptions());
+            var tempDataService = new TempDataService(memoryCache);
+            return new LoginController(_context, tempDataService);
         }
 
         [Fact]

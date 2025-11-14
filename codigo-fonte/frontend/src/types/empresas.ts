@@ -1,31 +1,26 @@
+export type TipoPessoa = 'Fisica' | 'Juridica'
+
 export interface Empresa {
-    id: number
-    tipoPessoa: number
-    cpfCnpj: string
-    nomeRazao: string
-    nomeFantasia: string
-    telefone: string
-    celular: string
-    email: string
-    status: boolean
-    idEndereco: number
-    endereco: string
-    colaboradores: string[]
-    contratos: string[]
+  id: number
+  tipoPessoa: TipoPessoa
+  cpfCnpj: string
+  nomeRazao: string
+  nomeFantasia?: string
+  telefone?: string
+  celular?: string
+  email?: string
+  status: boolean
+  idEndereco?: number
 }
 
 export interface EmpresaFormData {
-    tipoPessoa: number
-    cpfCnpj: string
-    nomeRazao: string
-    nomeFantasia: string
-    telefone: string
-    celular: string
-    email: string
-    status: boolean
-    idEndereco: number
-    endereco: string
-    colaboradores: string[]
-    contratos: string[]
+  tipoPessoa: TipoPessoa
+  cpfCnpj: string
+  nomeRazao: string
+  nomeFantasia?: string
+  telefone?: string
+  celular?: string
+  email?: string
+  status: boolean
+  idEndereco?: number
 }
-

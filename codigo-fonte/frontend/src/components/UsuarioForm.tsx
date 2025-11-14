@@ -1,30 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-
-export interface Usuario {
-  id?: number
-  nome_completo: string
-  email: string
-  senha: string
-  id_empresa_prestadora?: number
-  id_perfil: number
-  status: boolean
-}
+import { useEffect, useState } from 'react'
+import { Usuario, UsuarioFormValues } from '@/types/usuario'
 
 interface UsuarioFormProps {
   usuario?: Usuario | null
-  onSave: (usuario: Usuario) => void
+  onSave: (usuario: UsuarioFormValues) => void
   onCancel: () => void
 }
 
 export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
-  const [formData, setFormData] = useState<Usuario>({
-    nome_completo: '',
+  const [formData, setFormData] = useState<UsuarioFormValues>({
+    nomeCompleto: '',
     email: '',
     senha: '',
-    id_empresa_prestadora: undefined,
-    id_perfil: 2 // Padrão: Administrador
+    idPerfil: 2
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -33,23 +23,30 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
   useEffect(() => {
     if (usuario) {
       setFormData({
-        ...usuario,
-        senha: '' // Não preencher senha ao editar
+        nomeCompleto: usuario.nomeCompleto,
+        email: usuario.email,
+        senha: '',
+        idPerfil: usuario.idPerfil
       })
     }
   }, [usuario])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = event.target
+    const parsedValue =
+      name === 'idPerfil'
+        ? parseInt(value, 10) || 0
+        : type === 'checkbox'
+          ? (event.target as HTMLInputElement).checked
+          : value
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' 
-        ? parseInt(value) || 0
-        : value
+      [name]: parsedValue
     }))
 
-    // Limpar erro do campo quando o usuário começar a digitar
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -61,8 +58,8 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.nome_completo.trim()) {
-      newErrors.nome_completo = 'Nome completo é obrigatório'
+    if (!formData.nomeCompleto.trim()) {
+      newErrors.nomeCompleto = 'Nome completo é obrigatório'
     }
 
     if (!formData.email.trim()) {
@@ -71,14 +68,14 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
       newErrors.email = 'Email deve ter um formato válido'
     }
 
-    if (!usuario && !formData.senha.trim()) {
+    if (!usuario && !formData.senha?.trim()) {
       newErrors.senha = 'Senha é obrigatória'
     } else if (formData.senha && formData.senha.length < 6) {
       newErrors.senha = 'Senha deve ter pelo menos 6 caracteres'
     }
 
-    if (!formData.id_perfil) {
-      newErrors.id_perfil = 'Perfil é obrigatório'
+    if (!formData.idPerfil) {
+      newErrors.idPerfil = 'Perfil é obrigatório'
     }
 
     setErrors(newErrors)
@@ -92,7 +89,14 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
       return
     }
 
-    onSave(formData)
+    const payload: UsuarioFormValues = {
+      nomeCompleto: formData.nomeCompleto.trim(),
+      email: formData.email.trim(),
+      idPerfil: formData.idPerfil,
+      senha: formData.senha?.trim() ? formData.senha.trim() : undefined
+    }
+
+    onSave(payload)
   }
 
   return (
@@ -105,20 +109,20 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Nome Completo */}
           <div className="md:col-span-2">
-            <label htmlFor="nome_completo" className="block text-sm font-medium text-gray-900 mb-2">
+            <label htmlFor="nomeCompleto" className="block text-sm font-medium text-gray-900 mb-2">
               Nome Completo *
             </label>
             <input
               type="text"
-              id="nome_completo"
-              name="nome_completo"
-              value={formData.nome_completo}
+              id="nomeCompleto"
+              name="nomeCompleto"
+              value={formData.nomeCompleto}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
               placeholder="Digite o nome completo"
             />
-            {errors.nome_completo && (
-              <p className="mt-1 text-sm text-red-600">{errors.nome_completo}</p>
+            {errors.nomeCompleto && (
+              <p className="mt-1 text-sm text-red-600">{errors.nomeCompleto}</p>
             )}
           </div>
 
@@ -143,13 +147,13 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
 
           {/* Perfil */}
           <div>
-            <label htmlFor="id_perfil" className="block text-sm font-medium text-gray-900 mb-2">
+            <label htmlFor="idPerfil" className="block text-sm font-medium text-gray-900 mb-2">
               Perfil *
             </label>
             <select
-              id="id_perfil"
-              name="id_perfil"
-              value={formData.id_perfil}
+              id="idPerfil"
+              name="idPerfil"
+              value={formData.idPerfil}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
             >
@@ -157,8 +161,8 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
               <option value={2}>Administrador</option>
               <option value={3}>Usuário</option>
             </select>
-            {errors.id_perfil && (
-              <p className="mt-1 text-sm text-red-600">{errors.id_perfil}</p>
+            {errors.idPerfil && (
+              <p className="mt-1 text-sm text-red-600">{errors.idPerfil}</p>
             )}
           </div>
 

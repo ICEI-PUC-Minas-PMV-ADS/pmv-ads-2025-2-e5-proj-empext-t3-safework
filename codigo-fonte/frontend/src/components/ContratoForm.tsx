@@ -1,285 +1,291 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Contrato, ContratoFormData, StatusContrato } from '../types/contrato'
+import { useEffect, useMemo, useState } from 'react'
+
+import { Empresa } from '@/types/empresas'
+import { Contrato, ContratoFormValues, StatusContrato } from '@/types/contrato'
 
 interface ContratoFormProps {
   contrato?: Contrato | null
-  onSave: (contrato: Contrato) => void
+  empresas: Empresa[]
+  empresaPrestadoraId: number
+  onSave: (data: ContratoFormValues) => void
   onCancel: () => void
 }
 
-// Mock data para empresas - em produção viria de uma API
-const mockEmpresas = [
-  { id: 1, nome_razao: 'Empresa ABC Ltda', cpf_cnpj: '12.345.678/0001-90' },
-  { id: 2, nome_razao: 'XYZ Serviços S.A.', cpf_cnpj: '98.765.432/0001-10' },
-  { id: 3, nome_razao: 'Tech Solutions Ltda', cpf_cnpj: '11.222.333/0001-44' }
+const DEFAULT_FORM: ContratoFormValues = {
+  numero: '',
+  dataInicio: '',
+  dataFim: '',
+  statusContrato: StatusContrato.Ativo,
+  pathFile: '',
+  valor: '',
+  observacoes: '',
+  idEmpresaCliente: 0,
+  idEmpresaPrestadora: 0
+}
+
+const formatCurrency = (value: string) => {
+  const numeric = value.replace(/\D/g, '')
+  const amount = Number(numeric) / 100
+
+  return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+}
+
+const parseCurrencyToNumber = (value: string) => {
+  if (!value) return 0
+  const numeric = value.replace(/[R$\s.]/g, '').replace(',', '.')
+  return Number(numeric) || 0
+}
+
+const statusOptions: StatusContrato[] = [
+  StatusContrato.Ativo,
+  StatusContrato.Inativo,
+  StatusContrato.Suspenso
 ]
 
-const mockEmpresasPrestadoras = [
-  { id: 1, nome_razao: 'ScPrevenção', cpf_cnpj: '99.999.999/0001-99' },
-  { id: 2, nome_razao: 'SafeWork Consultoria', cpf_cnpj: '88.888.888/0001-88' }
-]
+const getStatusLabel = (status: StatusContrato) => {
+  switch (status) {
+    case StatusContrato.Ativo:
+      return 'Ativo'
+    case StatusContrato.Inativo:
+      return 'Inativo'
+    case StatusContrato.Suspenso:
+      return 'Suspenso'
+    default:
+      return 'Ativo'
+  }
+}
 
-export function ContratoForm({ contrato, onSave, onCancel }: ContratoFormProps) {
-  const [formData, setFormData] = useState<ContratoFormData>({
-    numero: '',
-    data_inicio: '',
-    data_fim: '',
-    status_contrato: StatusContrato.Ativo,
-    path_file: '',
-    valor: '',
-    observacoes: '',
-    id_empresa_cliente: 0,
-    id_empresa_prestadora: 0
+export function ContratoForm({
+  contrato,
+  empresas,
+  empresaPrestadoraId,
+  onSave,
+  onCancel
+}: ContratoFormProps) {
+  const [formData, setFormData] = useState<ContratoFormValues>({
+    ...DEFAULT_FORM,
+    idEmpresaPrestadora: empresaPrestadoraId
   })
-
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    if (contrato) {
+    if (!contrato) {
       setFormData({
-        numero: contrato.numero,
-        data_inicio: contrato.data_inicio.split('T')[0], // Formato para input date
-        data_fim: contrato.data_fim.split('T')[0],
-        status_contrato: contrato.status_contrato,
-        path_file: contrato.path_file || '',
-        valor: contrato.valor.toString(),
-        observacoes: contrato.observacoes || '',
-        id_empresa_cliente: contrato.id_empresa_cliente,
-        id_empresa_prestadora: contrato.id_empresa_prestadora
+        ...DEFAULT_FORM,
+        idEmpresaPrestadora: empresaPrestadoraId
       })
+      return
     }
-  }, [contrato])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'number' ? parseInt(value) || 0 : value
-    }))
-
-    // Limpar erro do campo quando o usuário começar a digitar
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
-    }
-  }
-
-  const formatCurrency = (value: string) => {
-    // Remove tudo que não é dígito
-    const numbers = value.replace(/\D/g, '')
-    
-    // Converte para formato de moeda
-    const amount = parseFloat(numbers) / 100
-    return amount.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    setFormData({
+      numero: contrato.numero,
+      dataInicio: contrato.dataInicio.split('T')[0],
+      dataFim: contrato.dataFim.split('T')[0],
+      statusContrato: contrato.statusContrato,
+      pathFile: contrato.pathFile ?? '',
+      valor: formatCurrency(String(contrato.valor)),
+      observacoes: contrato.observacoes ?? '',
+      idEmpresaCliente: contrato.idEmpresaCliente,
+      idEmpresaPrestadora: contrato.idEmpresaPrestadora
     })
+  }, [contrato, empresaPrestadoraId])
+
+  const empresasOrdenadas = useMemo(
+    () =>
+      empresas
+        .slice()
+        .sort((a, b) => a.nomeRazao.localeCompare(b.nomeRazao, 'pt-BR')),
+    [empresas]
+  )
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = event.target
+
+    setFormData(prev => {
+      if (name === 'idEmpresaCliente' || name === 'idEmpresaPrestadora') {
+        return { ...prev, [name]: Number(value) }
+      }
+
+      if (name === 'statusContrato') {
+        return { ...prev, statusContrato: Number(value) as StatusContrato }
+      }
+
+      return {
+        ...prev,
+        [name]: type === 'number' ? Number(value) : value
+      }
+    })
+
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }))
+    }
   }
 
-  const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    const formatted = formatCurrency(value)
-    
-    setFormData(prev => ({
-      ...prev,
-      valor: formatted
-    }))
+  const handleValorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrency(event.target.value)
+    setFormData(prev => ({ ...prev, valor: formatted }))
 
     if (errors.valor) {
-      setErrors(prev => ({
-        ...prev,
-        valor: ''
-      }))
+      setErrors(prev => ({ ...prev, valor: '' }))
     }
   }
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+  const validate = () => {
+    const validationErrors: Record<string, string> = {}
 
     if (!formData.numero.trim()) {
-      newErrors.numero = 'Número do contrato é obrigatório'
+      validationErrors.numero = 'Número do contrato é obrigatório'
     }
 
-    if (!formData.data_inicio) {
-      newErrors.data_inicio = 'Data de início é obrigatória'
+    if (!formData.dataInicio) {
+      validationErrors.dataInicio = 'Data de início é obrigatória'
     }
 
-    if (!formData.data_fim) {
-      newErrors.data_fim = 'Data de fim é obrigatória'
+    if (!formData.dataFim) {
+      validationErrors.dataFim = 'Data de fim é obrigatória'
     }
 
-    if (formData.data_inicio && formData.data_fim) {
-      const dataInicio = new Date(formData.data_inicio)
-      const dataFim = new Date(formData.data_fim)
-      
-      if (dataFim <= dataInicio) {
-        newErrors.data_fim = 'Data de fim deve ser posterior à data de início'
+    if (formData.dataInicio && formData.dataFim) {
+      const inicio = new Date(formData.dataInicio)
+      const fim = new Date(formData.dataFim)
+
+      if (fim <= inicio) {
+        validationErrors.dataFim =
+          'Data de fim deve ser posterior à data de início'
       }
     }
 
     if (!formData.valor.trim()) {
-      newErrors.valor = 'Valor do contrato é obrigatório'
+      validationErrors.valor = 'Valor do contrato é obrigatório'
     }
 
-    if (formData.id_empresa_cliente === 0) {
-      newErrors.id_empresa_cliente = 'Empresa cliente é obrigatória'
+    if (!formData.idEmpresaCliente) {
+      validationErrors.idEmpresaCliente = 'Selecione a empresa cliente'
     }
 
-    if (formData.id_empresa_prestadora === 0) {
-      newErrors.id_empresa_prestadora = 'Empresa prestadora é obrigatória'
-    }
-
-    if (formData.id_empresa_cliente === formData.id_empresa_prestadora && formData.id_empresa_cliente !== 0) {
-      newErrors.id_empresa_prestadora = 'Empresa prestadora deve ser diferente da empresa cliente'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    setErrors(validationErrors)
+    return Object.keys(validationErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!validateForm()) {
-      return
-    }
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
 
-    // Converter valor de string formatada para número
-    const valorNumerico = parseFloat(formData.valor.replace(/[^\d,]/g, '').replace(',', '.'))
+    if (!validate()) return
 
-    const dataToSave: Contrato = {
-      id: contrato?.id,
-      numero: formData.numero,
-      data_inicio: formData.data_inicio,
-      data_fim: formData.data_fim,
-      status_contrato: formData.status_contrato,
-      path_file: formData.path_file || undefined,
-      valor: valorNumerico,
-      observacoes: formData.observacoes || undefined,
-      id_empresa_cliente: formData.id_empresa_cliente,
-      id_empresa_prestadora: formData.id_empresa_prestadora
-    }
-
-    onSave(dataToSave)
+    onSave({
+      ...formData,
+      valor: formData.valor,
+      pathFile: formData.pathFile?.trim(),
+      observacoes: formData.observacoes?.trim(),
+      idEmpresaPrestadora: formData.idEmpresaPrestadora || empresaPrestadoraId
+    })
   }
 
-  const getStatusLabel = (status: StatusContrato) => {
-    switch (status) {
-      case StatusContrato.Ativo:
-        return 'Ativo'
-      case StatusContrato.Inativo:
-        return 'Inativo'
-      case StatusContrato.Suspenso:
-        return 'Suspenso'
-      default:
-        return 'Ativo'
-    }
-  }
+  const valorNumerico = parseCurrencyToNumber(formData.valor)
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">
+    <div className="rounded-lg bg-white p-6 shadow-sm">
+      <h2 className="mb-6 text-lg font-semibold text-gray-900">
         {contrato ? 'Editar Contrato' : 'Novo Contrato'}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Número do Contrato */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="numero" className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-900" htmlFor="numero">
               Número do Contrato *
             </label>
             <input
-              type="text"
               id="numero"
               name="numero"
+              type="text"
               value={formData.numero}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
+              onChange={handleChange}
+              className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
                 errors.numero ? 'border-red-300' : 'border-gray-300'
               }`}
-              placeholder="Digite o número do contrato"
+              placeholder="Informe o número do contrato"
             />
             {errors.numero && (
               <p className="mt-1 text-sm text-red-600">{errors.numero}</p>
             )}
           </div>
 
-          {/* Status do Contrato */}
           <div>
-            <label htmlFor="status_contrato" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              className="mb-2 block text-sm font-medium text-gray-900"
+              htmlFor="statusContrato"
+            >
               Status *
             </label>
             <select
-              id="status_contrato"
-              name="status_contrato"
-              value={formData.status_contrato}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+              id="statusContrato"
+              name="statusContrato"
+              value={formData.statusContrato}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value={StatusContrato.Ativo}>{getStatusLabel(StatusContrato.Ativo)}</option>
-              <option value={StatusContrato.Inativo}>{getStatusLabel(StatusContrato.Inativo)}</option>
-              <option value={StatusContrato.Suspenso}>{getStatusLabel(StatusContrato.Suspenso)}</option>
+              {statusOptions.map(option => (
+                <option key={option} value={option}>
+                  {getStatusLabel(option)}
+                </option>
+              ))}
             </select>
           </div>
 
-          {/* Data de Início */}
           <div>
-            <label htmlFor="data_inicio" className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-900" htmlFor="dataInicio">
               Data de Início *
             </label>
             <input
+              id="dataInicio"
+              name="dataInicio"
               type="date"
-              id="data_inicio"
-              name="data_inicio"
-              value={formData.data_inicio}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${
-                errors.data_inicio ? 'border-red-300' : 'border-gray-300'
+              value={formData.dataInicio}
+              onChange={handleChange}
+              className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                errors.dataInicio ? 'border-red-300' : 'border-gray-300'
               }`}
             />
-            {errors.data_inicio && (
-              <p className="mt-1 text-sm text-red-600">{errors.data_inicio}</p>
+            {errors.dataInicio && (
+              <p className="mt-1 text-sm text-red-600">{errors.dataInicio}</p>
             )}
           </div>
 
-          {/* Data de Fim */}
           <div>
-            <label htmlFor="data_fim" className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-900" htmlFor="dataFim">
               Data de Fim *
             </label>
             <input
+              id="dataFim"
+              name="dataFim"
               type="date"
-              id="data_fim"
-              name="data_fim"
-              value={formData.data_fim}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${
-                errors.data_fim ? 'border-red-300' : 'border-gray-300'
+              value={formData.dataFim}
+              onChange={handleChange}
+              className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                errors.dataFim ? 'border-red-300' : 'border-gray-300'
               }`}
             />
-            {errors.data_fim && (
-              <p className="mt-1 text-sm text-red-600">{errors.data_fim}</p>
+            {errors.dataFim && (
+              <p className="mt-1 text-sm text-red-600">{errors.dataFim}</p>
             )}
           </div>
 
-          {/* Valor */}
           <div>
-            <label htmlFor="valor" className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-900" htmlFor="valor">
               Valor do Contrato *
             </label>
             <input
-              type="text"
               id="valor"
               name="valor"
+              type="text"
               value={formData.valor}
               onChange={handleValorChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
+              className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
                 errors.valor ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="R$ 0,00"
@@ -287,105 +293,96 @@ export function ContratoForm({ contrato, onSave, onCancel }: ContratoFormProps) 
             {errors.valor && (
               <p className="mt-1 text-sm text-red-600">{errors.valor}</p>
             )}
+            <p className="mt-1 text-xs text-gray-500">
+              Valor numérico: {valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </p>
           </div>
 
-          {/* Arquivo */}
           <div>
-            <label htmlFor="path_file" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              className="mb-2 block text-sm font-medium text-gray-900"
+              htmlFor="pathFile"
+            >
               Arquivo do Contrato
             </label>
             <input
+              id="pathFile"
+              name="pathFile"
               type="text"
-              id="path_file"
-              name="path_file"
-              value={formData.path_file}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
-              placeholder="Caminho do arquivo (opcional)"
+              value={formData.pathFile ?? ''}
+              onChange={handleChange}
+              placeholder="Caminho ou URL (opcional)"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
-          {/* Empresa Cliente */}
-          <div>
-            <label htmlFor="id_empresa_cliente" className="block text-sm font-medium text-gray-900 mb-2">
+          <div className="md:col-span-2">
+            <label
+              className="mb-2 block text-sm font-medium text-gray-900"
+              htmlFor="idEmpresaCliente"
+            >
               Empresa Cliente *
             </label>
             <select
-              id="id_empresa_cliente"
-              name="id_empresa_cliente"
-              value={formData.id_empresa_cliente}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${
-                errors.id_empresa_cliente ? 'border-red-300' : 'border-gray-300'
+              id="idEmpresaCliente"
+              name="idEmpresaCliente"
+              value={formData.idEmpresaCliente}
+              onChange={handleChange}
+              className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                errors.idEmpresaCliente ? 'border-red-300' : 'border-gray-300'
               }`}
             >
               <option value={0}>Selecione uma empresa cliente</option>
-              {mockEmpresas.map(empresa => (
+              {empresasOrdenadas.map(empresa => (
                 <option key={empresa.id} value={empresa.id}>
-                  {empresa.nome_razao} - {empresa.cpf_cnpj}
+                  {empresa.nomeRazao} • {empresa.cpfCnpj}
                 </option>
               ))}
             </select>
-            {errors.id_empresa_cliente && (
-              <p className="mt-1 text-sm text-red-600">{errors.id_empresa_cliente}</p>
+            {errors.idEmpresaCliente && (
+              <p className="mt-1 text-sm text-red-600">{errors.idEmpresaCliente}</p>
             )}
           </div>
 
-          {/* Empresa Prestadora */}
-          <div>
-            <label htmlFor="id_empresa_prestadora" className="block text-sm font-medium text-gray-900 mb-2">
-              Empresa Prestadora *
+          <div className="md:col-span-2">
+            <label className="mb-2 block text-sm font-medium text-gray-900">
+              Empresa Prestadora
             </label>
-            <select
-              id="id_empresa_prestadora"
-              name="id_empresa_prestadora"
-              value={formData.id_empresa_prestadora}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${
-                errors.id_empresa_prestadora ? 'border-red-300' : 'border-gray-300'
-              }`}
-            >
-              <option value={0}>Selecione uma empresa prestadora</option>
-              {mockEmpresasPrestadoras.map(empresa => (
-                <option key={empresa.id} value={empresa.id}>
-                  {empresa.nome_razao} - {empresa.cpf_cnpj}
-                </option>
-              ))}
-            </select>
-            {errors.id_empresa_prestadora && (
-              <p className="mt-1 text-sm text-red-600">{errors.id_empresa_prestadora}</p>
-            )}
+            <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+              {contrato?.empresaPrestadora?.nomeRazao ?? 'ScPrevenção'}
+            </p>
           </div>
         </div>
 
-        {/* Observações */}
         <div>
-          <label htmlFor="observacoes" className="block text-sm font-medium text-gray-900 mb-2">
+          <label
+            className="mb-2 block text-sm font-medium text-gray-900"
+            htmlFor="observacoes"
+          >
             Observações
           </label>
           <textarea
             id="observacoes"
             name="observacoes"
-            value={formData.observacoes}
-            onChange={handleInputChange}
+            value={formData.observacoes ?? ''}
+            onChange={handleChange}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
-            placeholder="Digite observações sobre o contrato (opcional)"
+            placeholder="Informações adicionais sobre o contrato (opcional)"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
-        {/* Botões */}
-        <div className="flex justify-end space-x-3 pt-6">
+        <div className="flex justify-end gap-3 border-t border-gray-200 pt-6">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             {contrato ? 'Atualizar' : 'Salvar'}
           </button>
@@ -394,3 +391,4 @@ export function ContratoForm({ contrato, onSave, onCancel }: ContratoFormProps) 
     </div>
   )
 }
+

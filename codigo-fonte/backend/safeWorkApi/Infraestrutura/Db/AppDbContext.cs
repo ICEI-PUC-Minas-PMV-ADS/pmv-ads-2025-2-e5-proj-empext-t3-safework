@@ -44,7 +44,7 @@ namespace safeWorkApi.Models
             modelBuilder.Entity<Colaborador>()
                 .HasOne(c => c.Endereco)
                 .WithMany(ec => ec.Colaborador)
-                .HasForeignKey(c => c.IdEmpresaCliente);
+                .HasForeignKey(c => c.IdEndereco);
 
             modelBuilder.Entity<Colaborador>()
                 .HasOne(c => c.EmpresaCliente)

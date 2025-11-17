@@ -308,11 +308,10 @@ export default function EmpresasPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${
-                            empresa.tipoPessoa === 'Fisica'
+                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${empresa.tipoPessoa === 'Fisica'
                               ? 'bg-purple-50 text-purple-800 border-purple-200'
                               : 'bg-blue-50 text-blue-800 border-blue-200'
-                          }`}
+                            }`}
                         >
                           {empresa.tipoPessoa === 'Fisica' ? 'PF' : 'PJ'}
                         </span>
@@ -325,11 +324,10 @@ export default function EmpresasPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            empresa.status
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${empresa.status
                               ? 'bg-green-100 text-green-800'
                               : 'bg-red-100 text-red-800'
-                          }`}
+                            }`}
                         >
                           {empresa.status ? 'Ativo' : 'Inativo'}
                         </span>

@@ -32,8 +32,27 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     idEndereco: undefined
   })
 
+  const [enderecos, setEnderecos] = useState<{ id: number; logradouro: string }[]>([])
+  const [loadingEnderecos, setLoadingEnderecos] = useState(true)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  // Busca endereços da API
+  useEffect(() => {
+    const fetchEnderecos = async () => {
+      try {
+        const res = await apiEnderecos.getEnderecos()
+        setEnderecos(res)
+      } catch (error) {
+        console.error('Erro ao buscar endereços:', error)
+      } finally {
+        setLoadingEnderecos(false)
+      }
+    }
+
+    fetchEnderecos()
+  }, [])
+
+  // Preenche formulário ao editar
   useEffect(() => {
     if (empresa) {
       setFormData({
@@ -123,6 +142,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     }
   }
 
+  // Validação do formulário
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
@@ -207,9 +227,8 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
               value={formData.cpfCnpj}
               onChange={handleCpfCnpjChange}
               maxLength={cpfCnpjMask[formData.tipoPessoa].length}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.cpfCnpj ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.cpfCnpj ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder={cpfCnpjMask[formData.tipoPessoa]}
             />
             {errors.cpfCnpj && (
@@ -235,9 +254,8 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
               name="nomeRazao"
               value={formData.nomeRazao}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder={
                 formData.tipoPessoa === 'Fisica'
                   ? 'Digite o nome completo'
@@ -318,13 +336,39 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
               name="email"
               value={formData.email ?? ''}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${
-                errors.email ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.email ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder="exemplo@email.com"
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+          </div>
+
+          {/* Endereço */}
+          <div>
+            <label htmlFor="idEndereco" className="block text-sm font-medium text-gray-900 mb-2">
+              Endereço *
+            </label>
+            {loadingEnderecos ? (
+              <p className="text-sm text-gray-500">Carregando endereços...</p>
+            ) : (
+              <select
+                id="idEndereco"
+                name="idEndereco"
+                value={formData.idEndereco ?? ''}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+              >
+                <option value="">Selecione um endereço</option>
+                {enderecos.map((endereco) => (
+                  <option key={endereco.id} value={endereco.id}>
+                    {endereco.logradouro}
+                  </option>
+                ))}
+              </select>
+            )}
+            {errors.idEndereco && (
+              <p className="mt-1 text-sm text-red-600">{errors.idEndereco}</p>
             )}
           </div>
 

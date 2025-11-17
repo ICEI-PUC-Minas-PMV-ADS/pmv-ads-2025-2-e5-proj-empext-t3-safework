@@ -1,16 +1,27 @@
-import { apiEnderecos } from '@/lib/api_enderecos'
-import { Empresa, EmpresaFormData } from '@/types/empresas'
-import { useState, useEffect } from 'react'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Empresa, EmpresaFormData, TipoPessoa } from '@/types/empresas'
 
 interface EmpresaFormProps {
   empresa?: Empresa | null
-  onSave: (empresa: EmpresaFormData) => void
+  onSave: (data: EmpresaFormData) => void
   onCancel: () => void
+}
+
+const TIPO_PESSOA_OPTIONS: { value: TipoPessoa; label: string }[] = [
+  { value: 'Fisica', label: 'Pessoa Física' },
+  { value: 'Juridica', label: 'Pessoa Jurídica' }
+]
+
+const cpfCnpjMask = {
+  Fisica: '000.000.000-00',
+  Juridica: '00.000.000/0000-00'
 }
 
 export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
   const [formData, setFormData] = useState<EmpresaFormData>({
-    tipoPessoa: 'Juridica',
+    tipoPessoa: 'Fisica',
     cpfCnpj: '',
     nomeRazao: '',
     nomeFantasia: '',
@@ -18,7 +29,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     celular: '',
     email: '',
     status: true,
-    idEndereco: null
+    idEndereco: undefined
   })
 
   const [enderecos, setEnderecos] = useState<{ id: number; logradouro: string }[]>([])
@@ -45,25 +56,68 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
   useEffect(() => {
     if (empresa) {
       setFormData({
-        ...empresa,
+        tipoPessoa: empresa.tipoPessoa,
+        cpfCnpj: empresa.cpfCnpj,
+        nomeRazao: empresa.nomeRazao,
+        nomeFantasia: empresa.nomeFantasia ?? '',
+        telefone: empresa.telefone ?? '',
+        celular: empresa.celular ?? '',
+        email: empresa.email ?? '',
+        status: empresa.status,
+        idEndereco: empresa.idEndereco
       })
     }
   }, [empresa])
 
-  // Manipula inputs genéricos
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    if (name === 'id') return
+  const formatCpfCnpj = (value: string, tipoPessoa: TipoPessoa) => {
+    const numbers = value.replace(/\D/g, '')
 
-    setFormData(prev => ({
-      ...prev,
-      [name]:
-        type === 'checkbox'
-          ? (e.target as HTMLInputElement).checked
-          : type === 'number'
-            ? parseInt(value) || 0
-            : value
-    }))
+    if (tipoPessoa === 'Fisica') {
+      if (numbers.length <= 11) {
+        return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, (_, p1, p2, p3, p4) =>
+          [p1, p2, p3, p4 ? `-${p4}` : ''].filter(Boolean).join('.').replace('.-', '-')
+        )
+      }
+      return numbers.slice(0, 11).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    }
+
+    if (numbers.length <= 14) {
+      return numbers.replace(
+        /(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/,
+        (_, p1, p2, p3, p4, p5) =>
+          `${p1}.${p2}.${p3}/${p4}${p5 ? `-${p5}` : ''}`
+      )
+    }
+
+    return numbers
+      .slice(0, 14)
+      .replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+  }
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, type } = event.target
+    const value =
+      type === 'checkbox'
+        ? (event.target as HTMLInputElement).checked
+        : event.target.value
+
+    setFormData(prev => {
+      if (name === 'tipoPessoa') {
+        const typedValue = value as TipoPessoa
+        return {
+          ...prev,
+          tipoPessoa: typedValue,
+          cpfCnpj: formatCpfCnpj(prev.cpfCnpj, typedValue)
+        }
+      }
+
+      return {
+        ...prev,
+        [name]: value
+      }
+    })
 
     if (errors[name]) {
       setErrors(prev => ({
@@ -73,25 +127,8 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     }
   }
 
-  // Formata CPF/CNPJ
-  const formatCpfCnpj = (value: string) => {
-    const numbers = value.replace(/\D/g, '')
-
-    if (numbers.length <= 11) {
-      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, (_, a, b, c, d) => {
-        return d ? `${a}.${b}.${c}-${d}` : `${a}.${b}.${c}`
-      })
-    } else {
-      return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{0,4})(\d{0,2})/, (_, a, b, c, d, e) => {
-        if (e) return `${a}.${b}.${c}/${d}-${e}`
-        if (d) return `${a}.${b}.${c}/${d}`
-        return `${a}.${b}.${c}`
-      })
-    }
-  }
-
-  const handleCpfCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatCpfCnpj(e.target.value)
+  const handleCpfCnpjChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCpfCnpj(event.target.value, formData.tipoPessoa)
     setFormData(prev => ({
       ...prev,
       cpfCnpj: formatted
@@ -109,11 +146,20 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.cpfCnpj.trim()) newErrors.cpfCnpj = 'CPF/CNPJ é obrigatório'
-    if (!formData.nomeRazao.trim()) newErrors.nomeRazao = 'Nome/Razão Social é obrigatório'
-    if (!formData.idEndereco) newErrors.idEndereco = 'Selecione um endereço'
+    if (!formData.cpfCnpj.trim()) {
+      newErrors.cpfCnpj = 'CPF/CNPJ é obrigatório'
+    }
 
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!formData.nomeRazao.trim()) {
+      newErrors.nomeRazao = formData.tipoPessoa === 'Fisica'
+        ? 'Nome completo é obrigatório'
+        : 'Razão social é obrigatória'
+    }
+
+    if (
+      formData.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
       newErrors.email = 'Email deve ter um formato válido'
     }
 
@@ -121,20 +167,21 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     return Object.keys(newErrors).length === 0
   }
 
-  // Submissão
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) return
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
 
-    const dataToSave = {
-      ...formData,
-      cpfCnpj: formData.cpfCnpj.replace(/\D/g, ''),
-      tipoPessoa: formData.tipoPessoa
+    if (!validateForm()) {
+      return
     }
-    console.log('Dados enviados:', dataToSave)
 
-    onSave(dataToSave)
+    onSave({
+      ...formData,
+      cpfCnpj: formData.cpfCnpj.replace(/\D/g, '')
+    })
   }
+
+  const cpfCnpjLabel =
+    formData.tipoPessoa === 'Fisica' ? 'CPF' : 'CNPJ'
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -144,27 +191,34 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Tipo de Pessoa */}
           <div>
-            <label htmlFor="tipoPessoa" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              htmlFor="tipoPessoa"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
               Tipo de Pessoa *
             </label>
             <select
               id="tipoPessoa"
               name="tipoPessoa"
               value={formData.tipoPessoa}
-              onChange={handleInputChange}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
             >
-              <option value="Fisica">Pessoa Física</option>
-              <option value="Juridica">Pessoa Jurídica</option>
+              {TIPO_PESSOA_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
-          {/* CPF/CNPJ */}
           <div>
-            <label htmlFor="cpfCnpj" className="block text-sm font-medium text-gray-900 mb-2">
-              {formData.tipoPessoa === 'Juridica' ? 'CNPJ' : 'CPF'} *
+            <label
+              htmlFor="cpfCnpj"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
+              {cpfCnpjLabel} *
             </label>
             <input
               type="text"
@@ -172,91 +226,118 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
               name="cpfCnpj"
               value={formData.cpfCnpj}
               onChange={handleCpfCnpjChange}
-              maxLength={formData.tipoPessoa === 'Juridica' ? 18 : 14}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.cpfCnpj ? 'border-red-300' : 'border-gray-300'}`}
-              placeholder={formData.tipoPessoa === 'Juridica' ? '00.000.000/0000-00' : '000.000.000-00'}
+              maxLength={cpfCnpjMask[formData.tipoPessoa].length}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.cpfCnpj ? 'border-red-300' : 'border-gray-300'
+                }`}
+              placeholder={cpfCnpjMask[formData.tipoPessoa]}
             />
-            {errors.cpfCnpj && <p className="mt-1 text-sm text-red-600">{errors.cpfCnpj}</p>}
+            {errors.cpfCnpj && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.cpfCnpj}
+              </p>
+            )}
           </div>
 
-          {/* Nome/Razão Social */}
           <div>
-            <label htmlFor="nomeRazao" className="block text-sm font-medium text-gray-900 mb-2">
-              {formData.tipoPessoa === 'Juridica' ? 'Razão Social' : 'Nome Completo'} *
+            <label
+              htmlFor="nomeRazao"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
+              {formData.tipoPessoa === 'Fisica'
+                ? 'Nome Completo'
+                : 'Razão Social'}{' '}
+              *
             </label>
             <input
               type="text"
               id="nomeRazao"
               name="nomeRazao"
               value={formData.nomeRazao}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'}`}
-              placeholder={formData.tipoPessoa === 'Juridica' ? 'Digite a razão social' : 'Digite o nome completo'}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
+                }`}
+              placeholder={
+                formData.tipoPessoa === 'Fisica'
+                  ? 'Digite o nome completo'
+                  : 'Digite a razão social'
+              }
             />
-            {errors.nomeRazao && <p className="mt-1 text-sm text-red-600">{errors.nomeRazao}</p>}
+            {errors.nomeRazao && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.nomeRazao}
+              </p>
+            )}
           </div>
 
-          {/* Nome Fantasia */}
           <div>
-            <label htmlFor="nomeFantasia" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              htmlFor="nomeFantasia"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
               Nome Fantasia
             </label>
             <input
               type="text"
-              disabled={formData.tipoPessoa !== 'Juridica'}
               id="nomeFantasia"
               name="nomeFantasia"
-              value={formData.nomeFantasia || ''}
-              onChange={handleInputChange}
+              value={formData.nomeFantasia ?? ''}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
               placeholder="Digite o nome fantasia"
             />
           </div>
 
-          {/* Telefone */}
           <div>
-            <label htmlFor="telefone" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              htmlFor="telefone"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
               Telefone
             </label>
             <input
               type="tel"
               id="telefone"
               name="telefone"
-              value={formData.telefone || ''}
-              onChange={handleInputChange}
+              value={formData.telefone ?? ''}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
               placeholder="(00) 0000-0000"
             />
           </div>
 
-          {/* Celular */}
           <div>
-            <label htmlFor="celular" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              htmlFor="celular"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
               Celular
             </label>
             <input
               type="tel"
               id="celular"
               name="celular"
-              value={formData.celular || ''}
-              onChange={handleInputChange}
+              value={formData.celular ?? ''}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
               placeholder="(00) 00000-0000"
             />
           </div>
 
-          {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
               Email
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              value={formData.email || ''}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.email ? 'border-red-300' : 'border-gray-300'}`}
+              value={formData.email ?? ''}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.email ? 'border-red-300' : 'border-gray-300'
+                }`}
               placeholder="exemplo@email.com"
             />
             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
@@ -291,23 +372,24 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
             )}
           </div>
 
-          {/* Status */}
           <div className="flex items-center">
             <input
               type="checkbox"
               id="status"
               name="status"
               checked={formData.status}
-              onChange={handleInputChange}
+              onChange={handleChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="status" className="ml-2 block text-sm text-gray-900">
+            <label
+              htmlFor="status"
+              className="ml-2 block text-sm text-gray-900"
+            >
               Empresa ativa
             </label>
           </div>
         </div>
 
-        {/* Botões */}
         <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
           <button
             type="button"

@@ -1,53 +1,76 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { EmpresaForm } from '../../../components/EmpresaForm'
-import { apiEmpresas } from '@/lib/api_empresas'
-import { Empresa, EmpresaFormData } from '@/types/empresas'
+import { useEffect, useMemo, useState } from 'react'
 
+import { Empresa, EmpresaFormData } from '@/types/empresas'
+import { EmpresaForm } from '@/components/EmpresaForm'
+import { apiClient } from '@/lib/api'
+
+type RequestState = 'idle' | 'loading' | 'saving'
+
+const formatDocument = (value: string, tipoPessoa: Empresa['tipoPessoa']) => {
+  if (!value) return '-'
+
+  if (tipoPessoa === 'Fisica') {
+    return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  }
+
+  return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+}
 
 export default function EmpresasPage() {
   const [empresas, setEmpresas] = useState<Empresa[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [state, setState] = useState<RequestState>('idle')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Inicializar empresas filtradas
   useEffect(() => {
-    const initializeEnderecos = async () => {
+    const fetchEmpresas = async () => {
+      setState('loading')
       try {
-        const empresasData = await apiEmpresas.getEmpresas();
-        console.log(empresasData)
-        setEmpresas(empresasData)
+        const data = await apiClient.getEmpresas()
+        setEmpresas(data)
+        setErrorMessage(null)
       } catch (error) {
-        console.error('Erro ao inicializar empresas:', error)
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Não foi possível carregar as empresas.'
+        setErrorMessage(message)
+      } finally {
+        setState('idle')
       }
     }
 
-    initializeEnderecos()
-
+    fetchEmpresas()
   }, [])
 
   const filteredEmpresas = useMemo(() => {
+    if (!searchTerm) {
+      return empresas
+    }
+
+    const normalized = searchTerm.trim().toLowerCase()
+
     return empresas.filter(empresa => {
-      const matchesSearch = searchTerm === '' ||
-        empresa.nomeRazao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        empresa.nomeFantasia?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        empresa.cpfCnpj.includes(searchTerm) ||
-        empresa.email?.toLowerCase().includes(searchTerm.toLowerCase())
-
-      return matchesSearch
+      return (
+        empresa.nomeRazao.toLowerCase().includes(normalized) ||
+        (empresa.nomeFantasia?.toLowerCase().includes(normalized) ?? false) ||
+        empresa.cpfCnpj.includes(searchTerm.replace(/\D/g, '')) ||
+        (empresa.email?.toLowerCase().includes(normalized) ?? false)
+      )
     })
-  }, [empresas, searchTerm,])
+  }, [empresas, searchTerm])
 
-  // Calcular estatísticas das empresas
   const totalEmpresas = empresas.length
   const empresasAtivas = empresas.filter(empresa => empresa.status).length
-  const empresasInativas = empresas.filter(empresa => !empresa.status).length
+  const empresasInativas = totalEmpresas - empresasAtivas
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value)
+  const handleAddEmpresa = () => {
+    setEditingEmpresa(null)
+    setShowForm(true)
   }
 
   const handleEditEmpresa = (empresa: Empresa) => {
@@ -55,176 +78,193 @@ export default function EmpresasPage() {
     setShowForm(true)
   }
 
-  const handleSaveEmpresa = (empresaData: EmpresaFormData) => {
-    if (editingEmpresa) {
-      // Editar empresa existente
-      apiEmpresas.updateEmpresas(editingEmpresa.id, empresaData as Empresa).then((updateEmpresa) => {
-        setEmpresas(prev => prev.map(empresa =>
-          empresa.id === updateEmpresa.id ? updateEmpresa : empresa
-        ))
-      }).catch((error) => {
-        console.error('Erro ao atualizar empresa:', error)
-      })
-    } else {
-      // Criar nova empresa
-      apiEmpresas.createEmpresas(empresaData as Empresa).then((newEmpresa) => {
-        setEmpresas(prev => [...prev, newEmpresa])
-      }).catch((error) => {
-        console.error('Erro ao criar empresa:', error)
-      })
-    }
-
+  const resetForm = () => {
     setShowForm(false)
     setEditingEmpresa(null)
   }
 
-  const handleDeleteEmpresa = (id: number) => {
-    if (window.confirm(`Tem certeza que deseja excluir a empresa?`)) {
-      apiEmpresas.deleteEmpresas(id).then(() => {
-        setEmpresas(prev => prev.filter(empresa => empresa.id !== id))
-      }).catch((error) => {
-        console.error('Erro ao excluir empresa:', error)
-      })
+  const handleSaveEmpresa = async (data: EmpresaFormData) => {
+    try {
+      setState('saving')
+      setErrorMessage(null)
+
+      if (editingEmpresa) {
+        const updated = await apiClient.updateEmpresa(editingEmpresa.id, data)
+        setEmpresas(prev =>
+          prev.map(item => (item.id === updated.id ? updated : item))
+        )
+      } else {
+        const created = await apiClient.createEmpresa(data)
+        setEmpresas(prev => [...prev, created])
+      }
+
+      resetForm()
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível salvar a empresa.'
+      setErrorMessage(message)
+    } finally {
+      setState('idle')
     }
   }
 
-  const handleCancelForm = () => {
-    setShowForm(false)
-    setEditingEmpresa(null)
-  }
-
-  if (showForm) {
-    return (
-      <div className="p-6">
-        <div className="mb-6">
-          <button
-            onClick={handleCancelForm}
-            className="text-blue-600 hover:text-blue-800 mb-4"
-          >
-            ← Voltar para lista
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {editingEmpresa ? 'Editar Empresa' : 'Nova Empresa'}
-          </h1>
-        </div>
-        <EmpresaForm
-          empresa={editingEmpresa}
-          onSave={handleSaveEmpresa}
-          onCancel={handleCancelForm}
-        />
-      </div>
+  const handleDeleteEmpresa = async (empresa: Empresa) => {
+    const confirmed = window.confirm(
+      `Tem certeza que deseja excluir a empresa "${empresa.nomeRazao}"?`
     )
+
+    if (!confirmed) return
+
+    try {
+      setState('saving')
+      setErrorMessage(null)
+
+      await apiClient.deleteEmpresa(empresa.id)
+
+      setEmpresas(prev => prev.filter(item => item.id !== empresa.id))
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível excluir a empresa.'
+      setErrorMessage(message)
+    } finally {
+      setState('idle')
+    }
   }
+
+  const isLoading = state === 'loading'
+  const isSaving = state === 'saving'
 
   return (
     <div className="p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">Empresas</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Empresas</h1>
+          <p className="text-gray-600">
+            Gerencie as empresas clientes vinculadas à prestadora.
+          </p>
+        </div>
         <button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          onClick={handleAddEmpresa}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          disabled={isSaving}
         >
           Nova Empresa
         </button>
       </div>
 
-      {/* Cards de Estatísticas */}
+      {errorMessage && (
+        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {/* Total de Empresas */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total de Empresas</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{totalEmpresas}</p>
+              <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                Total de Empresas
+              </p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {isLoading ? '-' : totalEmpresas}
+              </p>
             </div>
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
+                <span className="text-blue-600 text-xl">🏢</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Empresas Ativas */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Empresas Ativas</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{empresasAtivas}</p>
+              <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                Empresas Ativas
+              </p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {isLoading ? '-' : empresasAtivas}
+              </p>
             </div>
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <span className="text-green-600 text-xl">✅</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Empresas Inativas */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Empresas Inativas</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{empresasInativas}</p>
+              <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                Empresas Inativas
+              </p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {isLoading ? '-' : empresasInativas}
+              </p>
             </div>
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <span className="text-red-600 text-xl">⏸️</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Campo de pesquisa */}
       <div className="mb-6">
         <div className="relative max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg
-              className="h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <span className="text-gray-400">🔍</span>
           </div>
           <input
             type="text"
             placeholder="Pesquisar empresas..."
             value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            onChange={event => setSearchTerm(event.target.value)}
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
       </div>
 
+      {showForm && (
+        <div className="mb-6">
+          <EmpresaForm
+            empresa={editingEmpresa}
+            onSave={handleSaveEmpresa}
+            onCancel={resetForm}
+          />
+        </div>
+      )}
 
       <div className="bg-white rounded-lg shadow">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Lista de Empresas</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Lista de Empresas
+            </h2>
             {searchTerm && (
               <span className="text-sm text-gray-500">
                 {filteredEmpresas.length} resultado(s) encontrado(s)
               </span>
             )}
           </div>
-          {filteredEmpresas.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">
-              {searchTerm ? 'Nenhuma empresa encontrada para a pesquisa.' : 'Nenhuma empresa cadastrada ainda.'}
+
+          {isLoading ? (
+            <p className="py-12 text-center text-gray-500">
+              Carregando empresas...
+            </p>
+          ) : filteredEmpresas.length === 0 ? (
+            <p className="text-gray-500 text-center py-12">
+              {searchTerm
+                ? 'Nenhuma empresa encontrada para a pesquisa.'
+                : 'Nenhuma empresa cadastrada ainda.'}
             </p>
           ) : (
             <div className="overflow-x-auto">
@@ -252,8 +292,8 @@ export default function EmpresasPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredEmpresas.map((empresa) => (
-                    <tr key={empresa.id}>
+                  {filteredEmpresas.map(empresa => (
+                    <tr key={empresa.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
@@ -267,40 +307,48 @@ export default function EmpresasPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${empresa.tipoPessoa === 'Fisica'
-                          ? 'bg-purple-50 text-purple-800 border-purple-200'
-                          : 'bg-blue-50 text-blue-800 border-blue-200'
-                          }`}>
+                        <span
+                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${empresa.tipoPessoa === 'Fisica'
+                              ? 'bg-purple-50 text-purple-800 border-purple-200'
+                              : 'bg-blue-50 text-blue-800 border-blue-200'
+                            }`}
+                        >
                           {empresa.tipoPessoa === 'Fisica' ? 'PF' : 'PJ'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {empresa.cpfCnpj}
+                        {formatDocument(empresa.cpfCnpj, empresa.tipoPessoa)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {empresa.email || '-'}
+                        {empresa.email ?? '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${empresa.status
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                          }`}>
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${empresa.status
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                            }`}
+                        >
                           {empresa.status ? 'Ativo' : 'Inativo'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => handleEditEmpresa(empresa)}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => handleDeleteEmpresa(empresa.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Excluir
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleEditEmpresa(empresa)}
+                            className="text-blue-600 hover:text-blue-900"
+                            disabled={isSaving}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEmpresa(empresa)}
+                            className="text-red-600 hover:text-red-900"
+                            disabled={isSaving}
+                          >
+                            Excluir
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using safeWorkApi.Models;
 
 namespace safeWorkApi.Dominio.DTOs
 {
-    public class EmpresaClienteCreateDTO
+    public class ColaboradorCreateDto
     {
         [Required]
-        [RegularExpression("^(Fisica|Juridica)$", ErrorMessage = "O tipo de pessoa deve ser 'Fisica' ou 'Juridica'.")]
         public TipoPessoa TipoPessoa { get; set; }
 
         [Required]
@@ -18,13 +13,25 @@ namespace safeWorkApi.Dominio.DTOs
 
         [Required]
         public string NomeRazao { get; set; } = string.Empty;
+
         public string? NomeFantasia { get; set; }
+
         public string? Telefone { get; set; }
+
         public string? Celular { get; set; }
+
         public string? Email { get; set; }
 
+        [Required]
         public bool Status { get; set; }
-        public int? IdEndereco { get; set; }
-    }
 
+        public int? IdEndereco { get; set; }
+
+        [Required]
+        public string Funcao { get; set; } = string.Empty;
+
+        [Required]
+        public int IdEmpresaCliente { get; set; }
+    }
 }
+

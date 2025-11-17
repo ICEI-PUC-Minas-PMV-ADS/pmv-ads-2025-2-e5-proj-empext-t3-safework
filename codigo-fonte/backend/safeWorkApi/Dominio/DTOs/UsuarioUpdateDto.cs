@@ -4,15 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace safeWorkApi.Controller
+namespace safeWorkApi.Dominio.DTOs
 {
     public class UsuarioUpdateDto
     {
         public string NomeCompleto { get; set; } = null!;
         [Required]
         public string Email { get; set; } = null!;
-        [Required]
-        public string Senha { get; set; } = null!;
+        public string? Senha { get; set; }
         [Required]
         public int IdPerfil { get; set; }
     }

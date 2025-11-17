@@ -1,365 +1,401 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ContratoForm } from '../../../components/ContratoForm'
-import { Contrato, StatusContrato } from '../../../types/contrato'
+import { useEffect, useMemo, useState } from 'react'
+
+import { Contrato, ContratoFormValues, StatusContrato } from '@/types/contrato'
+import { Empresa } from '@/types/empresas'
+import {
+  createContrato,
+  deleteContrato,
+  getContratos,
+  getEmpresas,
+  updateContrato
+} from '@/lib/api'
+import { ContratoForm } from '@/components/ContratoForm'
+
+type RequestState = 'idle' | 'loading' | 'saving'
+
+const formatCurrency = (value: number) =>
+  value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
+const formatDate = (value: string) =>
+  value ? new Date(value).toLocaleDateString('pt-BR') : '-'
+
+const getStatusBadge = (status: StatusContrato) => {
+  const base = 'px-2 py-1 text-xs font-medium rounded-full'
+  switch (status) {
+    case StatusContrato.Ativo:
+      return `${base} bg-green-100 text-green-800`
+    case StatusContrato.Inativo:
+      return `${base} bg-red-100 text-red-800`
+    case StatusContrato.Suspenso:
+      return `${base} bg-yellow-100 text-yellow-800`
+    default:
+      return `${base} bg-gray-100 text-gray-800`
+  }
+}
+
+const getStatusLabel = (status: StatusContrato) => {
+  switch (status) {
+    case StatusContrato.Ativo:
+      return 'Ativo'
+    case StatusContrato.Inativo:
+      return 'Inativo'
+    case StatusContrato.Suspenso:
+      return 'Suspenso'
+    default:
+      return 'Ativo'
+  }
+}
+
+const parseCurrencyToNumber = (value: string) => {
+  if (!value) return 0
+  const numeric = value.replace(/[R$\s.]/g, '').replace(',', '.')
+  return Number(numeric) || 0
+}
+
+const EMPRESA_PRESTADORA_PADRAO = 1
 
 export default function ContratosPage() {
-  const [contratos, setContratos] = useState<Contrato[]>([
-    {
-      id: 1,
-      numero: 'CT-2025-001',
-      data_inicio: '2025-01-01T00:00:00Z',
-      data_fim: '2025-12-31T23:59:59Z',
-      status_contrato: StatusContrato.Ativo,
-      path_file: '/contratos/ct-2025-001.pdf',
-      valor: 150000.00,
-      observacoes: 'Contrato de prestação de serviços de segurança do trabalho para o ano de 2025',
-      id_empresa_cliente: 1,
-      id_empresa_prestadora: 1,
-      empresa_cliente: {
-        id: 1,
-        nome_razao: 'Empresa ABC Ltda',
-        cpf_cnpj: '12.345.678/0001-90'
-      },
-      empresa_prestadora: {
-        id: 1,
-        nome_razao: 'ScPrevenção',
-        cpf_cnpj: '99.999.999/0001-99'
-      }
-    },
-    {
-      id: 2,
-      numero: 'CT-2025-002',
-      data_inicio: '2025-02-01T00:00:00Z',
-      data_fim: '2026-01-31T23:59:59Z',
-      status_contrato: StatusContrato.Ativo,
-      path_file: '/contratos/ct-2025-002.pdf',
-      valor: 85000.00,
-      observacoes: 'Contrato de consultoria em segurança ocupacional',
-      id_empresa_cliente: 2,
-      id_empresa_prestadora: 1,
-      empresa_cliente: {
-        id: 2,
-        nome_razao: 'XYZ Serviços S.A.',
-        cpf_cnpj: '98.765.432/0001-10'
-      },
-      empresa_prestadora: {
-        id: 1,
-        nome_razao: 'ScPrevenção',
-        cpf_cnpj: '99.999.999/0001-99'
-      }
-    },
-    {
-      id: 3,
-      numero: 'CT-2024-015',
-      data_inicio: '2024-06-01T00:00:00Z',
-      data_fim: '2024-12-31T23:59:59Z',
-      status_contrato: StatusContrato.Suspenso,
-      path_file: '/contratos/ct-2024-015.pdf',
-      valor: 45000.00,
-      observacoes: 'Contrato suspenso temporariamente por solicitação do cliente',
-      id_empresa_cliente: 3,
-      id_empresa_prestadora: 2,
-      empresa_cliente: {
-        id: 3,
-        nome_razao: 'Tech Solutions Ltda',
-        cpf_cnpj: '11.222.333/0001-44'
-      },
-      empresa_prestadora: {
-        id: 2,
-        nome_razao: 'SafeWork Consultoria',
-        cpf_cnpj: '88.888.888/0001-88'
-      }
-    }
-  ])
-
-  const [showForm, setShowForm] = useState(false)
-  const [editingContrato, setEditingContrato] = useState<Contrato | null>(null)
+  const [contratos, setContratos] = useState<Contrato[]>([])
+  const [empresas, setEmpresas] = useState<Empresa[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusContrato | 'all'>('all')
+  const [showForm, setShowForm] = useState(false)
+  const [editingContrato, setEditingContrato] = useState<Contrato | null>(null)
+  const [state, setState] = useState<RequestState>('idle')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const filteredContratos = contratos.filter(contrato => {
-    const matchesSearch = 
-      contrato.numero.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contrato.empresa_cliente?.nome_razao.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || contrato.status_contrato === statusFilter
-    
-    return matchesSearch && matchesStatus
-  })
+  useEffect(() => {
+    const fetchData = async () => {
+      setState('loading')
+      try {
+        const [contratosData, empresasData] = await Promise.all([
+          getContratos(),
+          getEmpresas()
+        ])
 
-  const handleSave = (contrato: Contrato) => {
-    if (editingContrato) {
-      // Atualizar contrato existente
-      setContratos(prev => prev.map(c => 
-        c.id === editingContrato.id ? { ...contrato, id: editingContrato.id } : c
-      ))
-    } else {
-      // Adicionar novo contrato
-      const newId = Math.max(...contratos.map(c => c.id || 0)) + 1
-      setContratos(prev => [...prev, { ...contrato, id: newId }])
+        setContratos(contratosData)
+        setEmpresas(empresasData)
+        setErrorMessage(null)
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Não foi possível carregar os contratos.'
+        setErrorMessage(message)
+      } finally {
+        setState('idle')
+      }
     }
-    
-    setShowForm(false)
-    setEditingContrato(null)
-  }
 
-  const handleEdit = (contrato: Contrato) => {
-    setEditingContrato(contrato)
-    setShowForm(true)
-  }
+    fetchData()
+  }, [])
 
-  const handleDelete = (id: number) => {
-    if (confirm('Tem certeza que deseja excluir este contrato?')) {
-      setContratos(prev => prev.filter(c => c.id !== id))
-    }
-  }
+  const filteredContratos = useMemo(() => {
+    return contratos.filter(contrato => {
+      const query = searchTerm.trim().toLowerCase()
+      const matchesSearch =
+        query.length === 0 ||
+        contrato.numero.toLowerCase().includes(query) ||
+        (contrato.empresaCliente?.nomeRazao ?? '')
+          .toLowerCase()
+          .includes(query)
 
-  const handleCancel = () => {
-    setShowForm(false)
-    setEditingContrato(null)
-  }
+      const matchesStatus =
+        statusFilter === 'all' || contrato.statusContrato === statusFilter
 
-  const getStatusBadge = (status: StatusContrato) => {
-    const baseClasses = "px-2 py-1 text-xs font-medium rounded-full"
-    
-    switch (status) {
-      case StatusContrato.Ativo:
-        return `${baseClasses} bg-green-100 text-green-800`
-      case StatusContrato.Inativo:
-        return `${baseClasses} bg-red-100 text-red-800`
-      case StatusContrato.Suspenso:
-        return `${baseClasses} bg-yellow-100 text-yellow-800`
-      default:
-        return `${baseClasses} bg-gray-100 text-gray-800`
-    }
-  }
-
-  const getStatusLabel = (status: StatusContrato) => {
-    switch (status) {
-      case StatusContrato.Ativo:
-        return 'Ativo'
-      case StatusContrato.Inativo:
-        return 'Inativo'
-      case StatusContrato.Suspenso:
-        return 'Suspenso'
-      default:
-        return 'Ativo'
-    }
-  }
-
-  const formatCurrency = (value: number) => {
-    return value.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+      return matchesSearch && matchesStatus
     })
+  }, [contratos, searchTerm, statusFilter])
+
+  const stats = useMemo(() => {
+    const total = contratos.length
+    const ativos = contratos.filter(
+      contrato => contrato.statusContrato === StatusContrato.Ativo
+    ).length
+    const vencidos = contratos.filter(
+      contrato => new Date(contrato.dataFim) < new Date()
+    ).length
+
+    const hoje = new Date()
+    const em30Dias = new Date()
+    em30Dias.setDate(hoje.getDate() + 30)
+
+    const vencendo = contratos.filter(contrato => {
+      const fim = new Date(contrato.dataFim)
+      return fim >= hoje && fim <= em30Dias
+    }).length
+
+    return { total, ativos, vencidos, vencendo }
+  }, [contratos])
+
+  const handleSave = async (data: ContratoFormValues) => {
+    try {
+      setState('saving')
+      setErrorMessage(null)
+
+      const payload = {
+        numero: data.numero.trim(),
+        dataInicio: data.dataInicio,
+        dataFim: data.dataFim,
+        statusContrato: data.statusContrato,
+        pathFile: data.pathFile?.trim() || null,
+        valor: parseCurrencyToNumber(data.valor),
+        observacoes: data.observacoes?.trim() || null,
+        idEmpresaCliente: data.idEmpresaCliente,
+        idEmpresaPrestadora:
+          data.idEmpresaPrestadora || EMPRESA_PRESTADORA_PADRAO
+      }
+
+      if (editingContrato) {
+        const updated = await updateContrato(editingContrato.id, payload)
+        setContratos(prev =>
+          prev.map(item => (item.id === updated.id ? updated : item))
+        )
+      } else {
+        const created = await createContrato(payload)
+        setContratos(prev => [...prev, created])
+      }
+
+      setShowForm(false)
+      setEditingContrato(null)
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível salvar o contrato.'
+      setErrorMessage(message)
+    } finally {
+      setState('idle')
+    }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR')
+  const handleDelete = async (contrato: Contrato) => {
+    const confirmed = window.confirm(
+      `Excluir contrato ${contrato.numero}? Esta ação não pode ser desfeita.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setState('saving')
+      setErrorMessage(null)
+      await deleteContrato(contrato.id)
+      setContratos(prev => prev.filter(item => item.id !== contrato.id))
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível excluir o contrato.'
+      setErrorMessage(message)
+    } finally {
+      setState('idle')
+    }
   }
+
+  const isLoading = state === 'loading'
+  const isSaving = state === 'saving'
 
   if (showForm) {
     return (
-      <ContratoForm
-        contrato={editingContrato}
-        onSave={handleSave}
-        onCancel={handleCancel}
-      />
+      <div className="p-6">
+        <ContratoForm
+          contrato={editingContrato}
+          empresas={empresas}
+          empresaPrestadoraId={EMPRESA_PRESTADORA_PADRAO}
+          onSave={handleSave}
+          onCancel={() => {
+            setShowForm(false)
+            setEditingContrato(null)
+          }}
+        />
+      </div>
     )
   }
 
   return (
     <div className="p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gerenciamento de Contratos</h1>
-        <p className="text-gray-600">Gerencie os contratos de prestação de serviços</p>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gerenciamento de Contratos
+          </h1>
+          <p className="text-gray-600">
+            Controle contratos de prestação de serviços e acompanhe vencimentos.
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            setEditingContrato(null)
+            setShowForm(true)
+          }}
+          className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={isSaving}
+        >
+          Novo Contrato
+        </button>
       </div>
 
-      {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total de Contratos</p>
-              <p className="text-2xl font-bold text-gray-900">{contratos.length}</p>
-            </div>
-          </div>
+      {errorMessage && (
+        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
         </div>
+      )}
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Contratos Ativos</p>
-              <p className="text-2xl font-bold text-green-600">{contratos.filter(c => c.status_contrato === StatusContrato.Ativo).length}</p>
-            </div>
-          </div>
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="rounded-lg border border-blue-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">Total</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
+            {isLoading ? '-' : stats.total}
+          </p>
         </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Contratos Vencidos</p>
-              <p className="text-2xl font-bold text-red-600">{contratos.filter(c => new Date(c.data_fim) < new Date()).length}</p>
-            </div>
-          </div>
+        <div className="rounded-lg border border-green-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">Ativos</p>
+          <p className="mt-2 text-2xl font-bold text-green-600">
+            {isLoading ? '-' : stats.ativos}
+          </p>
         </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Vencendo em 30 dias</p>
-              <p className="text-2xl font-bold text-yellow-600">{contratos.filter(c => {
-                const dataFim = new Date(c.data_fim)
-                const hoje = new Date()
-                const em30Dias = new Date()
-                em30Dias.setDate(hoje.getDate() + 30)
-                return dataFim >= hoje && dataFim <= em30Dias
-              }).length}</p>
-            </div>
-          </div>
+        <div className="rounded-lg border border-red-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">Vencidos</p>
+          <p className="mt-2 text-2xl font-bold text-red-600">
+            {isLoading ? '-' : stats.vencidos}
+          </p>
+        </div>
+        <div className="rounded-lg border border-yellow-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-gray-600">Vencendo em 30 dias</p>
+          <p className="mt-2 text-2xl font-bold text-yellow-600">
+            {isLoading ? '-' : stats.vencendo}
+          </p>
         </div>
       </div>
 
-      {/* Filtros e Busca */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Buscar por número ou empresa cliente..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-600"
-            />
-          </div>
-          <div className="flex gap-4">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as StatusContrato | 'all')}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            >
-              <option value="all">Todos os status</option>
-              <option value={StatusContrato.Ativo}>Ativo</option>
-              <option value={StatusContrato.Inativo}>Inativo</option>
-              <option value={StatusContrato.Suspenso}>Suspenso</option>
-            </select>
-            <button
-              onClick={() => setShowForm(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-nowrap"
-            >
-              Novo Contrato
-            </button>
-          </div>
+      <div className="mb-6 flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Buscar por número ou empresa cliente..."
+            value={searchTerm}
+            onChange={event => setSearchTerm(event.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
         </div>
+        <select
+          value={statusFilter}
+          onChange={event =>
+            setStatusFilter(
+              event.target.value === 'all'
+                ? 'all'
+                : (Number(event.target.value) as StatusContrato)
+            )
+          }
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="all">Todos os status</option>
+          {Object.values(StatusContrato)
+            .filter(value => typeof value === 'number')
+            .map(value => (
+              <option key={value} value={value}>
+                {getStatusLabel(value as StatusContrato)}
+              </option>
+            ))}
+        </select>
       </div>
 
-      {/* Lista de Contratos */}
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Número
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Empresa Cliente
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Período
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Valor
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredContratos.map((contrato) => (
-                <tr key={contrato.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {contrato.numero}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <div>
-                      <div className="font-medium">{contrato.empresa_cliente.nome_razao}</div>
-                      <div className="text-gray-500">{contrato.empresa_cliente.cpf_cnpj}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatDate(contrato.data_inicio)} - {formatDate(contrato.data_fim)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatCurrency(contrato.valor)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={getStatusBadge(contrato.status_contrato)}>
-                      {getStatusLabel(contrato.status_contrato)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={() => {
-                          setSelectedContrato(contrato)
-                          setShowForm(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(contrato.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Excluir
-                      </button>
-                    </div>
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
+                    Carregando contratos...
                   </td>
                 </tr>
-              ))}
+              ) : filteredContratos.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
+                    {searchTerm || statusFilter !== 'all'
+                      ? 'Nenhum contrato encontrado com os filtros aplicados.'
+                      : 'Nenhum contrato cadastrado até o momento.'}
+                  </td>
+                </tr>
+              ) : (
+                filteredContratos.map(contrato => (
+                  <tr key={contrato.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                      {contrato.numero}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      <div className="font-medium">
+                        {contrato.empresaCliente?.nomeRazao ?? '-'}
+                      </div>
+                      <div className="text-gray-500">
+                        {contrato.empresaCliente?.cpfCnpj ?? ''}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {formatDate(contrato.dataInicio)} • {formatDate(contrato.dataFim)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {formatCurrency(contrato.valor)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={getStatusBadge(contrato.statusContrato)}>
+                        {getStatusLabel(contrato.statusContrato)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-medium">
+                      <div className="flex justify-end gap-3">
+                        <button
+                          onClick={() => {
+                            setEditingContrato(contrato)
+                            setShowForm(true)
+                          }}
+                          className="text-blue-600 hover:text-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={isSaving}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => handleDelete(contrato)}
+                          className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={isSaving}
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-
-        {filteredContratos.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-500">
-              {searchTerm || statusFilter !== 'all' 
-                ? 'Nenhum contrato encontrado com os filtros aplicados.' 
-                : 'Nenhum contrato cadastrado.'}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
 }
+

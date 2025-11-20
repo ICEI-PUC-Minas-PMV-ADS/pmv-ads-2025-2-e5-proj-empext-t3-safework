@@ -23,7 +23,10 @@ namespace safeWorkApi.Dominio.DTOs
         public string? NomeFantasia { get; set; }
         public string? Telefone { get; set; }
         public string? Celular { get; set; }
-        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
+        [EmailAddress(ErrorMessage = "O e-mail informado não é válido.")]
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         public bool Status { get; set; }

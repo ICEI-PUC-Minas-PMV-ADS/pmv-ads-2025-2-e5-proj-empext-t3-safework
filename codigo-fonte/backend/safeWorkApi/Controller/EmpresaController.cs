@@ -120,6 +120,11 @@ namespace safeWorkApi.Controller
         {
             if (id != model.Id) return BadRequest();
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var empresaCliente = await _context.EmpresasClientes.FirstOrDefaultAsync(e => e.Id == id);
             if (empresaCliente == null) return NotFound();
 

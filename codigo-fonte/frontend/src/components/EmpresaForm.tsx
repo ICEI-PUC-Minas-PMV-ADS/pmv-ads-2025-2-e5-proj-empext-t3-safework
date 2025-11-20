@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Empresa, EmpresaFormData, TipoPessoa } from '@/types/empresas'
+import { apiEnderecos } from '@/lib/api_enderecos'
 
 interface EmpresaFormProps {
   empresa?: Empresa | null
@@ -156,8 +157,9 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
         : 'Razão social é obrigatória'
     }
 
-    if (
-      formData.email &&
+    if (!formData.email?.trim()) {
+      newErrors.email = "Email é obrigatório"
+    } else if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
     ) {
       newErrors.email = 'Email deve ter um formato válido'
@@ -328,7 +330,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
               htmlFor="email"
               className="block text-sm font-medium text-gray-900 mb-2"
             >
-              Email
+              Email *
             </label>
             <input
               type="email"
@@ -336,6 +338,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
               name="email"
               value={formData.email ?? ''}
               onChange={handleChange}
+              required
               className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
               placeholder="exemplo@email.com"
@@ -355,7 +358,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                 id="idEndereco"
                 name="idEndereco"
                 value={formData.idEndereco ?? ''}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               >

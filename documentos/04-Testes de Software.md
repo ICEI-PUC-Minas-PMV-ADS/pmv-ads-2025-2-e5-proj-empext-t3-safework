@@ -1735,196 +1735,422 @@ A fim de aumentar a qualidade da aplicação desenvolvida, cada funcionalidade d
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-001<br>Login com credenciais válidas</th>
+    <th colspan="6" width="1000">CT-001 - S<br>Login com credenciais válidas</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
     <td colspan="5">O sistema deve redirecionar o usuário para a página inicial do sistema após o login bem-sucedido.</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Pedro Nogueira </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está permitindo o login corretamente.</td>
+    <td colspan="5">O teste por pares confirmou que o login com credenciais válidas redireciona corretamente para o dashboard.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-002<br>Logout com sessão ativa</th>
+    <th colspan="6" width="1000">CT-002 - S<br>Logout com sessão ativa</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve encerrar a sessão do usuário e redirecionar para a página de login</td>
+    <td colspan="5">O sistema deve encerrar a sessão do usuário e redirecionar para a página de login.</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Pedro Nogueira </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está efetuando o logout seguro com sucesso.</td>
+    <td colspan="5">O teste por pares verificou que o logout encerra a sessão e retorna para a tela de login sem inconsistências.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-003<br>Recuperação de senha</th>
+    <th colspan="6" width="1000">CT-003 - S<br>Cadastro de Empresa contratante</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve permitir que o usuario receba um codigo para recuperar sua senha</td>
+    <td colspan="5">Empresa aparece listada com status "Ativa".</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Pedro Nogueira </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Amaury Magno</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está recuperando a senha com sucesso.</td>
+    <td colspan="5">O teste por pares confirmou que empresas com dados válidos são salvas e exibidas corretamente como "Ativa".</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-004<br>Cadastro e Visualização de Empresas</th>
+    <th colspan="6" width="1000">CT-004 - S<br>Anexar documento contratual à Empresa</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve permitir que o usuario cadastre e visualize empresas</td>
+    <td colspan="5">Documento listado com nome, tamanho e data do upload.</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Gustavo Felix </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Amaury Magno</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está cadastrando as empresas com sucesso.</td>
+    <td colspan="5">O teste por pares validou que apenas arquivos válidos são anexados e exibidos corretamente nos detalhes da empresa.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-005<br>Cadastro e Visualização de Endereços</th>
+    <th colspan="6" width="1000">CT-005 - S<br>Filtrar contratos por período</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve permitir que o usuario cadastre e visualize endereços</td>
+    <td colspan="5">A lista contém apenas contratos cujo período interseca o filtro.</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Gustavo Felix </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Alvaro Tavares</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está cadastrando os endereços com sucesso.</td>
+    <td colspan="5">O teste por pares confirmou que o filtro por período retorna apenas contratos dentro do intervalo configurado.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-006<br>Edição de Empresas</th>
+    <th colspan="6" width="1000">CT-006 - S<br>Admin cadastrar colaborador do sistema</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve permitir que o usuario edite as empresas</td>
+    <td colspan="5">Usuário criado e visível na listagem com perfil correto.</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Gustavo Felix </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Alvaro Tavares</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está editando as empresas com sucesso.</td>
+    <td colspan="5">O teste por pares verificou que o Administrador consegue criar usuários com o perfil adequado e estes aparecem na listagem.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th colspan="6" width="1000">CT-006<br>Edição de Endereços</th>
+    <th colspan="6" width="1000">CT-007 - S<br>Cadastro e listagem de Colaboradores (empresa contratante)</th>
   </tr>
   <tr>
     <td width="170"><strong>Critérios de êxito</strong></td>
-    <td colspan="5">O sistema deve permitir que o usuario edite os endereços</td>
+    <td colspan="5">Colaborador visível com dados corretos e empresa associada.</td>
   </tr>
-    <tr>
-      <td><strong>Responsável pela funcionalidade</strong></td>
-    <td width="430">Gustavo Felix </td>
-      <td><strong>Responsável pelo teste</strong></td>
-    <td width="430">Vitor Galinari </td>
-     <td width="100"><strong>Data do teste</strong></td>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
     <td width="150">19/10/2025</td>
   </tr>
-    <tr>
+  <tr>
     <td width="170"><strong>Comentário</strong></td>
-    <td colspan="5">O sistema está editando os endereços com sucesso.</td>
+    <td colspan="5">O teste por pares confirmou que o cadastro de colaboradores é salvo corretamente e aparece vinculado à empresa contratante.</td>
   </tr>
   <tr>
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><video src=""/></td>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-008 - S<br>CRUD de ASO para colaborador</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Operações CRUD concluídas sem erros e refletidas na listagem.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares verificou que criar, editar, listar e excluir ASOs mantém a consistência dos dados na tela do colaborador.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-009 - S<br>Validação automática de ASO no sistema do Gov</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Status da ASO = "Validada" e comprovante acessível (imagem anexada ao registro).</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares confirmou que a integração com o sistema do Gov atualiza o status da ASO e registra o comprovante corretamente.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-010 - S<br>Geração de alertas mensais de ASO vencendo</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Alertas gerados e visíveis; logs de execução registrados.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares verificou que o job de alertas identifica ASOs próximas do vencimento e exibe os avisos no sistema.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-011 - S<br>Recuperação de Senha</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">A senha do usuário é alterada com sucesso.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares confirmou que o fluxo de recuperação de senha envia o código/link e permite redefinir a senha com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-012 - S<br>Cadastro e Visualização de Empresas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuário cadastre e visualize empresas.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares verificou que o cadastro de empresas e a listagem funcionam conforme o planejado no caso de teste.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-013 - S<br>Cadastro e Visualização de Endereços</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuário cadastre e visualize endereços.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares confirmou que os endereços são cadastrados, associados e exibidos corretamente.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-014 - S<br>Edição de Empresas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuário edite as empresas.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares verificou que alterações nos dados das empresas são salvas e refletidas na listagem sem erros.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-015 - S<br>Edição de Endereços</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">O sistema deve permitir que o usuário edite os endereços.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+    <td><strong>Responsável pelo teste</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">O teste por pares confirmou que a edição de endereços atualiza os dados corretamente sem impacto em outros registros.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"></td>
   </tr>
 </table>

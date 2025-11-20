@@ -410,7 +410,7 @@
   </tr> 
   <tr> 
     <td><strong>Requisitos associados</strong></td> 
-    <td>RF-03: Listagem e filtro de contratos</td> 
+    <td>RF-15: Login (autenticação) e recuperação de acesso; RNF-05: Segurança</td> 
   </tr> 
   <tr> 
     <td><strong>Passos</strong></td> 
@@ -1082,6 +1082,214 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
 
 <table>
   <tr>
+    <th colspan="6" width="1000">CT-003 - S<br>Cadastro de Empresa contratante</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Empresa aparece listada com status "Ativa".</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Amaury Magno</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">É possível cadastrar uma empresa com dados válidos.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-004 - S<br>Anexar documento contratual à Empresa</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Documento listado com nome, tamanho e data do upload.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Amaury Magno</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20//11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Confirma anexação de PDF contratual à empresa cadastrada.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-005 - S<br>Filtrar contratos por período</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">A lista contém apenas contratos cujo período interseca o filtro.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Alvaro Tavares</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Filtro por data de início e fim de contrato na listagem de empresas funcionando.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-006 - S<br>Admin cadastrar colaborador do sistema</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Usuário criado e visível na listagem com perfil correto.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Alvaro Tavares</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Admin cria usuário do sistema com perfil e permissões padrão com sucesso.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-007 - S<br>Cadastro e listagem de Colaboradores (empresa contratante)</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Colaborador visível com dados corretos e empresa associada.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20//11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Colaborador cadastrado e apresentado na lista</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-008 - S<br>CRUD de ASO para colaborador</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Operações CRUD concluídas sem erros e refletidas na listagem.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Colaborador vinculado a uma empresa criado, listado, atualizado e excluído.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-009 - S<br>Validação automática de ASO no sistema do Gov</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Status da ASO = "Validada" e comprovante acessível (imagem anexada ao registro).</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Sistema governamental e registro de comprovante está validando automaticamente.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-010 - S<br>Geração de alertas mensais de ASO vencendo</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Alertas gerados e visíveis; logs de execução registrados.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Alertas preventivos mensais para ASOs a vencer no período funcionando.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
     <th colspan="6" width="1000">CT-011 -S<br>Recuperação de senha</th>
   </tr>
   <tr>
@@ -1207,6 +1415,318 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
   </tr>
   <tr>
      <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/47936393-d4af-4a76-ae09-d75f6a3e6e96"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-001 - I01<br>Login com senha inválida</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Exibir mensagem "Credenciais inválidas" sem revelar motivo específico; nenhuma sessão criada.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Tratamento de credenciais inválidas no login verificado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-002 - I02<br>Tentativas repetidas de login (bloqueio)</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Conta/sessão bloqueada temporariamente; mensagem informando tentativa excedida, sem expor dados sensíveis.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Pedro Nogueira</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Aplicação de bloqueio temporário após várias tentativas falhas verificado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-003 - I03<br>Cadastro de Empresa com CNPJ inválido</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Bloquear gravação e exibir mensagem de CNPJ inválido.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Amaury Magno</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Tratamento de formato/validação de CNPJ incorreto no cadastro de empresa verificado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-004 - I04<br>Anexo de contrato com tipo/tamanho inválido</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Upload bloqueado; mensagem clara de tipo/tamanho inválido; nada salvo no sistema.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Amaury Magno</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Tratamento de arquivo não permitido (extensão/tamanho) no upload contratual verificado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-005 - I01<br>Cadastro de Colaborador com CPF inválido</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Cadastro negado com mensagem de CPF inválido; nenhum registro criado.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Alvaro Tavares</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Bloqueio de cadastro quando o CPF não é válido ou já existe validado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-006 - I02<br>Filtro de Colaboradores com parâmetros inconsistentes</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Exibir "Nenhum resultado" sem erro técnico e permitir limpar/ajustar filtros.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Alvaro Tavares</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Mensagem adequada quando não há resultado ou quando parâmetros são mutuamente excludentes validada.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-007 - I03<br>Cadastro de ASO com datas inválidas</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Bloquear gravação e exibir mensagem de inconsistência de datas.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Cadastro de ASO cujo fim menor que início ou validade no passado sem justificativa impedido</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-008 - I04<br>Anexo de ASO com vírus (simulado)</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Upload bloqueado; log de segurança registrado; alerta ao usuário sem detalhes técnicos sensíveis.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Siderley Tadeu</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Proteção ao upload de arquivos maliciosos validada.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-009 - I01<br>Falha na integração com sistema do Gov (timeout)</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Mensagem "Serviço indisponível, tente novamente"; operação marcada como "Pendente"; nenhuma informação inconsistente gravada.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Tratamento de indisponibilidade/timeout da API governamental ao validar ASO validada.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-010 - I02<br>Comprovante de validação indisponível/corrupção de screenshot</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Mensagem orientando nova tentativa de geração; registro do erro em log; manter status da ASO consistente.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Vitor Galinari</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Reação do sistema quando o arquivo de comprovante não pode ser gerado ou está corrompido verificado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-011 - I03<br>Alerta mensal não gerado (scheduler parado)</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Sinalização no dashboard (health check) indicando job indisponível; sem falha silenciosa.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Comportamento quando o job de alertas não executa no período esperado validado.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6" width="1000">CT-012 - I04<br>Acesso não autorizado a dados sensíveis (LGPD)</th>
+  </tr>
+  <tr>
+    <td width="170"><strong>Critérios de êxito</strong></td>
+    <td colspan="5">Acesso negado; mensagem de permissão insuficiente; evento auditado.</td>
+  </tr>
+  <tr>
+    <td><strong>Responsável pela funcionalidade</strong></td>
+    <td width="430">Gustavo Felix</td>
+    <td width="100"><strong>Data do teste</strong></td>
+    <td width="150">20/11/2025</td>
+  </tr>
+  <tr>
+    <td width="170"><strong>Comentário</strong></td>
+    <td colspan="5">Perfis sem permissão não estão visualizando dados médicos/ASO de colaboradores fora de seu escopo.</td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><strong>Evidência</strong></td>
+  </tr>
+  <tr>
+    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
   </tr>
 </table>
 

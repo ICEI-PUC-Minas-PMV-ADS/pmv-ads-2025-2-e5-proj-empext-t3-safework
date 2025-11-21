@@ -95,13 +95,32 @@ namespace safeWorkApi.Controller
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var model = await _context.Enderecos.FindAsync(id);
-            if (model == null)
+            var endereco = await _context.Enderecos.FindAsync(id);
+
+            if (endereco == null)
             {
-                return NotFound();
+                return NotFound("Endereço não encontrado");
             }
-            _context.Enderecos.Remove(model);
+
+            var usadoPorEmpresaCliente = await _context.EmpresasClientes
+                .AnyAsync(e => e.IdEndereco == id);
+
+            var usadoPorEmpresaPrestadora = await _context.EmpresasPrestadoras
+                .AnyAsync(e => e.IdEndereco == id);
+
+            var usadoPorColaborador = await _context.Colaboradores
+                .AnyAsync(c => c.IdEndereco == id);
+
+            if (usadoPorEmpresaCliente || usadoPorEmpresaPrestadora || usadoPorColaborador)
+            {
+                return BadRequest(
+                    "Este endereço está vinculado a uma empresa ou colaborador e não pode ser excluído. Atualize ou remova esses cadastros antes de excluir o endereço."
+                );
+            }
+
+            _context.Enderecos.Remove(endereco);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 

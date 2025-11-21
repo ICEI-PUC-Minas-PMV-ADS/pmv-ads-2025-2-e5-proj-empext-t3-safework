@@ -27,9 +27,9 @@ export default function EmpresasPage() {
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null)
   const [state, setState] = useState<RequestState>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [hasEnderecos , setHasEnderecos] = useState(false)
+  const [hasEnderecos, setHasEnderecos] = useState(false)
   const [enderecosCarregados, setEnderecosCarregados] = useState(false)
-  const [enderecoAviso, setEnderecoAviso] =useState<string | null>(null)
+  const [enderecoAviso, setEnderecoAviso] = useState<string | null>(null)
 
   const router = useRouter()
 
@@ -59,8 +59,8 @@ export default function EmpresasPage() {
         setHasEnderecos(temEndereco)
         setEnderecoAviso(
           temEndereco
-          ? null
-          : 'Para cadastrar uma empresa, é necessário cadastrar ao menos um endereço no menu "Endereços".'
+            ? 'Certifique-se de que o endereço da empresa já está cadastrado.'
+            : 'Para cadastrar uma empresa, é necessário cadastrar ao menos um endereço no menu "Endereços".'
         )
       } catch (error) {
         setHasEnderecos(false)
@@ -183,27 +183,33 @@ export default function EmpresasPage() {
             Gerencie as empresas clientes vinculadas à prestadora.
           </p>
         </div>
-        <button
-          onClick={handleAddEmpresa}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          disabled={isSaving || (!enderecosCarregados || !hasEnderecos)}
-        >
-          Nova Empresa
-        </button>
-      </div>
 
-      {enderecoAviso && (
-        <div className='mb-4 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-smtext-yellow-800'>
-          {enderecoAviso}{' '}
+        <div className="flex flex-col items-end gap-2">
+          {enderecoAviso && (
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-yellow-800 text-right">
+              <span className="hidden sm:inline">⚠️</span>
+              <span>
+                {enderecoAviso}{' '}
+                <button
+                  type="button"
+                  onClick={() => router.push('/dashboard/enderecos')}
+                  className="ml-1 font-medium underline"
+                >
+                  Ir para cadastro de endereços
+                </button>
+              </span>
+            </div>
+          )}
+
           <button
-            type='button'
-            onClick={() => router.push('/dashboard/enderecos')}
-            className='ml-1 font-medium underline'
+            onClick={handleAddEmpresa}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            disabled={isSaving || (!enderecosCarregados || !hasEnderecos)}
           >
-            Ir para cadastro de endereços
+            Nova Empresa
           </button>
         </div>
-      )}
+      </div>
 
       {errorMessage && (
         <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -358,8 +364,8 @@ export default function EmpresasPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${empresa.tipoPessoa === 'Fisica'
-                              ? 'bg-purple-50 text-purple-800 border-purple-200'
-                              : 'bg-blue-50 text-blue-800 border-blue-200'
+                            ? 'bg-purple-50 text-purple-800 border-purple-200'
+                            : 'bg-blue-50 text-blue-800 border-blue-200'
                             }`}
                         >
                           {empresa.tipoPessoa === 'Fisica' ? 'PF' : 'PJ'}
@@ -374,8 +380,8 @@ export default function EmpresasPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${empresa.status
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
                             }`}
                         >
                           {empresa.status ? 'Ativo' : 'Inativo'}

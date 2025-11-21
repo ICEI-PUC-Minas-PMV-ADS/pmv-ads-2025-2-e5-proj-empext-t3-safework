@@ -36,7 +36,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     idEndereco: undefined
   })
 
-  const [enderecos, setEnderecos] = useState<{ id: number; logradouro: string }[]>([])
+  const [enderecos, setEnderecos] = useState<{ id: number; logradouro: string; numero: string }[]>([])
   const [loadingEnderecos, setLoadingEnderecos] = useState(true)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showEnderecoModal, setShowEnderecoModal] = useState(false)
@@ -410,7 +410,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                   <option value="">Selecione um endereço</option>
                   {enderecos.map((endereco) => (
                     <option key={endereco.id} value={endereco.id}>
-                      {endereco.logradouro}
+                      {endereco.logradouro} {endereco.numero ? `, ${endereco.numero}` : ''}
                     </option>
                   ))}
                 </select>

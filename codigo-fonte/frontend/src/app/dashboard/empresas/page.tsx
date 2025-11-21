@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Empresa, EmpresaFormData } from '@/types/empresas'
 import { EmpresaForm } from '@/components/EmpresaForm'
 import { apiClient } from '@/lib/api'
+import { useRouter } from 'next/navigation'
+import { getEnderecos } from '@/lib/api_empresas'
 
 type RequestState = 'idle' | 'loading' | 'saving'
 
@@ -25,6 +27,11 @@ export default function EmpresasPage() {
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null)
   const [state, setState] = useState<RequestState>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [hasEnderecos , setHasEnderecos] = useState(false)
+  const [enderecosCarregados, setEnderecosCarregados] = useState(false)
+  const [enderecoAviso, setEnderecoAviso] =useState<string | null>(null)
+
+  const router = useRouter()
 
   useEffect(() => {
     const fetchEmpresas = async () => {
@@ -44,7 +51,29 @@ export default function EmpresasPage() {
       }
     }
 
+    const fetchEnderecos = async () => {
+      try {
+        const lista = await getEnderecos()
+        const temEndereco = lista.length > 0
+
+        setHasEnderecos(temEndereco)
+        setEnderecoAviso(
+          temEndereco
+          ? null
+          : 'Para cadastrar uma empresa, é necessário cadastrar ao menos um endereço no menu "Endereços".'
+        )
+      } catch (error) {
+        setHasEnderecos(false)
+        setEnderecoAviso(
+          'Não foi possível verificar os endereços cadastrados. Tente acessar o menu "Endereços" antes de criar uma empresa.'
+        )
+      } finally {
+        setEnderecosCarregados(true)
+      }
+    }
+
     fetchEmpresas()
+    fetchEnderecos()
   }, [])
 
   const filteredEmpresas = useMemo(() => {
@@ -69,6 +98,13 @@ export default function EmpresasPage() {
   const empresasInativas = totalEmpresas - empresasAtivas
 
   const handleAddEmpresa = () => {
+    if (!hasEnderecos) {
+      setEnderecoAviso(
+        'Para cadastrar uma empresa, é necessário cadastrar ao menos um endereço no menu "Endereços".'
+      )
+      return
+    }
+
     setEditingEmpresa(null)
     setShowForm(true)
   }
@@ -150,11 +186,24 @@ export default function EmpresasPage() {
         <button
           onClick={handleAddEmpresa}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          disabled={isSaving}
+          disabled={isSaving || (!enderecosCarregados || !hasEnderecos)}
         >
           Nova Empresa
         </button>
       </div>
+
+      {enderecoAviso && (
+        <div className='mb-4 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-smtext-yellow-800'>
+          {enderecoAviso}{' '}
+          <button
+            type='button'
+            onClick={() => router.push('/dashboard/enderecos')}
+            className='ml-1 font-medium underline'
+          >
+            Ir para cadastro de endereços
+          </button>
+        </div>
+      )}
 
       {errorMessage && (
         <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

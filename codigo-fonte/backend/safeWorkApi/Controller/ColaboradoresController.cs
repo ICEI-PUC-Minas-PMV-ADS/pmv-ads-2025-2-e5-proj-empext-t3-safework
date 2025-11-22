@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,19 +21,6 @@ namespace safeWorkApi.Controller
             _context = context;
         }
 
-        //Retorna o nome do perfil pelo Id do Perfil recebido
-        private async Task<string?> PerfilFilter(string PerfilId)
-        {
-            int perfilId = int.Parse(PerfilId);
-            var perfil = await _context.Perfis
-                .FirstOrDefaultAsync(c => c.Id == perfilId);
-
-            if (perfil == null)
-                return null;
-
-            return perfil.NomePerfil;
-        }
-
         //Funcao que retorna uma Lista das emprsas clientes Vinculadas a empresa prestadora
         private async Task<List<int>> VerficarEmpresasClientes(int idEmpresaPrestadora)
         {
@@ -46,6 +35,7 @@ namespace safeWorkApi.Controller
         }
 
         // GET: api/Colaborador
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ColaboradorDto>>> GetAll()
         {
@@ -55,21 +45,24 @@ namespace safeWorkApi.Controller
                 Console.WriteLine($"{claim.Type} = {claim.Value}");
             }
 
-            var IdPerfil = User.FindFirst("IdPerfil")?.Value;
-            if (string.IsNullOrEmpty(IdPerfil))
-                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
-
-            string perfil = await PerfilFilter(IdPerfil) ?? "";
-
-            //Valida o perfil
-            if (string.IsNullOrEmpty(perfil))
-                return Unauthorized(new { message = "Nome do perdil do usuário não encontrado." });
-
+            var perfil = User.FindFirst(ClaimTypes.Role)?.Value;
             var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
 
+            if (string.IsNullOrEmpty(perfil))
+                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
+
+            if (perfil == "Root")
+            {
+                // Se ROOT retorna todos os colaboradores
+                var colaboradores = await _context.Colaboradores
+                .AsNoTracking()
+                .ToListAsync();
+
+                return Ok(colaboradores.Select(MapToDto));
+            }
+
             // Somente Root pode não ter empresa prestadora
-            if (string.IsNullOrEmpty(idEmpresaPrestadoraString)
-                && !string.Equals(perfil, "Root"))
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
                 return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
 
             if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
@@ -82,30 +75,21 @@ namespace safeWorkApi.Controller
             if (!string.Equals(perfil, "Root") && empresasClinetes.Count == 0)
                 return NotFound(new { message = "Nenhum contrato encontrado para esta Empresa Prestadora." });
 
-            List<Colaborador> colaboradores;
-
             //Se o perfil for Administrador ou Colaborador, retororna
-            //os colaboradores viculadaos a empresa pro contrato
+            //os colaboradores viculadaos a empresa por contrato
             if (string.Equals(perfil, "Administrador")
                 || string.Equals(perfil, "Colaborador"))
             {
-                colaboradores = await _context.Colaboradores
+                var colaboradoresFiltrados = await _context.Colaboradores
                 .AsNoTracking()
                 .Where(c => empresasClinetes.Contains(c.IdEmpresaCliente))
                 .ToListAsync();
-            }
-            else if (string.Equals(perfil, "Root"))
-            {
-                // Se ROOT retorna todos os colaboradores
-                colaboradores = await _context.Colaboradores
-                .AsNoTracking()
-                .ToListAsync();
+
+                var result = colaboradoresFiltrados.Select(MapToDto).ToList();
+                return Ok(result);
             }
             else
                 return Unauthorized(new { message = "Perfil do usuario nao encontrado." });
-
-            var result = colaboradores.Select(MapToDto).ToList();
-            return Ok(result);
         }
 
         // GET api/Colaborador/5

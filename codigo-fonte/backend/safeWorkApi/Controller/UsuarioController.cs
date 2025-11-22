@@ -145,7 +145,7 @@ namespace safeWorkApi.Controller
                 Id = usuario.Id,
                 NomeCompleto = usuario.NomeCompleto ?? string.Empty,
                 Email = usuario.Email,
-                IdPerfil = usuario.IdPerfil,
+                NomePerfil = usuario.Perfil.NomePerfil,
                 IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
             };
         }

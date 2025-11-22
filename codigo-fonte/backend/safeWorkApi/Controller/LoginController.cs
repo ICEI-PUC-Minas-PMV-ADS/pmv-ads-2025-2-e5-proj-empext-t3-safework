@@ -53,7 +53,7 @@ namespace safeWorkApi.Controller
                     Id = usuarioDb.Id,
                     NomeCompleto = usuarioDb.NomeCompleto ?? "",
                     Email = usuarioDb.Email,
-                    IdPerfil = usuarioDb.IdPerfil,
+                    NomePerfil = usuarioDb.Perfil.NomePerfil.ToString(),
                     IdEmpresaPrestadora = usuarioDb.IdEmpresaPrestadora
                 }
             };
@@ -70,9 +70,9 @@ namespace safeWorkApi.Controller
 
             var claims = new List<Claim>
             {
-                new Claim("UserId", model.Id.ToString()),
-                new Claim("Email", model.Email),
-                new Claim("IdPerfil", model.IdPerfil.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
+                new Claim(ClaimTypes.Email, model.Email),
+                new Claim(ClaimTypes.Role, model.Perfil.NomePerfil),
                 new Claim("IdEmpresaPrestadora", model.IdEmpresaPrestadora?.ToString() ?? "")
             };
 
@@ -90,7 +90,7 @@ namespace safeWorkApi.Controller
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var email = User.FindFirst("Email")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
                 return Unauthorized();
 
@@ -104,9 +104,9 @@ namespace safeWorkApi.Controller
             var usuarioDto = new UsuarioDto
             {
                 Id = usuario.Id,
-                NomeCompleto = usuario.NomeCompleto,
+                NomeCompleto = usuario.NomeCompleto ?? "undefined",
                 Email = usuario.Email,
-                IdPerfil = usuario.IdPerfil,
+                NomePerfil = usuario.Perfil.NomePerfil,
                 IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
             };
 

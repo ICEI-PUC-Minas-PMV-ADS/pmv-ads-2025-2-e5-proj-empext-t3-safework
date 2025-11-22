@@ -52,7 +52,8 @@ export default function EnderecosPage() {
   }, [enderecos])
 
   const estadosUnicos = useMemo(() => {
-    const ufs = [...new Set(enderecos.map(endereco => endereco.uf))].sort()
+    const ufsSet = new Set(enderecos.map(endereco => endereco.uf))
+    const ufs = Array.from(ufsSet).sort()
     return ufs
   }, [enderecos])
 
@@ -86,10 +87,21 @@ export default function EnderecosPage() {
 
   const handleDeleteEndereco = (id: number) => {
     if (confirm('Tem certeza que deseja excluir este endereço?')) {
-      apiEnderecos.deleteEndereco(id).then(() => {
-        setEnderecos(prev => prev.filter(endereco => endereco.id !== id))
-      }).catch((error) => {
-        console.error('Erro ao excluir endereço:', error)
+      apiEnderecos.deleteEndereco(id)
+        .then(() => {
+          setEnderecos(prev => prev.filter(endereco => endereco.id !== id))
+        })
+        .catch((error: any) => {
+          console.error('Erro ao excluir endereço:', error)
+
+          const apiMessage =
+            error?.response?.data ||
+            error?.response?.data?.message
+
+          alert(
+            apiMessage ||
+            'Não foi possível excluir este endereço. Verifique se ele está vinculado a alguma empresa ou colaborador.'
+          )
       })
     }
   }
@@ -173,7 +185,7 @@ export default function EnderecosPage() {
             <div>
               <p className="text-sm text-gray-600">Cidades Únicas</p>
               <p className="text-2xl font-bold text-gray-900">
-                {[...new Set(enderecos.map(e => e.municipio))].length}
+                {new Set(enderecos.map(e => e.municipio)).size}
               </p>
             </div>
           </div>
@@ -187,7 +199,7 @@ export default function EnderecosPage() {
             <div>
               <p className="text-sm text-gray-600">CEPs Únicos</p>
               <p className="text-2xl font-bold text-gray-900">
-                {[...new Set(enderecos.map(e => e.cep))].length}
+                {new Set(enderecos.map(e => e.cep)).size}
               </p>
             </div>
           </div>

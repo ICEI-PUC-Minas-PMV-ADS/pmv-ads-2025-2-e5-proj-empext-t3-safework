@@ -47,11 +47,11 @@ namespace safeWorkApi.Controller
 
             var response = new LoginResponseDto
             {
-                JwtToken = jwt,
-                Usuario = new UsuarioDto
+                jwtToken = jwt,
+                usuario = new UsuarioDto
                 {
                     Id = usuarioDb.Id,
-                    NomeCompleto = usuarioDb.NomeCompleto,
+                    NomeCompleto = usuarioDb.NomeCompleto ?? "",
                     Email = usuarioDb.Email,
                     IdPerfil = usuarioDb.IdPerfil,
                     IdEmpresaPrestadora = usuarioDb.IdEmpresaPrestadora
@@ -67,15 +67,18 @@ namespace safeWorkApi.Controller
             var tokenHandler = new JwtSecurityTokenHandler();
             //Chave de criptografia deve ser o mesmo do program.cs
             var key = Encoding.ASCII.GetBytes("BjRxlIiDQHvTrRQM3Ke4CeS9uE3RZODH");
-            var claims = new ClaimsIdentity(new Claim[]
+
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, model.Email),
-                new Claim(ClaimTypes.Role, model.IdPerfil.ToString())
-            });
+                new Claim("UserId", model.Id.ToString()),
+                new Claim("Email", model.Email),
+                new Claim("IdPerfil", model.IdPerfil.ToString()),
+                new Claim("IdEmpresaPrestadora", model.IdEmpresaPrestadora?.ToString() ?? "")
+            };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = claims,
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(8),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
@@ -87,7 +90,7 @@ namespace safeWorkApi.Controller
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var email = User.FindFirst("Email")?.Value;
             if (string.IsNullOrEmpty(email))
                 return Unauthorized();
 

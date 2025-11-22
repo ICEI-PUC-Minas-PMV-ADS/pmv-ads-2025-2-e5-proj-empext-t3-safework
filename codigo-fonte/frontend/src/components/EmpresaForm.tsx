@@ -379,23 +379,9 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
 
             {/* Endereço */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label
-                  htmlFor="idEndereco"
-                  className="text-sm font-medium text-gray-900"
-                >
-                  Endereço *
-                </label>
-
-                <button
-                  type="button"
-                  onClick={() => setShowEnderecoModal(true)}
-                  className='text-xs sm:text-sm text-blue-600 hover:underline'
-                >
-                  + Cadastrar endereço
-                </button>
-              </div>
-
+              <label htmlFor="idEndereco" className="block text-sm font-medium text-gray-900 mb-2">
+                Endereço *
+              </label>
               {loadingEnderecos ? (
                 <p className="text-sm text-gray-500">Carregando endereços...</p>
               ) : (
@@ -410,7 +396,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                   <option value="">Selecione um endereço</option>
                   {enderecos.map((endereco) => (
                     <option key={endereco.id} value={endereco.id}>
-                      {endereco.logradouro} {endereco.numero ? `, ${endereco.numero}` : ''}
+                      {endereco.logradouro}
                     </option>
                   ))}
                 </select>

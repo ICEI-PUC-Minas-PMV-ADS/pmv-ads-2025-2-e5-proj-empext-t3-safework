@@ -51,6 +51,7 @@ class ApiClient {
 
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('auth_token')
+      console.log("TOKEN ENCONTRADO PARA API" + this.token)
       if (this.token) {
         this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
       }

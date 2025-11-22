@@ -50,14 +50,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setError(null)
       setIsLoading(true)
-      
+
       const response = await apiClient.login(credentials)
       apiClient.setToken(response.jwtToken)
-      
+
       // Salva os dados do usuário no localStorage
       localStorage.setItem('user_data', JSON.stringify(response.usuario))
       setUser(response.usuario)
-      
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login'
       setError(errorMessage)

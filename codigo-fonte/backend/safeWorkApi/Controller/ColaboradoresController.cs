@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
@@ -18,22 +19,96 @@ namespace safeWorkApi.Controller
             _context = context;
         }
 
-        // GET: api/Aso
+        //Retorna o nome do perfil pelo Id do Perfil recebido
+        private async Task<string?> PerfilFilter(string PerfilId)
+        {
+            int perfilId = int.Parse(PerfilId);
+            var perfil = await _context.Perfis
+                .FirstOrDefaultAsync(c => c.Id == perfilId);
+
+            if (perfil == null)
+                return null;
+
+            return perfil.NomePerfil;
+        }
+
+        //Funcao que retorna uma Lista das emprsas clientes Vinculadas a empresa prestadora
+        private async Task<List<int>> VerficarEmpresasClientes(int idEmpresaPrestadora)
+        {
+            List<int> empresasClinetes = await _context.Contratos
+                .AsNoTracking()
+                .Where(c => c.IdEmpresaPrestadora == idEmpresaPrestadora)
+                .Select(c => c.IdEmpresaCliente)
+                .Distinct()
+                .ToListAsync();
+
+            return empresasClinetes;
+        }
+
+        // GET: api/Colaborador
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ColaboradorDto>>> GetAll()
         {
-            var colaboradores = await _context.Colaboradores
+
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"{claim.Type} = {claim.Value}");
+            }
+
+            var IdPerfil = User.FindFirst("IdPerfil")?.Value;
+            if (string.IsNullOrEmpty(IdPerfil))
+                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
+
+            string perfil = await PerfilFilter(IdPerfil) ?? "";
+
+            //Valida o perfil
+            if (string.IsNullOrEmpty(perfil))
+                return Unauthorized(new { message = "Nome do perdil do usuário não encontrado." });
+
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString)
+                && !string.Equals(perfil, "Root"))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+            //Obtem o ID das empresas clientes vinculadas a empresa prestadora
+            List<int> empresasClinetes = await VerficarEmpresasClientes(idEmpresaPrestadora);
+
+            // Verifica se nao existe um contrato que vincule
+            if (!string.Equals(perfil, "Root") && empresasClinetes.Count == 0)
+                return NotFound(new { message = "Nenhum contrato encontrado para esta Empresa Prestadora." });
+
+            List<Colaborador> colaboradores;
+
+            //Se o perfil for Administrador ou Colaborador, retororna
+            //os colaboradores viculadaos a empresa pro contrato
+            if (string.Equals(perfil, "Administrador")
+                || string.Equals(perfil, "Colaborador"))
+            {
+                colaboradores = await _context.Colaboradores
                 .AsNoTracking()
-                .Include(c => c.EmpresaCliente)
-                .Include(c => c.Endereco)
+                .Where(c => empresasClinetes.Contains(c.IdEmpresaCliente))
                 .ToListAsync();
+            }
+            else if (string.Equals(perfil, "Root"))
+            {
+                // Se ROOT retorna todos os colaboradores
+                colaboradores = await _context.Colaboradores
+                .AsNoTracking()
+                .ToListAsync();
+            }
+            else
+                return Unauthorized(new { message = "Perfil do usuario nao encontrado." });
 
             var result = colaboradores.Select(MapToDto).ToList();
-
             return Ok(result);
         }
 
-        // GET api/Aso/5
+        // GET api/Colaborador/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ColaboradorDto>> GetById(int id)
         {

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
+using safeWorkApi.utils.Controller;
 
 namespace safeWorkApi.Controller
 {
@@ -14,25 +17,33 @@ namespace safeWorkApi.Controller
     public class UsuarioController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Filters _filters;
 
-        public UsuarioController(AppDbContext context)
+        public UsuarioController(AppDbContext context, Filters filters)
         {
             _context = context;
+            _filters = filters;
         }
 
         // GET: api/Usuario
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetAll()
         {
-            var usuarios = await _context.Usuarios
-                .AsNoTracking()
-                .ToListAsync();
+            var result = await _filters.FiltrarUsuarioPorContrato(User);
 
-            var result = usuarios.Select(MapToDto).ToList();
-            return Ok(result);
+            if (result.Result != null)
+            {
+                return result.Result;
+            }
+
+            var usuarios = result.Value;
+
+            return Ok(usuarios.Select(MapToDto).ToList());
         }
 
         // GET: api/Usuario/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDto>> GetById(int id)
         {
@@ -49,6 +60,7 @@ namespace safeWorkApi.Controller
         }
 
         // POST: api/Usuario
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> Create(UsuarioCreateDto usuario)
         {
@@ -57,8 +69,15 @@ namespace safeWorkApi.Controller
                 return BadRequest(ModelState);
             }
 
+            //Perfil do usuário
+            var perfil = User.FindFirst(ClaimTypes.Role)?.Value;
+            //Validação do Perfil
+            if (string.IsNullOrEmpty(perfil))
+                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
+
             var newUsuario = new Usuario { };
-            if (usuario.IdPerfil == 1)
+
+            if (perfil == "Root")
             {
                 //Configuracao para usuario de perfil Root
                 newUsuario = new Usuario
@@ -67,26 +86,38 @@ namespace safeWorkApi.Controller
                     Email = usuario.Email,
                     Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
                     IdPerfil = usuario.IdPerfil,
-                    IdEmpresaPrestadora = null
+                    IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
                 };
             }
-            else
+
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+            if (!(idEmpresaPrestadora == usuario.IdEmpresaPrestadora))
+                return Unauthorized(new { message = "Não é possível criar um usuário para outra empresa." });
+
+            //Perfis permitidos para criação de usuario para mesma empresa prestadora
+            if (string.Equals(perfil, "Administrador")
+                || string.Equals(perfil, "Colaborador"))
             {
-                //Configuracao para usuario convencional
+                //Configuracao para usuario de perfil convencional
                 newUsuario = new Usuario
                 {
                     NomeCompleto = usuario.NomeCompleto,
                     Email = usuario.Email,
                     Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
                     IdPerfil = usuario.IdPerfil,
-                    IdEmpresaPrestadora = 1 /* => Necessario alterar 
-                    futuramente caso tenham mais empresas
-                    de seguranca do trabalho cadastradas*/
+                    IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
                 };
             }
-
-
-
+            else
+                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
             try
             {
                 _context.Usuarios.Add(newUsuario);
@@ -101,6 +132,7 @@ namespace safeWorkApi.Controller
 
         // PUT: api/Usuario/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<UsuarioDto>> Update(int id, UsuarioUpdateDto model)
         {
             try
@@ -125,7 +157,8 @@ namespace safeWorkApi.Controller
             }
         }
 
-        // DELETE: api/Usuario/5
+        // DELETE: api/Usuario/5]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -145,7 +178,7 @@ namespace safeWorkApi.Controller
                 Id = usuario.Id,
                 NomeCompleto = usuario.NomeCompleto ?? string.Empty,
                 Email = usuario.Email,
-                NomePerfil = usuario.Perfil.NomePerfil,
+                IdPerfil = usuario.IdPerfil,
                 IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
             };
         }

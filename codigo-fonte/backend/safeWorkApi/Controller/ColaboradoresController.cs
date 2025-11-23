@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
+using safeWorkApi.utils.Controller;
 
 namespace safeWorkApi.Controller
 {
@@ -15,23 +16,12 @@ namespace safeWorkApi.Controller
     public class ColaboradoresController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Filters _filters;
 
-        public ColaboradoresController(AppDbContext context)
+        public ColaboradoresController(AppDbContext context, Filters filters)
         {
             _context = context;
-        }
-
-        //Funcao que retorna uma Lista das emprsas clientes Vinculadas a empresa prestadora
-        private async Task<List<int>> VerficarEmpresasClientes(int idEmpresaPrestadora)
-        {
-            List<int> empresasClinetes = await _context.Contratos
-                .AsNoTracking()
-                .Where(c => c.IdEmpresaPrestadora == idEmpresaPrestadora)
-                .Select(c => c.IdEmpresaCliente)
-                .Distinct()
-                .ToListAsync();
-
-            return empresasClinetes;
+            _filters = filters;
         }
 
         // GET: api/Colaborador
@@ -39,60 +29,20 @@ namespace safeWorkApi.Controller
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ColaboradorDto>>> GetAll()
         {
+            var result = await _filters.FiltrarColaboradoresPorContrato(User);
 
-            foreach (var claim in User.Claims)
+            if (result.Result != null)
             {
-                Console.WriteLine($"{claim.Type} = {claim.Value}");
+                return result.Result;
             }
 
-            var perfil = User.FindFirst(ClaimTypes.Role)?.Value;
-            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+            var colaboradores = result.Value;
 
-            if (string.IsNullOrEmpty(perfil))
-                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
-
-            if (perfil == "Root")
-            {
-                // Se ROOT retorna todos os colaboradores
-                var colaboradores = await _context.Colaboradores
-                .AsNoTracking()
-                .ToListAsync();
-
-                return Ok(colaboradores.Select(MapToDto));
-            }
-
-            // Somente Root pode não ter empresa prestadora
-            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
-                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
-
-            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
-                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
-
-            //Obtem o ID das empresas clientes vinculadas a empresa prestadora
-            List<int> empresasClinetes = await VerficarEmpresasClientes(idEmpresaPrestadora);
-
-            // Verifica se nao existe um contrato que vincule
-            if (!string.Equals(perfil, "Root") && empresasClinetes.Count == 0)
-                return NotFound(new { message = "Nenhum contrato encontrado para esta Empresa Prestadora." });
-
-            //Se o perfil for Administrador ou Colaborador, retororna
-            //os colaboradores viculadaos a empresa por contrato
-            if (string.Equals(perfil, "Administrador")
-                || string.Equals(perfil, "Colaborador"))
-            {
-                var colaboradoresFiltrados = await _context.Colaboradores
-                .AsNoTracking()
-                .Where(c => empresasClinetes.Contains(c.IdEmpresaCliente))
-                .ToListAsync();
-
-                var result = colaboradoresFiltrados.Select(MapToDto).ToList();
-                return Ok(result);
-            }
-            else
-                return Unauthorized(new { message = "Perfil do usuario nao encontrado." });
+            return Ok(colaboradores.Select(MapToDto).ToList());
         }
 
         // GET api/Colaborador/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ColaboradorDto>> GetById(int id)
         {
@@ -115,6 +65,26 @@ namespace safeWorkApi.Controller
             {
                 return BadRequest(ModelState);
             }
+
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+            //Obtem o lista de Ids das empresas clientes vinculadas a empresa prestadora pelo contrato
+            List<int> empresasClinetes = await _filters.VerficarEmpresasClientes(idEmpresaPrestadora);
+
+            //Verifica se a empresa prestadora a qual o usuário pertence
+            //possui vinculo com a empresa cliente vinculada ao colaborador
+            if (!empresasClinetes.Contains(model.IdEmpresaCliente))
+                return Unauthorized(new
+                {
+                    message = "Empresa Cliente inválida não possui vinculo com essa Empresa Prestadora."
+                });
 
             var colaborador = new Colaborador
             {
@@ -183,7 +153,7 @@ namespace safeWorkApi.Controller
             return NoContent();
         }
 
-        private static ColaboradorDto MapToDto(Colaborador model)
+        private ColaboradorDto MapToDto(Colaborador model)
         {
             return new ColaboradorDto
             {

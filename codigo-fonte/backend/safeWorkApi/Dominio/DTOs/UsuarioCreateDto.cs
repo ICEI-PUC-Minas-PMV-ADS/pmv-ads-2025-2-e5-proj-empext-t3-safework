@@ -19,6 +19,8 @@ namespace safeWorkApi.Dominio.DTOs
         [Required]
         public int IdPerfil { get; set; } = default!;
 
+        public int? IdEmpresaPrestadora { get; set; } = null;
+
 
     }
 }

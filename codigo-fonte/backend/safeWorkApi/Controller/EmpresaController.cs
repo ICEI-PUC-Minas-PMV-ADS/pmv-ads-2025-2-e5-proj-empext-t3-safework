@@ -1,8 +1,10 @@
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
+using safeWorkApi.utils.Controller;
 
 namespace safeWorkApi.Controller
 {
@@ -11,22 +13,29 @@ namespace safeWorkApi.Controller
     public class EmpresaController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Filters _filters;
 
-        public EmpresaController(AppDbContext context)
+        public EmpresaController(AppDbContext context, Filters filters)
         {
             _context = context;
+            _filters = filters;
         }
 
         // GET: api/Empresa
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmpresaClienteDTO>>> GetAll()
         {
-            var model = await _context.EmpresasClientes
-                .AsNoTracking()
-                .Include(e => e.Endereco)
-                .ToListAsync();
 
-            List<EmpresaClienteDTO> empresaClienteDTO = model.Select(m => new EmpresaClienteDTO
+            var result = await _filters.FiltrarEmpresasPorContrato(User);
+
+            if (result.Result != null)
+            {
+                return result.Result;
+            }
+            var colaboradores = result.Value;
+
+            List<EmpresaClienteDTO> empresaClienteDTO = colaboradores.Select(m => new EmpresaClienteDTO
             {
                 Id = m.Id,
                 TipoPessoa = m.TipoPessoa,
@@ -45,9 +54,30 @@ namespace safeWorkApi.Controller
         }
 
         // GET api/Empresa/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<EmpresaClienteDTO>> GetById(int id)
         {
+
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+            //Obtem o lista de Ids das empresas clientes vinculadas a empresa prestadora pelo contrato
+            List<int> empresasClinetes = await _filters.VerficarEmpresasClientes(idEmpresaPrestadora);
+
+            //Verifica se a empresa prestadora a qual o usuário pertence
+            //possui vinculo com a empresa cliente vinculada ao colaborador
+            if (!empresasClinetes.Contains(id))
+                return Unauthorized(new
+                {
+                    message = "Empresa Cliente inválida não possui vinculo com essa Empresa Prestadora."
+                });
 
             var model = await _context.EmpresasClientes
                 .AsNoTracking()
@@ -74,6 +104,7 @@ namespace safeWorkApi.Controller
         }
 
         // POST api/Empresa
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<EmpresaClienteCreateDTO>> Create(EmpresaClienteCreateDTO model)
         {
@@ -82,6 +113,17 @@ namespace safeWorkApi.Controller
             {
                 return BadRequest(ModelState);
             }
+
+            //Obtem Id da Empresa prestadora por JWT
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
 
             EmpresaCliente empresaCliente = new EmpresaCliente
             {
@@ -96,9 +138,24 @@ namespace safeWorkApi.Controller
                 IdEndereco = model.IdEndereco
             };
 
-
             _context.EmpresasClientes.Add(empresaCliente);
             await _context.SaveChangesAsync();
+
+            Contrato contrato = new Contrato
+            {
+                Numero = model.NumeroContrato,
+                DataInicio = model.DataInicioContrto,
+                DataFim = model.DataFimContrato,
+                StatusContrato = StatusContrato.Ativo,
+                PathFile = model.PathFileContrato,
+                Valor = model.ValorContrato,
+                Observacoes = model.ObservacoesContrto,
+                IdEmpresaCliente = empresaCliente.Id,
+                IdEmpresaPrestadora = idEmpresaPrestadora
+            };
+            _context.Contratos.Add(contrato);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetById), new { id = empresaCliente.Id }, new EmpresaClienteDTO
             {
                 Id = empresaCliente.Id,
@@ -115,6 +172,7 @@ namespace safeWorkApi.Controller
         }
 
         // PUT api/<AsoController>/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<EmpresaClienteDTO>> Update(int id, EmpresaClienteDTO model)
         {
@@ -144,6 +202,7 @@ namespace safeWorkApi.Controller
         }
 
         // DELETE api/<AsoController>/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -155,6 +214,23 @@ namespace safeWorkApi.Controller
             _context.EmpresasClientes.Remove(model);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Nenhum arquivo foi enviado");
+
+            if (file.ContentType != "application/pdf")
+                return BadRequest("Apenas arquivos PDF são permitidos");
+
+            // Upload para Azure Blob Storage
+            // var blobUrl = await _blobService.UploadFileAsync(file);
+
+            // return Ok(new { url = blobUrl });
+            return Ok();
         }
     }
 }

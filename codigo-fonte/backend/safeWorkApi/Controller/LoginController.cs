@@ -36,7 +36,7 @@ namespace safeWorkApi.Controller
                 string.IsNullOrWhiteSpace(model.Senha)))
                 return Unauthorized(new { message = "Email e senha são obrigatórios" });
 
-            Usuario? usuarioDb = await _context.Usuarios.AsNoTracking()
+            Usuario? usuarioDb = await _context.Usuarios
                 .Include(u => u.Perfil)
                 .FirstOrDefaultAsync(c => c.Email == model.Email);
 
@@ -125,7 +125,7 @@ namespace safeWorkApi.Controller
                 return StatusCode(422, "Dados de email inválidos");
 
             var user = await _context.Usuarios
-                .AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
                 return StatusCode(422, "Usuário não cadastrado");
@@ -158,7 +158,7 @@ namespace safeWorkApi.Controller
                 return StatusCode(400, "Dados não fornecidos");
 
             var userDb = await _context.Usuarios
-                .AsNoTracking().FirstOrDefaultAsync(u => u.Email == model.Email);
+                .FirstOrDefaultAsync(u => u.Email == model.Email);
 
             if (userDb == null)
                 return StatusCode(422, "Usuário não pertence ao site");

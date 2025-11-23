@@ -353,7 +353,97 @@ namespace safeWorkTests.Controller
             Assert.Equal("Usuário não cadastrado", message);
         }
 
-        
+        [Fact]
+        public async Task ResetPassword_WithNullModel_ReturnsBadRequest()
+        {
+            var controller = CreateController();
+
+            var result = await controller.ResetPassword(null!);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(400, objectResult.StatusCode);
+            var message = Assert.IsType<string>(objectResult.Value);
+            Assert.Equal("Dados não fornecidos", message);
+        }
+
+        [Fact]
+        public async Task ResetPassword_WithNonExistingUser_ReturnsUnprocessableEntity()
+        {
+            var controller = CreateController();
+            var model = new ResetPasswordDto
+            {
+                Email = "naoexiste@safework.com",
+                TempPassword = "abc123",
+                NewPassword = "novaSenha123"
+            };
+
+            var result = await controller.ResetPassword(model);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(422, objectResult.StatusCode);
+            var message = Assert.IsType<string>(objectResult.Value);
+            Assert.Equal("Usuário não pertence ao site", message);
+        }
+
+        [Fact]
+        public async Task ResetPassword_WithInvalidTempPassword_ReturnsBadRequest()
+        {
+            var controller = CreateController();
+            var model = new ResetPasswordDto
+            {
+                Email = "uteste@email.com",
+                TempPassword = "tokenErrado",
+                NewPassword = "novaSenha123"
+            };
+
+            var result = await controller.ResetPassword(model);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(400, objectResult.StatusCode);
+            var message = Assert.IsType<string>(objectResult.Value);
+            Assert.Equal("Token inválido ou expirado", message);
+        }
+
+        [Fact]
+        public async Task ResetPassword_WithValidData_UpdatesPasswordAndReturnsOk()
+        {
+            var controller = CreateController();
+            var email = "uteste@email.com";
+            var tempPassword = "token123";
+            var newPassword = "SenhaNova123";
+
+            var tempDataField = typeof(LoginController).GetField(
+                "_tempData",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            Assert.NotNull(tempDataField);
+
+            var tempDataService = Assert.IsType<TempDataService>(
+                tempDataField.GetValue(controller));
+
+            tempDataService.SetData(email, tempPassword);
+
+            var model = new ResetPasswordDto
+            {
+                Email = email,
+                TempPassword = tempPassword,
+                NewPassword = newPassword
+            };
+
+            var result = await controller.ResetPassword(model);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(200, objectResult.StatusCode);
+            var message = Assert.IsType<string>(objectResult.Value);
+            Assert.Equal("Senha Restaurada", message);
+
+            var userDb = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            Assert.NotNull(userDb);
+            Assert.True(BCrypt.Net.BCrypt.Verify(newPassword, userDb!.Senha));
+
+            var tempAfter = tempDataService.GetData(email);
+            Assert.True(string.IsNullOrEmpty(tempAfter));
+        }
 
     }
 }

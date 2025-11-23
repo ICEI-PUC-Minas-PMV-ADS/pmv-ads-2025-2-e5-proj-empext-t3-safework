@@ -16,14 +16,24 @@ class ApiEnderecos {
             },
         })
 
-        //ADICIONAR QUANDO PRECISAR USAR O TOKEN JWT NA REQUISICAO
+        if (typeof window !== 'undefined') {
+            this.token = localStorage.getItem('auth_token')
+            if (this.token) {
+                this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+            }
+        }
 
-        // if (typeof window !== 'undefined') {
-        //     this.token = localStorage.getItem('auth_token')
-        //     if (this.token) {
-        //         this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
-        //     }
-        // }
+        this.axiosInstance.interceptors.request.use(
+            (config: InternalAxiosRequestConfig) => {
+                if (this.token) {
+                    config.headers.Authorization = `Bearer ${this.token}`
+                }
+                return config
+            },
+            (error: any) => {
+                return Promise.reject(error)
+            }
+        )
     }
 
     async getEnderecos(): Promise<Endereco[]> {

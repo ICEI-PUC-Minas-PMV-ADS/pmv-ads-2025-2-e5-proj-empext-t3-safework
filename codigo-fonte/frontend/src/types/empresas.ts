@@ -11,6 +11,14 @@ export interface Empresa {
   email?: string
   status: boolean
   idEndereco?: number
+
+  // Campos do Contrato
+  numeroContrato?: string
+  pathFileContrato?: string
+  valorContrato?: number
+  observacoesContrto?: string
+  dataInicioContrto?: string
+  dataFimContrato?: string
 }
 
 export interface EmpresaFormData {
@@ -23,4 +31,12 @@ export interface EmpresaFormData {
   email?: string
   status: boolean
   idEndereco?: number
+
+  // Campos do Contrato
+  numeroContrato?: string
+  pathFileContrato?: string
+  valorContrato?: number
+  observacoesContrto?: string
+  dataInicioContrto?: string
+  dataFimContrato?: string
 }

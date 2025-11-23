@@ -6,7 +6,7 @@ import { Empresa, EmpresaFormData } from '@/types/empresas'
 import { EmpresaForm } from '@/components/EmpresaForm'
 import { apiClient } from '@/lib/api'
 import { useRouter } from 'next/navigation'
-import { getEnderecos } from '@/lib/api_empresas'
+import { getEnderecos } from '@/lib/api_enderecos'
 
 type RequestState = 'idle' | 'loading' | 'saving'
 

@@ -8,7 +8,7 @@ namespace safeWorkApi.Dominio.DTOs
 {
     public class LoginResponseDto
     {
-        public string JwtToken { get; set; } = string.Empty;
-        public UsuarioDto Usuario { get; set; } = new UsuarioDto();
+        public string jwtToken { get; set; } = string.Empty;
+        public UsuarioDto usuario { get; set; } = new UsuarioDto();
     }
 }

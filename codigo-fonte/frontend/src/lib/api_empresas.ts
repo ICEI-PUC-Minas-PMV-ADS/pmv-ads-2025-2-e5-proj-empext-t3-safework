@@ -57,7 +57,7 @@ class ApiEmpresa {
 
 export const apiEmpresas = new ApiEmpresa(API_BASE_URL)
 
-export const getEnderecos = () => apiEmpresas.getEmpresas()
+export const getEmpresas = () => apiEmpresas.getEmpresas()
 export const createEndereco = (empresa: Empresa) => apiEmpresas.createEmpresas(empresa)
 export const updateEndereco = (id: number, empresa: Empresa) => apiEmpresas.updateEmpresas(id, empresa)
 export const deleteEndereco = (id: number) => apiEmpresas.deleteEmpresas(id)

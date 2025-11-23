@@ -6,8 +6,10 @@ using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using safeWorkApi.Models;
 using safeWorkApi.service;
+using safeWorkApi.utils.Controller;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<Filters>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -44,6 +46,7 @@ builder.Services.AddAuthentication(options =>
                     };
                 });
 
+builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

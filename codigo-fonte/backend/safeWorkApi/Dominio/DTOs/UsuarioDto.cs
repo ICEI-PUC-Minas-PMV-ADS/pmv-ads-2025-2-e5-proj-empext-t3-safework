@@ -14,8 +14,8 @@ namespace safeWorkApi.Models
         public string NomeCompleto { get; set; } = null!;
         [Required]
         public string Email { get; set; } = null!;
-        [Required]
-        public int IdPerfil { get; set; }
+        public int? IdPerfil { get; set; }
+        public string NomePerfil { get; set; } = null!;
         public int? IdEmpresaPrestadora { get; set; }
     }
 }

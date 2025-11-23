@@ -47,13 +47,13 @@ namespace safeWorkApi.Controller
 
             var response = new LoginResponseDto
             {
-                JwtToken = jwt,
-                Usuario = new UsuarioDto
+                jwtToken = jwt,
+                usuario = new UsuarioDto
                 {
                     Id = usuarioDb.Id,
-                    NomeCompleto = usuarioDb.NomeCompleto,
+                    NomeCompleto = usuarioDb.NomeCompleto ?? "",
                     Email = usuarioDb.Email,
-                    IdPerfil = usuarioDb.IdPerfil,
+                    NomePerfil = usuarioDb.Perfil.NomePerfil.ToString(),
                     IdEmpresaPrestadora = usuarioDb.IdEmpresaPrestadora
                 }
             };
@@ -67,15 +67,18 @@ namespace safeWorkApi.Controller
             var tokenHandler = new JwtSecurityTokenHandler();
             //Chave de criptografia deve ser o mesmo do program.cs
             var key = Encoding.ASCII.GetBytes("BjRxlIiDQHvTrRQM3Ke4CeS9uE3RZODH");
-            var claims = new ClaimsIdentity(new Claim[]
+
+            var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
                 new Claim(ClaimTypes.Email, model.Email),
-                new Claim(ClaimTypes.Role, model.IdPerfil.ToString())
-            });
+                new Claim(ClaimTypes.Role, model.Perfil.NomePerfil),
+                new Claim("IdEmpresaPrestadora", model.IdEmpresaPrestadora?.ToString() ?? "")
+            };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = claims,
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(8),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
@@ -101,9 +104,9 @@ namespace safeWorkApi.Controller
             var usuarioDto = new UsuarioDto
             {
                 Id = usuario.Id,
-                NomeCompleto = usuario.NomeCompleto,
+                NomeCompleto = usuario.NomeCompleto ?? "undefined",
                 Email = usuario.Email,
-                IdPerfil = usuario.IdPerfil,
+                NomePerfil = usuario.Perfil.NomePerfil,
                 IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
             };
 

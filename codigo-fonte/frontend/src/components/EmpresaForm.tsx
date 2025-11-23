@@ -33,7 +33,14 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     celular: '',
     email: '',
     status: true,
-    idEndereco: undefined
+    idEndereco: undefined,
+    // Dados do Contrato
+    numeroContrato: '',
+    pathFileContrato: '',
+    valorContrato: 0,
+    observacoesContrto: '',
+    dataInicioContrto: '',
+    dataFimContrato: ''
   })
 
   const [enderecos, setEnderecos] = useState<{ id: number; logradouro: string; numero: string }[]>([])
@@ -41,6 +48,8 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showEnderecoModal, setShowEnderecoModal] = useState(false)
   const [savingEndereco, setSavingEndereco] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   // Busca endereços da API
   useEffect(() => {
@@ -70,7 +79,13 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
         celular: empresa.celular ?? '',
         email: empresa.email ?? '',
         status: empresa.status,
-        idEndereco: empresa.idEndereco
+        idEndereco: empresa.idEndereco,
+        numeroContrato: empresa.numeroContrato ?? '',
+        pathFileContrato: empresa.pathFileContrato ?? '',
+        valorContrato: empresa.valorContrato ?? 0,
+        observacoesContrto: empresa.observacoesContrto ?? '',
+        dataInicioContrto: empresa.dataInicioContrto ?? '',
+        dataFimContrato: empresa.dataFimContrato ?? ''
       })
     }
   }, [empresa])
@@ -100,8 +115,14 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
       .replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
   }
 
+  const formatCurrency = (value: string) => {
+    const numbers = value.replace(/\D/g, '')
+    const amount = parseFloat(numbers) / 100
+    return amount.toFixed(2)
+  }
+
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, type } = event.target
     const value =
@@ -116,6 +137,13 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
           ...prev,
           tipoPessoa: typedValue,
           cpfCnpj: formatCpfCnpj(prev.cpfCnpj, typedValue)
+        }
+      }
+
+      if (name === 'valorContrato' && typeof value === 'string') {
+        return {
+          ...prev,
+          valorContrato: parseFloat(value) || 0
         }
       }
 
@@ -148,6 +176,14 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     }
   }
 
+  const handleValorContratoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrency(event.target.value)
+    setFormData(prev => ({
+      ...prev,
+      valorContrato: parseFloat(formatted)
+    }))
+  }
+
   // Validação do formulário
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -170,21 +206,85 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
       newErrors.email = 'Email deve ter um formato válido'
     }
 
+    if (!formData.dataInicioContrto) {
+      newErrors.dataInicioContrto = 'Data de início do contrato é obrigatória'
+    }
+
+    if (!formData.dataFimContrato) {
+      newErrors.dataFimContrato = 'Data de fim do contrato é obrigatória'
+    }
+
+    if (formData.dataInicioContrto && formData.dataFimContrato) {
+      const dataInicio = new Date(formData.dataInicioContrto)
+      const dataFim = new Date(formData.dataFimContrato)
+
+      if (dataFim <= dataInicio) {
+        newErrors.dataFimContrato = 'Data de fim deve ser posterior à data de início'
+      }
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const uploadFileToBlob = async (file: File): Promise<string> => {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      // Ajuste a URL da sua API de upload
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao fazer upload do arquivo')
+      }
+
+      const data = await response.json()
+      return data.url // URL do blob retornada pela API
+    } catch (error) {
+      console.error('Erro no upload:', error)
+      throw error
+    }
+  }
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
     if (!validateForm()) {
       return
     }
 
-    onSave({
-      ...formData,
-      cpfCnpj: formData.cpfCnpj.replace(/\D/g, '')
-    })
+    try {
+      let blobUrl = formData.pathFileContrato
+
+      // Se houver um arquivo selecionado, faz o upload
+      if (selectedFile) {
+        blobUrl = await uploadFileToBlob(selectedFile)
+      }
+
+      // Converte as datas para o formato DateTime do C#
+      const dataInicio = formData.dataInicioContrto
+        ? new Date(formData.dataInicioContrto).toISOString()
+        : ''
+
+      const dataFim = formData.dataFimContrato
+        ? new Date(formData.dataFimContrato).toISOString()
+        : ''
+
+      onSave({
+        ...formData,
+        cpfCnpj: formData.cpfCnpj.replace(/\D/g, ''),
+        pathFileContrato: blobUrl,
+        dataInicioContrto: dataInicio,
+        dataFimContrato: dataFim
+      })
+    } catch (error) {
+      console.error('Erro ao processar formulário:', error)
+      alert('Erro ao fazer upload do arquivo. Tente novamente.')
+    }
   }
 
   const cpfCnpjLabel =
@@ -215,6 +315,60 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     setShowEnderecoModal(false)
   }
 
+  // Handlers para upload de arquivo
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file)
+      setFormData(prev => ({
+        ...prev,
+        pathFileContrato: file.name
+      }))
+      if (errors.pathFileContrato) {
+        setErrors(prev => ({ ...prev, pathFileContrato: '' }))
+      }
+    } else {
+      alert('Por favor, selecione apenas arquivos PDF')
+    }
+  }
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDragging(false)
+
+    const file = event.dataTransfer.files[0]
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file)
+      setFormData(prev => ({
+        ...prev,
+        pathFileContrato: file.name
+      }))
+      if (errors.pathFileContrato) {
+        setErrors(prev => ({ ...prev, pathFileContrato: '' }))
+      }
+    } else {
+      alert('Por favor, selecione apenas arquivos PDF')
+    }
+  }
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null)
+    setFormData(prev => ({
+      ...prev,
+      pathFileContrato: ''
+    }))
+  }
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-6">
@@ -223,218 +377,424 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label
-                htmlFor="tipoPessoa"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Tipo de Pessoa *
-              </label>
-              <select
-                id="tipoPessoa"
-                name="tipoPessoa"
-                value={formData.tipoPessoa}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-              >
-                {TIPO_PESSOA_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label
-                htmlFor="cpfCnpj"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                {cpfCnpjLabel} *
-              </label>
-              <input
-                type="text"
-                id="cpfCnpj"
-                name="cpfCnpj"
-                value={formData.cpfCnpj}
-                onChange={handleCpfCnpjChange}
-                maxLength={cpfCnpjMask[formData.tipoPessoa].length}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.cpfCnpj ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                placeholder={cpfCnpjMask[formData.tipoPessoa]}
-              />
-              {errors.cpfCnpj && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.cpfCnpj}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="nomeRazao"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                {formData.tipoPessoa === 'Fisica'
-                  ? 'Nome Completo'
-                  : 'Razão Social'}{' '}
-                *
-              </label>
-              <input
-                type="text"
-                id="nomeRazao"
-                name="nomeRazao"
-                value={formData.nomeRazao}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                placeholder={
-                  formData.tipoPessoa === 'Fisica'
-                    ? 'Digite o nome completo'
-                    : 'Digite a razão social'
-                }
-              />
-              {errors.nomeRazao && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.nomeRazao}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="nomeFantasia"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Nome Fantasia
-              </label>
-              <input
-                type="text"
-                id="nomeFantasia"
-                name="nomeFantasia"
-                value={formData.nomeFantasia ?? ''}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
-                placeholder="Digite o nome fantasia"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="telefone"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Telefone
-              </label>
-              <input
-                type="tel"
-                id="telefone"
-                name="telefone"
-                value={formData.telefone ?? ''}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
-                placeholder="(00) 0000-0000"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="celular"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Celular
-              </label>
-              <input
-                type="tel"
-                id="celular"
-                name="celular"
-                value={formData.celular ?? ''}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
-                placeholder="(00) 00000-0000"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Email *
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email ?? ''}
-                onChange={handleChange}
-                required
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.email ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                placeholder="exemplo@email.com"
-              />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-            </div>
-
-            {/* Endereço */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
+          {/* Seção: Dados da Empresa */}
+          <div>
+            <h3 className="text-md font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+              Dados da Empresa
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
                 <label
-                  htmlFor="idEndereco"
-                  className="text-sm font-medium text-gray-900"
+                  htmlFor="tipoPessoa"
+                  className="block text-sm font-medium text-gray-900 mb-2"
                 >
-                  Endereço *
+                  Tipo de Pessoa *
                 </label>
-
-                <button
-                  type="button"
-                  onClick={() => setShowEnderecoModal(true)}
-                  className='text-xs sm:text-sm text-blue-600 hover:underline'
-                >
-                  + Cadastrar endereço
-                </button>
-              </div>
-
-              {loadingEnderecos ? (
-                <p className="text-sm text-gray-500">Carregando endereços...</p>
-              ) : (
                 <select
-                  id="idEndereco"
-                  name="idEndereco"
-                  value={formData.idEndereco ?? ''}
+                  id="tipoPessoa"
+                  name="tipoPessoa"
+                  value={formData.tipoPessoa}
                   onChange={handleChange}
-                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                 >
-                  <option value="">Selecione um endereço</option>
-                  {enderecos.map((endereco) => (
-                    <option key={endereco.id} value={endereco.id}>
-                      {endereco.logradouro} {endereco.numero ? `, ${endereco.numero}` : ''}
+                  {TIPO_PESSOA_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
-              )}
-              {errors.idEndereco && (
-                <p className="mt-1 text-sm text-red-600">{errors.idEndereco}</p>
-              )}
-            </div>
+              </div>
 
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="status"
-                name="status"
-                checked={formData.status}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="status"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Empresa ativa
-              </label>
+              <div>
+                <label
+                  htmlFor="cpfCnpj"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  {cpfCnpjLabel} *
+                </label>
+                <input
+                  type="text"
+                  id="cpfCnpj"
+                  name="cpfCnpj"
+                  value={formData.cpfCnpj}
+                  onChange={handleCpfCnpjChange}
+                  maxLength={cpfCnpjMask[formData.tipoPessoa].length}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.cpfCnpj ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  placeholder={cpfCnpjMask[formData.tipoPessoa]}
+                />
+                {errors.cpfCnpj && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.cpfCnpj}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="nomeRazao"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  {formData.tipoPessoa === 'Fisica'
+                    ? 'Nome Completo'
+                    : 'Razão Social'}{' '}
+                  *
+                </label>
+                <input
+                  type="text"
+                  id="nomeRazao"
+                  name="nomeRazao"
+                  value={formData.nomeRazao}
+                  onChange={handleChange}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  placeholder={
+                    formData.tipoPessoa === 'Fisica'
+                      ? 'Digite o nome completo'
+                      : 'Digite a razão social'
+                  }
+                />
+                {errors.nomeRazao && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.nomeRazao}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="nomeFantasia"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Nome Fantasia
+                </label>
+                <input
+                  type="text"
+                  id="nomeFantasia"
+                  name="nomeFantasia"
+                  value={formData.nomeFantasia ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                  placeholder="Digite o nome fantasia"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="telefone"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Telefone
+                </label>
+                <input
+                  type="tel"
+                  id="telefone"
+                  name="telefone"
+                  value={formData.telefone ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                  placeholder="(00) 0000-0000"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="celular"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Celular
+                </label>
+                <input
+                  type="tel"
+                  id="celular"
+                  name="celular"
+                  value={formData.celular ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                  placeholder="(00) 00000-0000"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email ?? ''}
+                  onChange={handleChange}
+                  required
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.email ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  placeholder="exemplo@email.com"
+                />
+                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="idEndereco" className="block text-sm font-medium text-gray-900 mb-2">
+                  Endereço *
+                </label>
+                {loadingEnderecos ? (
+                  <p className="text-sm text-gray-500">Carregando endereços...</p>
+                ) : (
+                  <select
+                    id="idEndereco"
+                    name="idEndereco"
+                    value={formData.idEndereco ?? ''}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  >
+                    <option value="">Selecione um endereço</option>
+                    {enderecos.map((endereco) => (
+                      <option key={endereco.id} value={endereco.id}>
+                        {endereco.logradouro}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {errors.idEndereco && (
+                  <p className="mt-1 text-sm text-red-600">{errors.idEndereco}</p>
+                )}
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="status"
+                  name="status"
+                  checked={formData.status}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="status"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Empresa ativa
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Dados do Contrato */}
+          <div>
+            <h3 className="text-md font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+              Dados do Contrato
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  htmlFor="numeroContrato"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Número do Contrato
+                </label>
+                <input
+                  type="text"
+                  id="numeroContrato"
+                  name="numeroContrato"
+                  value={formData.numeroContrato}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                  placeholder="Digite o número do contrato"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="pathFileContrato"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Arquivo do Contrato (PDF)
+                </label>
+
+                {/* Área de Drag and Drop */}
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${isDragging
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                >
+                  <input
+                    type="file"
+                    id="pathFileContrato"
+                    name="pathFileContrato"
+                    accept="application/pdf"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+
+                  {selectedFile ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <svg
+                          className="w-8 h-8 text-red-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-gray-900">
+                            {selectedFile.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(selectedFile.size / 1024).toFixed(2)} KB
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveFile}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <svg
+                        className="mx-auto h-12 w-12 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <p className="mt-2 text-sm text-gray-600">
+                        Arraste o arquivo PDF aqui ou{' '}
+                        <label
+                          htmlFor="pathFileContrato"
+                          className="text-blue-600 hover:text-blue-500 cursor-pointer font-medium"
+                        >
+                          clique para selecionar
+                        </label>
+                      </p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Apenas arquivos PDF
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {errors.pathFileContrato && (
+                  <p className="mt-1 text-sm text-red-600">{errors.pathFileContrato}</p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="valorContrato"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Valor do Contrato (R$)
+                </label>
+                <input
+                  type="number"
+                  id="valorContrato"
+                  name="valorContrato"
+                  value={formData.valorContrato}
+                  onChange={handleChange}
+                  step="0.01"
+                  min="0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="dataInicioContrto"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Data de Início *
+                </label>
+                <input
+                  type="date"
+                  id="dataInicioContrto"
+                  name="dataInicioContrto"
+                  value={formData.dataInicioContrto}
+                  onChange={handleChange}
+                  required
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${errors.dataInicioContrto ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                />
+                {errors.dataInicioContrto && (
+                  <p className="mt-1 text-sm text-red-600">{errors.dataInicioContrto}</p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="dataFimContrato"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Data de Fim *
+                </label>
+                <input
+                  type="date"
+                  id="dataFimContrato"
+                  name="dataFimContrato"
+                  value={formData.dataFimContrato}
+                  onChange={handleChange}
+                  required
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${errors.dataFimContrato ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                />
+                {errors.dataFimContrato && (
+                  <p className="mt-1 text-sm text-red-600">{errors.dataFimContrato}</p>
+                )}
+              </div>
+
+              <div className="md:col-span-2">
+                <label
+                  htmlFor="observacoesContrto"
+                  className="block text-sm font-medium text-gray-900 mb-2"
+                >
+                  Observações do Contrato
+                </label>
+                <textarea
+                  id="observacoesContrto"
+                  name="observacoesContrto"
+                  value={formData.observacoesContrto}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                  placeholder="Digite observações sobre o contrato..."
+                />
+              </div>
             </div>
           </div>
 

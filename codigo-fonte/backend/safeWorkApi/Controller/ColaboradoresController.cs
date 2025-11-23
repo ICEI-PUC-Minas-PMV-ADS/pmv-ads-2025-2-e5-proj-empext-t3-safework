@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using safeWorkApi.Dominio.DTOs;
 using safeWorkApi.Models;
+using safeWorkApi.utils.Controller;
 
 namespace safeWorkApi.Controller
 {
@@ -12,28 +16,33 @@ namespace safeWorkApi.Controller
     public class ColaboradoresController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Filters _filters;
 
-        public ColaboradoresController(AppDbContext context)
+        public ColaboradoresController(AppDbContext context, Filters filters)
         {
             _context = context;
+            _filters = filters;
         }
 
-        // GET: api/Aso
+        // GET: api/Colaborador
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ColaboradorDto>>> GetAll()
         {
-            var colaboradores = await _context.Colaboradores
-                .AsNoTracking()
-                .Include(c => c.EmpresaCliente)
-                .Include(c => c.Endereco)
-                .ToListAsync();
+            var result = await _filters.FiltrarColaboradoresPorContrato(User);
 
-            var result = colaboradores.Select(MapToDto).ToList();
+            if (result.Result != null)
+            {
+                return result.Result;
+            }
 
-            return Ok(result);
+            var colaboradores = result.Value;
+
+            return Ok(colaboradores.Select(MapToDto).ToList());
         }
 
-        // GET api/Aso/5
+        // GET api/Colaborador/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ColaboradorDto>> GetById(int id)
         {
@@ -56,6 +65,26 @@ namespace safeWorkApi.Controller
             {
                 return BadRequest(ModelState);
             }
+
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+            //Obtem o lista de Ids das empresas clientes vinculadas a empresa prestadora pelo contrato
+            List<int> empresasClinetes = await _filters.VerficarEmpresasClientes(idEmpresaPrestadora);
+
+            //Verifica se a empresa prestadora a qual o usuário pertence
+            //possui vinculo com a empresa cliente vinculada ao colaborador
+            if (!empresasClinetes.Contains(model.IdEmpresaCliente))
+                return Unauthorized(new
+                {
+                    message = "Empresa Cliente inválida não possui vinculo com essa Empresa Prestadora."
+                });
 
             var colaborador = new Colaborador
             {
@@ -124,7 +153,7 @@ namespace safeWorkApi.Controller
             return NoContent();
         }
 
-        private static ColaboradorDto MapToDto(Colaborador model)
+        private ColaboradorDto MapToDto(Colaborador model)
         {
             return new ColaboradorDto
             {

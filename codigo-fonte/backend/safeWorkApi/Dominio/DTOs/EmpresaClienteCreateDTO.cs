@@ -28,6 +28,20 @@ namespace safeWorkApi.Dominio.DTOs
 
         public bool Status { get; set; }
         public int? IdEndereco { get; set; }
+
+        //Dado para Criação do Contrato com a emrpesa cliente
+        public string NumeroContrato { get; set; } = string.Empty;
+
+        public string PathFileContrato { get; set; } = string.Empty;
+
+        public decimal ValorContrato { get; set; } = 0;
+
+        public string ObservacoesContrto { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime DataInicioContrto { get; set; }
+        [Required]
+        public DateTime DataFimContrato { get; set; }
     }
 
 }

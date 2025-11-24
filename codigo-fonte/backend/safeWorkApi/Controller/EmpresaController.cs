@@ -63,7 +63,7 @@ namespace safeWorkApi.Controller
 
             // Somente Root pode não ter empresa prestadora
             if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
-                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+                return Unauthorized(new { message = "Empresa prestadora não encontrada." });
 
             if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
                 return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
@@ -119,7 +119,7 @@ namespace safeWorkApi.Controller
 
             // Somente Root pode não ter empresa prestadora
             if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
-                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+                return Unauthorized(new { message = "Empresa prestadora não encontrada." });
 
             if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
                 return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });

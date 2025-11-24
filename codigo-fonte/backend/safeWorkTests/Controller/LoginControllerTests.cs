@@ -166,11 +166,11 @@ namespace safeWorkTests.Controller
             var okResult = Assert.IsType<OkObjectResult>(result);
             var response = Assert.IsType<LoginResponseDto>(okResult.Value);
 
-            Assert.NotNull(response.JwtToken);
-            Assert.NotNull(response.Usuario);
+            Assert.NotNull(response.jwtToken);
+            Assert.NotNull(response.usuario);
 
-            Assert.Equal("uteste@email.com", response.Usuario.Email);
-            Assert.Equal("Usuario Teste", response.Usuario.NomeCompleto);
+            Assert.Equal("uteste@email.com", response.usuario.Email);
+            Assert.Equal("Usuario Teste", response.usuario.NomeCompleto);
 
         }
 

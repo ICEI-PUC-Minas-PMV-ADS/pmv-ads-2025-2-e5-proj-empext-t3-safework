@@ -21,7 +21,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   const menuItems = [
-    { name: 'Dashboard', href: '/dashboard/dashboard', icon: HomeIcon },
+    { name: 'Dashboard', href: '/dashboard/home', icon: HomeIcon },
     { name: 'Usuários', href: '/dashboard/usuarios', icon: UsersIcon },
     { name: 'Colaboradores', href: '/dashboard/colaboradores', icon: UserGroupIcon },
     { name: 'Endereços', href: '/dashboard/enderecos', icon: MapPinIcon },

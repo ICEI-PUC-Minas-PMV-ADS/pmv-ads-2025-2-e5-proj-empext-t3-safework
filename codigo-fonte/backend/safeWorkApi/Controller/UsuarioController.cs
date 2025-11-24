@@ -79,15 +79,32 @@ namespace safeWorkApi.Controller
 
             if (perfil == "Root")
             {
-                //Configuracao para usuario de perfil Root
-                newUsuario = new Usuario
+                if (usuario.IdPerfil == 1)
                 {
-                    NomeCompleto = usuario.NomeCompleto,
-                    Email = usuario.Email,
-                    Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
-                    IdPerfil = usuario.IdPerfil,
-                    IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
-                };
+                    //Configuracao para usuario de perfil Root
+                    newUsuario = new Usuario
+                    {
+                        NomeCompleto = usuario.NomeCompleto,
+                        Email = usuario.Email,
+                        Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                        IdPerfil = usuario.IdPerfil,
+                        IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
+                    };
+                }
+                else
+                {
+                    //Ajustar para receber o IdEmpresaPrestadora espeficio ++
+
+                    newUsuario = new Usuario
+                    {
+                        NomeCompleto = usuario.NomeCompleto,
+                        Email = usuario.Email,
+                        Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                        IdPerfil = usuario.IdPerfil,
+                        IdEmpresaPrestadora = 1
+                    };
+                }
+
             }
             else
             {

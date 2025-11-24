@@ -1102,7 +1102,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+    <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/5ac91767-8939-4b9b-9dfa-4f3db92fe73b"/></td>
   </tr>
 </table>
 
@@ -1180,7 +1180,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+    <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/44a33696-09fd-4f76-8407-8898f93e2ea0"/></td>
   </tr>
 </table>
 
@@ -1206,7 +1206,7 @@ Cada funcionalidade desenvolvida deve ser testada pelo próprio desenvolvedor, u
     <td colspan="6" align="center"><strong>Evidência</strong></td>
   </tr>
   <tr>
-    <td colspan="6" align="center"><!-- inserir link de imagem/vídeo ou descrição da evidência --></td>
+    <td colspan="6" align="center"><video src="https://github.com/user-attachments/assets/0a59e631-9968-4b48-a90f-f60e1d3104fb"/></td>
   </tr>
 </table>
 

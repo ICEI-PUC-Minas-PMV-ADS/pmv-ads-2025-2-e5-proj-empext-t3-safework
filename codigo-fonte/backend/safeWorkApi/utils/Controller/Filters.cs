@@ -87,6 +87,59 @@ namespace safeWorkApi.utils.Controller
                 return Unauthorized(new { message = "Perfil do usuario nao encontrado." });
         }
 
+        public async Task<ActionResult<List<Aso>>> FiltrarAsosPorContrato(ClaimsPrincipal User)
+        {
+            //Perfil do usuário
+            var perfil = User.FindFirst(ClaimTypes.Role)?.Value;
+            //Validação do Perfil
+            if (string.IsNullOrEmpty(perfil))
+                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
+
+            if (perfil == "Root")
+            {
+                // Se ROOT retorna todos os colaboradores
+                var asos = await _context.Asos
+                .AsNoTracking()
+                .ToListAsync();
+
+                return asos;
+            }
+
+            //Recupera IdEmpresaPrestadora
+            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+            // Somente Root pode não ter empresa prestadora
+            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+            //Obtem o lista de Ids das empresas clientes vinculadas a empresa prestadora pelo contrato
+            List<int> empresasClinetes = await VerficarEmpresasClientes(idEmpresaPrestadora);
+
+            // Verifica se nao existe um contrato que vincule
+            if (empresasClinetes.Count == 0)
+                return NotFound(new { message = "Nenhum contrato encontrado para esta Empresa Prestadora." });
+
+            //Perfis permitidos para retorno
+            if (string.Equals(perfil, "Administrador")
+                || string.Equals(perfil, "Colaborador"))
+            {
+                var asosRelacionadas = await _context.Asos
+                .AsNoTracking()
+                .Where(a => empresasClinetes.Contains(a.IdColaborador))
+                .ToListAsync();
+
+                if (asosRelacionadas.Count == 0)
+                    return new List<Aso>();
+
+                return asosRelacionadas;
+            }
+            else
+                return Unauthorized(new { message = "Perfil do usuario nao encontrado." });
+        }
+
         public async Task<ActionResult<List<EmpresaCliente>>> FiltrarEmpresasPorContrato(ClaimsPrincipal User)
         {
             //Perfil do usuário

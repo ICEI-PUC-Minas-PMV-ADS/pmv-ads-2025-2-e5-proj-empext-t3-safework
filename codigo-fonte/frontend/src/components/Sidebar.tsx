@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { 
-  HomeIcon, 
-  UsersIcon, 
-  UserGroupIcon, 
+import {
+  HomeIcon,
+  UsersIcon,
+  UserGroupIcon,
   MapPinIcon,
   BuildingOfficeIcon,
   Bars3Icon,
@@ -21,7 +21,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   const menuItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+    { name: 'Dashboard', href: '/dashboard/home', icon: HomeIcon },
     { name: 'Usuários', href: '/dashboard/usuarios', icon: UsersIcon },
     { name: 'Colaboradores', href: '/dashboard/colaboradores', icon: UserGroupIcon },
     { name: 'Endereços', href: '/dashboard/enderecos', icon: MapPinIcon },
@@ -48,7 +48,7 @@ export function Sidebar() {
       </div>
 
       {isOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={() => setIsOpen(false)}
         />
@@ -94,8 +94,8 @@ export function Sidebar() {
                   onClick={() => setIsOpen(false)}
                   className={`
                     flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
-                    ${isActive 
-                      ? 'bg-gray-800 text-white' 
+                    ${isActive
+                      ? 'bg-gray-800 text-white'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                     }
                   `}

@@ -79,45 +79,65 @@ namespace safeWorkApi.Controller
 
             if (perfil == "Root")
             {
-                //Configuracao para usuario de perfil Root
-                newUsuario = new Usuario
+                if (usuario.IdPerfil == 1)
                 {
-                    NomeCompleto = usuario.NomeCompleto,
-                    Email = usuario.Email,
-                    Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
-                    IdPerfil = usuario.IdPerfil,
-                    IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
-                };
-            }
-
-            var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
-
-            // Somente Root pode não ter empresa prestadora
-            if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
-                return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
-
-            if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
-                return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
-
-            if (!(idEmpresaPrestadora == usuario.IdEmpresaPrestadora))
-                return Unauthorized(new { message = "Não é possível criar um usuário para outra empresa." });
-
-            //Perfis permitidos para criação de usuario para mesma empresa prestadora
-            if (string.Equals(perfil, "Administrador")
-                || string.Equals(perfil, "Colaborador"))
-            {
-                //Configuracao para usuario de perfil convencional
-                newUsuario = new Usuario
+                    //Configuracao para usuario de perfil Root
+                    newUsuario = new Usuario
+                    {
+                        NomeCompleto = usuario.NomeCompleto,
+                        Email = usuario.Email,
+                        Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                        IdPerfil = usuario.IdPerfil,
+                        IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
+                    };
+                }
+                else
                 {
-                    NomeCompleto = usuario.NomeCompleto,
-                    Email = usuario.Email,
-                    Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
-                    IdPerfil = usuario.IdPerfil,
-                    IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
-                };
+                    //Ajustar para receber o IdEmpresaPrestadora espeficio ++
+
+                    newUsuario = new Usuario
+                    {
+                        NomeCompleto = usuario.NomeCompleto,
+                        Email = usuario.Email,
+                        Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                        IdPerfil = usuario.IdPerfil,
+                        IdEmpresaPrestadora = 1
+                    };
+                }
+
             }
             else
-                return Unauthorized(new { message = "Perfil do usuário não encontrado." });
+            {
+                var idEmpresaPrestadoraString = User.FindFirst("IdEmpresaPrestadora")?.Value;
+
+                // Somente Root pode não ter empresa prestadora
+                if (string.IsNullOrEmpty(idEmpresaPrestadoraString))
+                    return Unauthorized(new { message = "Empresa Prestadora nao encontrada." });
+
+                if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
+                    return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
+
+                if (!(idEmpresaPrestadora == usuario.IdEmpresaPrestadora))
+                    return Unauthorized(new { message = "Não é possível criar um usuário para outra empresa." });
+
+                //Perfis permitidos para criação de usuario para mesma empresa prestadora
+                if (string.Equals(perfil, "Administrador")
+                    || string.Equals(perfil, "Colaborador"))
+                {
+                    //Configuracao para usuario de perfil convencional
+                    newUsuario = new Usuario
+                    {
+                        NomeCompleto = usuario.NomeCompleto,
+                        Email = usuario.Email,
+                        Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
+                        IdPerfil = usuario.IdPerfil,
+                        IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
+                    };
+                }
+                else
+                    return Unauthorized(new { message = "Perfil do usuário não encontrado." });
+            }
+
             try
             {
                 _context.Usuarios.Add(newUsuario);

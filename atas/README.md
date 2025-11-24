@@ -9,3 +9,6 @@
 # Ata 03 - Reunião de 17 de Setembro de 2025.
 [📄 Abrir Print da Reunião com Cliente](./Etapa2/ReunicaoComCliente02.jpeg)
 [📄 Comprovanete Implementção dos Testes](./Etapa2/ComprovanteTesteDeLogin.png)
+
+# Ata 04 - Reunião de 20 de Novembro de 2025.
+[📄 Abrir Print da Reunião com Cliente](./documentos/img/Print4°etapa.jpeg)

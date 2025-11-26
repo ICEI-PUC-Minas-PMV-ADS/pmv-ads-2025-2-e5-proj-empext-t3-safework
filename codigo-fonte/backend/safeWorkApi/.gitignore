@@ -75,8 +75,10 @@ secrets.json
 # AppSettings locais (não compartilhar)
 appsettings.Local.json
 appsettings.*.local.json
+appsettings.*.local.json
 # (opcional) se você preferir NÃO versionar dev:
 appsettings.Development.json
+appsettings.*.json
 appsettings.json
 
 # ─────────────────────────────────────────────

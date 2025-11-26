@@ -13,7 +13,7 @@ builder.Services.AddScoped<Filters>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// builder.Services.AddEndpointsApiExplorer(); => so funciona no dotnet9
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -22,9 +22,12 @@ builder.Services.AddControllers()
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<TempDataService>();
 
-//Implement database connection using default connection string
+//Implement database connection using appsettings in dev or .env in release
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? Environment.GetEnvironmentVariable("DB_CONNECTION");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseNpgsql(connectionString)
 );
 
 builder.Services.AddAuthentication(options =>
@@ -55,7 +58,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(
+                "https://safework-njzx.onrender.com",
+                "http://localhost:3000"
+            )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -65,17 +71,26 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (dbContext.Database.CanConnect())
+    try
     {
-        Console.WriteLine("✅ Banco de dados conectado com sucesso!");
-    }
-    else
-    {
-        Console.WriteLine("❌ Falha ao conectar ao banco de dados!");
-    }
-    dbContext.Database.Migrate();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
+        if (dbContext.Database.CanConnect())
+        {
+            Console.WriteLine("✅ Banco de dados conectado com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("❌ Falha ao conectar ao banco de dados!");
+        }
+
+        // dbContext.Database.Migrate();  // NÃO usar em SmarterASP
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("❌ Erro ao testar conexão com o banco:");
+        Console.WriteLine(ex.Message);
+    }
 }
 
 

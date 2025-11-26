@@ -1,7 +1,7 @@
 import { Empresa, EmpresaFormData } from '@/types/empresas'
 import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5219/api'
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || 'http://localhost:5219/api'
 
 
 class ApiEmpresa {

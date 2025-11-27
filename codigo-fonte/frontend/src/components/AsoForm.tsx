@@ -146,11 +146,29 @@ export default function AsoForm({ aso, colaboradores, onSave, onCancel }: AsoFor
 
     if (!validate()) return
 
-    onSave({
-      ...formData,
+    // Prepara os dados garantindo formato correto das datas
+    const dataToSend: AsoFormValues = {
+      tipoAso: formData.tipoAso,
+      status: formData.status,
+      idColaborador: formData.idColaborador,
+
+      // Converte as datas para ISO 8601 completo
+      dataSolicitacao: formData.dataSolicitacao
+        ? new Date(formData.dataSolicitacao + 'T00:00:00').toISOString()
+        : '',
+
+      dataValidade: formData.dataValidade
+        ? new Date(formData.dataValidade + 'T23:59:59').toISOString()
+        : '',
+
+      // Campos opcionais
       pathFile: formData.pathFile?.trim() || undefined,
       observacoes: formData.observacoes?.trim() || undefined
-    })
+    }
+
+    console.log('Dados ASO sendo enviados:', dataToSend) // Para debug
+
+    onSave(dataToSend)
   }
 
   return (
@@ -183,9 +201,8 @@ export default function AsoForm({ aso, colaboradores, onSave, onCancel }: AsoFor
                 name="idColaborador"
                 value={formData.idColaborador}
                 onChange={handleChange}
-                className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                  errors.idColaborador ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${errors.idColaborador ? 'border-red-500' : 'border-gray-300'
+                  }`}
               >
                 <option value={0}>Selecione um colaborador</option>
                 {colaboradores.map(colaborador => (
@@ -258,9 +275,8 @@ export default function AsoForm({ aso, colaboradores, onSave, onCancel }: AsoFor
                   name="dataSolicitacao"
                   value={formData.dataSolicitacao}
                   onChange={handleChange}
-                  className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                    errors.dataSolicitacao ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${errors.dataSolicitacao ? 'border-red-500' : 'border-gray-300'
+                    }`}
                 />
                 {errors.dataSolicitacao && (
                   <p className="mt-1 text-sm text-red-600">{errors.dataSolicitacao}</p>
@@ -280,9 +296,8 @@ export default function AsoForm({ aso, colaboradores, onSave, onCancel }: AsoFor
                   name="dataValidade"
                   value={formData.dataValidade}
                   onChange={handleChange}
-                  className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                    errors.dataValidade ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full rounded-md border px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${errors.dataValidade ? 'border-red-500' : 'border-gray-300'
+                    }`}
                 />
                 {errors.dataValidade && (
                   <p className="mt-1 text-sm text-red-600">{errors.dataValidade}</p>
@@ -290,7 +305,7 @@ export default function AsoForm({ aso, colaboradores, onSave, onCancel }: AsoFor
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <label
                 htmlFor="pathFile"
                 className="mb-2 block text-sm font-medium text-gray-900"
@@ -306,7 +321,7 @@ export default function AsoForm({ aso, colaboradores, onSave, onCancel }: AsoFor
                 placeholder="Opcional"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
-            </div>
+            </div> */}
 
             <div>
               <label

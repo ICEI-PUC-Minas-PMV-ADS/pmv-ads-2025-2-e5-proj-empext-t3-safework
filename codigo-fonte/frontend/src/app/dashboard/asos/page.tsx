@@ -180,7 +180,6 @@ export default function AsosPage() {
     try {
       setState('saving')
       setErrorMessage(null)
-
       await deleteAso(aso.id)
       setAsos(prev => prev.filter(item => item.id !== aso.id))
     } catch (error) {

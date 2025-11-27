@@ -10,10 +10,16 @@ import {
   BuildingOfficeIcon,
   Bars3Icon,
   XMarkIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  FolderPlusIcon,
+  DocumentPlusIcon
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { DocumentTextIcon } from '@heroicons/react/24/solid'
+import { SwatchIcon } from '@heroicons/react/24/solid'
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -24,8 +30,10 @@ export function Sidebar() {
     { name: 'Dashboard', href: '/dashboard/home', icon: HomeIcon },
     { name: 'Usuários', href: '/dashboard/usuarios', icon: UsersIcon },
     { name: 'Colaboradores', href: '/dashboard/colaboradores', icon: UserGroupIcon },
-    { name: 'Endereços', href: '/dashboard/enderecos', icon: MapPinIcon },
+    { name: 'Asos', href: '/dashboard/asos', icon: DocumentPlusIcon },
     { name: 'Empresas', href: '/dashboard/empresas', icon: BuildingOfficeIcon },
+    { name: 'Contratos', href: '/dashboard/contratos', icon: DocumentTextIcon },
+    { name: 'Endereços', href: '/dashboard/enderecos', icon: MapPinIcon },
   ]
 
   const handleLogout = () => {

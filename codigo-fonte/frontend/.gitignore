@@ -9,6 +9,8 @@
 # testing
 /coverage
 
+makefile
+
 # next.js
 /.next/
 /out/

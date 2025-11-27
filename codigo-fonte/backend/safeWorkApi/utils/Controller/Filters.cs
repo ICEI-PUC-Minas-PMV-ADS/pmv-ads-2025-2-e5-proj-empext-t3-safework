@@ -76,6 +76,7 @@ namespace safeWorkApi.utils.Controller
                 var colaboradoresFiltrados = await _context.Colaboradores
                 .AsNoTracking()
                 .Where(c => empresasClinetes.Contains(c.IdEmpresaCliente))
+                .Include(c => c.EmpresaCliente)
                 .ToListAsync();
 
                 if (colaboradoresFiltrados.Count == 0)
@@ -128,7 +129,7 @@ namespace safeWorkApi.utils.Controller
             {
                 var asosRelacionadas = await _context.Asos
                 .AsNoTracking()
-                .Where(a => empresasClinetes.Contains(a.IdColaborador))
+                .Where(a => empresasClinetes.Contains(a.Colaborador.IdEmpresaCliente))
                 .ToListAsync();
 
                 if (asosRelacionadas.Count == 0)

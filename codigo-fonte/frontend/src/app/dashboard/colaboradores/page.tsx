@@ -350,11 +350,10 @@ export default function ColaboradoresPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
-                          colaborador.status
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${colaborador.status
                             ? 'border-green-200 bg-green-100 text-green-800'
                             : 'border-red-200 bg-red-100 text-red-800'
-                        }`}
+                          }`}
                       >
                         {colaborador.status ? 'Ativo' : 'Inativo'}
                       </span>

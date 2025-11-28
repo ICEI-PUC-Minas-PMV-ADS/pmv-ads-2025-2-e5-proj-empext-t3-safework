@@ -117,9 +117,6 @@ namespace safeWorkApi.Controller
                 if (!int.TryParse(idEmpresaPrestadoraString, out int idEmpresaPrestadora))
                     return Unauthorized(new { message = "IdEmpresaPrestadora inválido no token." });
 
-                if (!(idEmpresaPrestadora == usuario.IdEmpresaPrestadora))
-                    return Unauthorized(new { message = "Não é possível criar um usuário para outra empresa." });
-
                 //Perfis permitidos para criação de usuario para mesma empresa prestadora
                 if (string.Equals(perfil, "Administrador")
                     || string.Equals(perfil, "Colaborador"))
@@ -131,7 +128,7 @@ namespace safeWorkApi.Controller
                         Email = usuario.Email,
                         Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha),
                         IdPerfil = usuario.IdPerfil,
-                        IdEmpresaPrestadora = usuario.IdEmpresaPrestadora
+                        IdEmpresaPrestadora = idEmpresaPrestadora
                     };
                 }
                 else

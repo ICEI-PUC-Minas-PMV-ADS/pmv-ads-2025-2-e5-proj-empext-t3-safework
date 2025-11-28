@@ -144,12 +144,12 @@ namespace safeWorkApi.Controller
             Contrato contrato = new Contrato
             {
                 Numero = model.NumeroContrato,
-                DataInicio = model.DataInicioContrto,
+                DataInicio = model.DataInicioContrato,
                 DataFim = model.DataFimContrato,
                 StatusContrato = StatusContrato.Ativo,
                 PathFile = model.PathFileContrato,
                 Valor = model.ValorContrato,
-                Observacoes = model.ObservacoesContrto,
+                Observacoes = model.ObservacoesContrato,
                 IdEmpresaCliente = empresaCliente.Id,
                 IdEmpresaPrestadora = idEmpresaPrestadora
             };

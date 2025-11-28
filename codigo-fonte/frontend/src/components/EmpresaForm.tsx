@@ -25,7 +25,7 @@ const cpfCnpjMask = {
 export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
 
   const [formData, setFormData] = useState<EmpresaFormData>({
-    tipoPessoa: 'Fisica',
+    tipoPessoa: 'Juridica',
     cpfCnpj: '',
     nomeRazao: '',
     nomeFantasia: '',
@@ -34,12 +34,11 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
     email: '',
     status: true,
     idEndereco: undefined,
-    // Dados do Contrato
     numeroContrato: '',
     pathFileContrato: '',
     valorContrato: 0,
-    observacoesContrto: '',
-    dataInicioContrto: '',
+    observacoesContrato: '',
+    dataInicioContrato: '',
     dataFimContrato: ''
   })
 
@@ -83,9 +82,12 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
         numeroContrato: empresa.numeroContrato ?? '',
         pathFileContrato: empresa.pathFileContrato ?? '',
         valorContrato: empresa.valorContrato ?? 0,
-        observacoesContrto: empresa.observacoesContrto ?? '',
-        dataInicioContrto: empresa.dataInicioContrto ?? '',
-        dataFimContrato: empresa.dataFimContrato ?? ''
+        dataInicioContrato: empresa.dataInicioContrato
+          ? empresa.dataInicioContrato.split('T')[0]
+          : '',
+        dataFimContrato: empresa.dataFimContrato
+          ? empresa.dataFimContrato.split('T')[0]
+          : ''
       })
     }
   }, [empresa])
@@ -206,7 +208,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
       newErrors.email = 'Email deve ter um formato válido'
     }
 
-    if (!formData.dataInicioContrto) {
+    if (!formData.dataInicioContrato) {
       newErrors.dataInicioContrto = 'Data de início do contrato é obrigatória'
     }
 
@@ -214,8 +216,8 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
       newErrors.dataFimContrato = 'Data de fim do contrato é obrigatória'
     }
 
-    if (formData.dataInicioContrto && formData.dataFimContrato) {
-      const dataInicio = new Date(formData.dataInicioContrto)
+    if (formData.dataInicioContrato && formData.dataFimContrato) {
+      const dataInicio = new Date(formData.dataInicioContrato)
       const dataFim = new Date(formData.dataFimContrato)
 
       if (dataFim <= dataInicio) {
@@ -265,25 +267,40 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
         blobUrl = await uploadFileToBlob(selectedFile)
       }
 
-      // Converte as datas para o formato DateTime do C#
-      const dataInicio = formData.dataInicioContrto
-        ? new Date(formData.dataInicioContrto).toISOString()
-        : ''
-
-      const dataFim = formData.dataFimContrato
-        ? new Date(formData.dataFimContrato).toISOString()
-        : ''
-
-      onSave({
-        ...formData,
+      // Prepara os dados para envio
+      const dataToSend: EmpresaFormData = {
+        tipoPessoa: formData.tipoPessoa,
         cpfCnpj: formData.cpfCnpj.replace(/\D/g, ''),
-        pathFileContrato: blobUrl,
-        dataInicioContrto: dataInicio,
-        dataFimContrato: dataFim
-      })
+        nomeRazao: formData.nomeRazao,
+        nomeFantasia: formData.nomeFantasia || undefined,
+        telefone: formData.telefone || undefined,
+        celular: formData.celular || undefined,
+        email: formData.email,
+        status: formData.status,
+        idEndereco: formData.idEndereco || undefined,
+
+        // Dados do contrato
+        numeroContrato: formData.numeroContrato || '',
+        pathFileContrato: blobUrl || '',
+        valorContrato: Number(formData.valorContrato) || 0,
+        observacoesContrato: formData.observacoesContrato || '',
+
+        // Datas no formato ISO 8601 completo
+        dataInicioContrato: formData.dataInicioContrato
+          ? new Date(formData.dataInicioContrato + 'T00:00:00').toISOString()
+          : new Date().toISOString(),
+
+        dataFimContrato: formData.dataFimContrato
+          ? new Date(formData.dataFimContrato + 'T23:59:59').toISOString()
+          : new Date().toISOString()
+      }
+
+      console.log('Dados sendo enviados:', dataToSend) // Para debug
+
+      onSave(dataToSend)
     } catch (error) {
       console.error('Erro ao processar formulário:', error)
-      alert('Erro ao fazer upload do arquivo. Tente novamente.')
+      alert('Erro ao processar o formulário. Tente novamente.')
     }
   }
 
@@ -607,7 +624,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label
                   htmlFor="pathFileContrato"
                   className="block text-sm font-medium text-gray-900 mb-2"
@@ -615,7 +632,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                   Arquivo do Contrato (PDF)
                 </label>
 
-                {/* Área de Drag and Drop */}
+                Área de Drag and Drop 
                 <div
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
@@ -712,7 +729,7 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                 {errors.pathFileContrato && (
                   <p className="mt-1 text-sm text-red-600">{errors.pathFileContrato}</p>
                 )}
-              </div>
+              </div> */}
 
               <div>
                 <label
@@ -736,23 +753,23 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
 
               <div>
                 <label
-                  htmlFor="dataInicioContrto"
+                  htmlFor="dataInicioContrato"
                   className="block text-sm font-medium text-gray-900 mb-2"
                 >
                   Data de Início *
                 </label>
                 <input
                   type="date"
-                  id="dataInicioContrto"
-                  name="dataInicioContrto"
-                  value={formData.dataInicioContrto}
+                  id="dataInicioContrato"
+                  name="dataInicioContrato"
+                  value={formData.dataInicioContrato}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${errors.dataInicioContrto ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${errors.dataInicioContrato ? 'border-red-300' : 'border-gray-300'
                     }`}
                 />
-                {errors.dataInicioContrto && (
-                  <p className="mt-1 text-sm text-red-600">{errors.dataInicioContrto}</p>
+                {errors.dataInicioContrato && (
+                  <p className="mt-1 text-sm text-red-600">{errors.dataInicioContrato}</p>
                 )}
               </div>
 
@@ -780,15 +797,15 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
 
               <div className="md:col-span-2">
                 <label
-                  htmlFor="observacoesContrto"
+                  htmlFor="observacoesContrato"
                   className="block text-sm font-medium text-gray-900 mb-2"
                 >
                   Observações do Contrato
                 </label>
                 <textarea
-                  id="observacoesContrto"
-                  name="observacoesContrto"
-                  value={formData.observacoesContrto}
+                  id="observacoesContrato"
+                  name="observacoesContrato"
+                  value={formData.observacoesContrato}
                   onChange={handleChange}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"

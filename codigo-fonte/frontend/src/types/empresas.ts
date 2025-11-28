@@ -16,8 +16,8 @@ export interface Empresa {
   numeroContrato?: string
   pathFileContrato?: string
   valorContrato?: number
-  observacoesContrto?: string
-  dataInicioContrto?: string
+  observacoesContrato?: string
+  dataInicioContrato?: string
   dataFimContrato?: string
 }
 
@@ -36,7 +36,7 @@ export interface EmpresaFormData {
   numeroContrato?: string
   pathFileContrato?: string
   valorContrato?: number
-  observacoesContrto?: string
-  dataInicioContrto?: string
+  observacoesContrato?: string
+  dataInicioContrato?: string
   dataFimContrato?: string
 }

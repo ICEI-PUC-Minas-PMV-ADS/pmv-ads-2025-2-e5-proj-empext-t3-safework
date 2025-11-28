@@ -8,6 +8,8 @@ out/
 [Ll]og/
 *.log
 
+makefile
+
 # Perf/diagnostics
 *.etl
 *.etl.json

@@ -36,10 +36,10 @@ namespace safeWorkApi.Dominio.DTOs
 
         public decimal ValorContrato { get; set; } = 0;
 
-        public string ObservacoesContrto { get; set; } = string.Empty;
+        public string ObservacoesContrato { get; set; } = string.Empty;
 
         [Required]
-        public DateTime DataInicioContrto { get; set; }
+        public DateTime DataInicioContrato { get; set; }
         [Required]
         public DateTime DataFimContrato { get; set; }
     }

@@ -40,7 +40,6 @@ namespace safeWorkTests.Controller
             SeedDatabase();
         }
 
-        //Criacao dos dados para teste
         private void SeedDatabase()
         {
             var perfil = new Perfil { Id = 1, NomePerfil = "Root" };
@@ -61,7 +60,6 @@ namespace safeWorkTests.Controller
             _context.SaveChanges();
         }
 
-        //Limpa os dados a casa teste
         public void Dispose()
         {
             _context?.Dispose();
@@ -73,6 +71,8 @@ namespace safeWorkTests.Controller
             var tempDataService = new TempDataService(memoryCache);
             return new LoginController(_context, tempDataService);
         }
+
+        #region Login
 
         [Fact]
         public async Task Login_WithNullModel_ReturnsUnauthorized()
@@ -92,19 +92,15 @@ namespace safeWorkTests.Controller
         [Fact]
         public async Task Login_WithEmptyCredentials_ReturnsUnauthorized()
         {
-            //Arrange
             var controller = CreateController();
             var model = new AuthenticateDto { Email = "", Senha = "" };
 
 
-            //Act
             var result = await controller.Login(model);
 
-            //Assert
             var resultUnauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
             Assert.Equal(401, resultUnauthorized.StatusCode);
 
-            //Messsage of Return(Extra)
             var message = GetMessageFromResult(resultUnauthorized);
             Assert.Equal("Email e senha são obrigatórios", message);
 
@@ -113,18 +109,14 @@ namespace safeWorkTests.Controller
         [Fact]
         public async Task Login_WithNonExistentUser_ReturnsUnauthorized()
         {
-            //Arrange
             var controller = CreateController();
             var model = new AuthenticateDto { Email = "inexistente@email.com", Senha = "1234" };
 
-            //Act
             var result = await controller.Login(model);
 
-            //Assert
             var resultUnauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
             Assert.Equal(401, resultUnauthorized.StatusCode);
 
-            //Messsage of Return(Extra)
             var message = GetMessageFromResult(resultUnauthorized);
             Assert.Equal("Email ou senha incorretos", message);
 
@@ -133,18 +125,14 @@ namespace safeWorkTests.Controller
         [Fact]
         public async Task Login_WithWrongPassword_ReturnsUnauthorized()
         {
-            //Arrange
             var controller = CreateController();
             var model = new AuthenticateDto { Email = "uteste@email.com", Senha = "errada" };
 
-            //Act
             var result = await controller.Login(model);
 
-            //Assert
             var resultUnauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
             Assert.Equal(401, resultUnauthorized.StatusCode);
 
-            //Messsage of Return(Extra)
             var message = GetMessageFromResult(resultUnauthorized);
             Assert.Equal("Email ou senha incorretos", message);
 
@@ -153,14 +141,11 @@ namespace safeWorkTests.Controller
         [Fact]
         public async Task Login_WithValidCredentials_ReturnsOkWithToken()
         {
-            //Arrange
             var controller = CreateController();
             var model = new AuthenticateDto { Email = "uteste@email.com", Senha = "teste1234" };
 
-            //Act
             var result = await controller.Login(model);
 
-            //Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var response = Assert.IsType<LoginResponseDto>(okResult.Value);
 
@@ -172,27 +157,27 @@ namespace safeWorkTests.Controller
 
         }
 
+        #endregion
+
+        #region GetCurrentUser
+
         [Fact]
         public async Task GetCurrentUser_WithoutAuthentication_ReturnsUnauthorized()
         {
-            // Arrange
             var controller = CreateController();
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
             };
 
-            // Act
             var result = await controller.GetCurrentUser();
 
-            // Assert
             Assert.IsType<UnauthorizedResult>(result);
         }
 
         [Fact]
         public async Task GetCurrentUser_WithValidEmailClaim_ReturnsUser()
         {
-            // Arrange
             var controller = CreateController();
 
             var claims = new List<Claim>
@@ -211,10 +196,8 @@ namespace safeWorkTests.Controller
                 }
             };
 
-            // Act
             var result = await controller.GetCurrentUser();
 
-            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var usuarioDto = Assert.IsType<UsuarioDto>(okResult.Value);
 
@@ -225,7 +208,6 @@ namespace safeWorkTests.Controller
         [Fact]
         public async Task GetCurrentUser_WithNonExistentEmail_ReturnsNotFound()
         {
-            // Arrange
             var controller = CreateController();
 
             var claims = new List<Claim>
@@ -244,17 +226,18 @@ namespace safeWorkTests.Controller
                 }
             };
 
-            // Act
             var result = await controller.GetCurrentUser();
 
-            // Assert
             Assert.IsType<NotFoundResult>(result);
         }
+
+        #endregion
+
+        #region GenerateJwtToken
 
         [Fact]
         public void GenerateJwtToken_WithValidUser_ReturnsValidToken()
         {
-            // Arrange
             var controller = CreateController();
             var usuario = new Usuario
             {
@@ -267,14 +250,11 @@ namespace safeWorkTests.Controller
                 }
             };
 
-            // Use reflection para acessar o método privado
             var methodInfo = typeof(LoginController).GetMethod("GenerateJwtToken",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            // Act
             var token = methodInfo?.Invoke(controller, new object[] { usuario }) as string;
 
-            // Assert
             Assert.NotNull(token);
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -293,8 +273,9 @@ namespace safeWorkTests.Controller
             Assert.Equal("Root", principal.FindFirst(ClaimTypes.Role)?.Value);
         }
 
+        #endregion
 
-        //Metodo auxiliar para extrair mensagem de retorno
+        #region GetMessageFromResult
         private string GetMessageFromResult(UnauthorizedObjectResult result)
         {
             if (result.Value is object valueObject)
@@ -308,6 +289,10 @@ namespace safeWorkTests.Controller
 
             return string.Empty;
         }
+
+        #endregion
+
+        #region RecoverPassword
 
         [Fact]
         public async Task RecoverPassword_WithNullEmail_ReturnsUnauthorized()
@@ -352,6 +337,10 @@ namespace safeWorkTests.Controller
             var message = Assert.IsType<string>(objectResult.Value);
             Assert.Equal("Usuário não cadastrado", message);
         }
+
+        #endregion
+
+        #region ResetPassword
 
         [Fact]
         public async Task ResetPassword_WithNullModel_ReturnsBadRequest()
@@ -445,5 +434,6 @@ namespace safeWorkTests.Controller
             Assert.True(string.IsNullOrEmpty(tempAfter));
         }
 
+        #endregion
     }
 }

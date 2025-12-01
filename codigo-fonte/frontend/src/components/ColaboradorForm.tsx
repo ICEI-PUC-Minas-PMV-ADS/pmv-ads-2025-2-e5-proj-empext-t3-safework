@@ -287,22 +287,24 @@ export function ColaboradorForm({
             )}
           </div>
 
-          <div>
-            <label
-              htmlFor="nomeFantasia"
-              className="mb-2 block text-sm font-medium text-gray-900"
-            >
-              Nome Fantasia
-            </label>
-            <input
-              id="nomeFantasia"
-              name="nomeFantasia"
-              value={formData.nomeFantasia ?? ''}
-              onChange={handleChange}
-              placeholder="Digite o nome fantasia"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
+          {formData.tipoPessoa === 'Juridica' && (
+            <div>
+              <label
+                htmlFor="nomeFantasia"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Nome Fantasia
+              </label>
+              <input
+                id="nomeFantasia"
+                name="nomeFantasia"
+                value={formData.nomeFantasia ?? ''}
+                onChange={handleChange}
+                placeholder="Digite o nome fantasia"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          )}
 
           <div>
             <label

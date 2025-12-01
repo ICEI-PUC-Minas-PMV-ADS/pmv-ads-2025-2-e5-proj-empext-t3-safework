@@ -76,6 +76,14 @@ class ApiClient {
         return response
       },
       (error: AxiosError) => {
+        if (!error.response) {
+          const isLoginRequest = error.config?.url?.includes('/Login') && error.config?.method === 'post'
+          if (isLoginRequest) {
+            throw new Error('Não foi possível conectar ao servidor. Verifique sua conexão com a internet e tente novamente.')
+          }
+          throw new Error('Erro de conexão com o servidor. Verifique sua conexão com a internet.')
+        }
+
         if (error.response?.status === 401) {
           const isLoginRequest = error.config?.url?.includes('/Login') && error.config?.method === 'post'
 

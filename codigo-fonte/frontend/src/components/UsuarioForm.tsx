@@ -28,6 +28,14 @@ export function UsuarioForm({ usuario, onSave, onCancel }: UsuarioFormProps) {
         senha: '',
         idPerfil: usuario.idPerfil
       })
+    } else {
+      setFormData({
+        nomeCompleto: '',
+        email: '',
+        senha: '',
+        idPerfil: 2
+      })
+      setErrors({})
     }
   }, [usuario])
 

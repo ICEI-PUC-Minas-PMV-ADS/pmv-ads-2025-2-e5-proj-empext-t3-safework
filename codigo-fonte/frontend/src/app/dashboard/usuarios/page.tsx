@@ -28,6 +28,8 @@ const perfilBadgeColor: Record<number, string> = {
 export default function UsuariosPage() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [perfilFilter, setPerfilFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
   const [showForm, setShowForm] = useState(false)
   const [editingUsuario, setEditingUsuario] = useState<Usuario | null>(null)
   const [state, setState] = useState<RequestState>('idle')
@@ -55,19 +57,26 @@ export default function UsuariosPage() {
   }, [])
 
   const filteredUsuarios = useMemo(() => {
-    if (!searchTerm) {
-      return usuarios
-    }
-
-    const normalized = searchTerm.trim().toLowerCase()
-
     return usuarios.filter(usuario => {
-      return (
-        usuario.nomeCompleto.toLowerCase().includes(normalized) ||
-        usuario.email.toLowerCase().includes(normalized)
-      )
+      const matchesSearch = !searchTerm || (() => {
+        const normalized = searchTerm.trim().toLowerCase()
+        return (
+          usuario.nomeCompleto.toLowerCase().includes(normalized) ||
+          usuario.email.toLowerCase().includes(normalized)
+        )
+      })()
+
+      const matchesPerfil = perfilFilter === 'all' || 
+        (perfilFilter === 'administrador' && usuario.idPerfil === 2) ||
+        (perfilFilter === 'usuario' && usuario.idPerfil === 3) ||
+        (perfilFilter === 'root' && usuario.idPerfil === 1)
+
+
+      const matchesStatus = statusFilter === 'all' || statusFilter === 'ativo'
+
+      return matchesSearch && matchesPerfil && matchesStatus
     })
-  }, [usuarios, searchTerm])
+  }, [usuarios, searchTerm, perfilFilter, statusFilter])
 
   const totalUsuarios = usuarios.length
   const administradores = usuarios.filter(
@@ -79,6 +88,7 @@ export default function UsuariosPage() {
 
   const handleAddUsuario = () => {
     setEditingUsuario(null)
+    setErrorMessage(null)
     setShowForm(true)
   }
 
@@ -115,11 +125,18 @@ export default function UsuariosPage() {
       }
 
       handleCancelForm()
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Não foi possível salvar o usuário.'
+    } catch (error: any) {
+      let message = 'Não foi possível salvar o usuário.'
+      
+      if (error?.message) {
+        message = error.message
+        if (message.includes('500') || message.includes('Erro na criacao do usuario')) {
+          message = 'Este e-mail já está cadastrado. Por favor, use outro e-mail.'
+        }
+      } else if (error?.response?.status === 500) {
+        message = 'Este e-mail já está cadastrado ou ocorreu um erro no servidor. Tente novamente.'
+      }
+      
       setErrorMessage(message)
     } finally {
       setState('idle')
@@ -245,6 +262,27 @@ export default function UsuariosPage() {
                 className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+            <select
+              value={perfilFilter}
+              onChange={event => setPerfilFilter(event.target.value)}
+              className="rounded-md border border-gray-300 py-2 px-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="all">Todos os perfis</option>
+              <option value="root">Root</option>
+              <option value="administrador">Administrador</option>
+              <option value="usuario">Usuário</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={event => setStatusFilter(event.target.value)}
+              className="rounded-md border border-gray-300 py-2 px-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="all">Todos os status</option>
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
           </div>
         </div>
       </div>

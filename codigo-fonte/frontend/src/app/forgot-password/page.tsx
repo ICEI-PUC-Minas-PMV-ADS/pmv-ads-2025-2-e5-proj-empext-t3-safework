@@ -33,9 +33,17 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true);
     
-    await apiClient.recoverPassword(email);
-    setIsResolved(true);
-    setIsLoading(false);
+    try {
+      await apiClient.recoverPassword(email);
+      setIsResolved(true);
+      setErrors({});
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Erro ao enviar email de recuperação. Verifique sua conexão e tente novamente.';
+      setErrors({ email: errorMessage });
+      setIsResolved(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,11 +108,6 @@ export default function ForgotPasswordPage() {
                   Email
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                    </svg>
-                  </div>
                   <input
                     id="email"
                     name="email"
@@ -117,7 +120,7 @@ export default function ForgotPasswordPage() {
                         setErrors(prev => ({ ...prev, email: '' }));
                       }
                     }}
-                    className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm text-black placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+                    className={`block w-full px-3 py-2 border rounded-md shadow-sm text-black placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="seu@email.com"

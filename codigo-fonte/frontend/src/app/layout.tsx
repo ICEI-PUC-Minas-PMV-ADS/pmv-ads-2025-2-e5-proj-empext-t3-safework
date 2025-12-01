@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'SafeWork',
   description: 'Aplicação frontend do projeto SafeWork',
+  icons: {
+    icon: '/logoSafeW.jpeg',
+  },
 }
 
 export default function RootLayout({

@@ -447,54 +447,77 @@ export function EmpresaForm({ empresa, onSave, onCancel }: EmpresaFormProps) {
                 )}
               </div>
 
-              <div>
-                <label
-                  htmlFor="nomeRazao"
-                  className="block text-sm font-medium text-gray-900 mb-2"
-                >
-                  {formData.tipoPessoa === 'Fisica'
-                    ? 'Nome Completo'
-                    : 'Razão Social'}{' '}
-                  *
-                </label>
-                <input
-                  type="text"
-                  id="nomeRazao"
-                  name="nomeRazao"
-                  value={formData.nomeRazao}
-                  onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  placeholder={
-                    formData.tipoPessoa === 'Fisica'
-                      ? 'Digite o nome completo'
-                      : 'Digite a razão social'
-                  }
-                />
-                {errors.nomeRazao && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.nomeRazao}
-                  </p>
-                )}
-              </div>
+              {formData.tipoPessoa === 'Juridica' && (
+                <div>
+                  <label
+                    htmlFor="nomeRazao"
+                    className="block text-sm font-medium text-gray-900 mb-2"
+                  >
+                    Razão Social *
+                  </label>
+                  <input
+                    type="text"
+                    id="nomeRazao"
+                    name="nomeRazao"
+                    value={formData.nomeRazao}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                    placeholder="Digite a razão social"
+                  />
+                  {errors.nomeRazao && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.nomeRazao}
+                    </p>
+                  )}
+                </div>
+              )}
 
-              <div>
-                <label
-                  htmlFor="nomeFantasia"
-                  className="block text-sm font-medium text-gray-900 mb-2"
-                >
-                  Nome Fantasia
-                </label>
-                <input
-                  type="text"
-                  id="nomeFantasia"
-                  name="nomeFantasia"
-                  value={formData.nomeFantasia ?? ''}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
-                  placeholder="Digite o nome fantasia"
-                />
-              </div>
+              {formData.tipoPessoa === 'Fisica' && (
+                <div>
+                  <label
+                    htmlFor="nomeRazao"
+                    className="block text-sm font-medium text-gray-900 mb-2"
+                  >
+                    Nome Completo *
+                  </label>
+                  <input
+                    type="text"
+                    id="nomeRazao"
+                    name="nomeRazao"
+                    value={formData.nomeRazao}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600 ${errors.nomeRazao ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                    placeholder="Digite o nome completo"
+                  />
+                  {errors.nomeRazao && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.nomeRazao}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {formData.tipoPessoa === 'Juridica' && (
+                <div>
+                  <label
+                    htmlFor="nomeFantasia"
+                    className="block text-sm font-medium text-gray-900 mb-2"
+                  >
+                    Nome Fantasia
+                  </label>
+                  <input
+                    type="text"
+                    id="nomeFantasia"
+                    name="nomeFantasia"
+                    value={formData.nomeFantasia ?? ''}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-600"
+                    placeholder="Digite o nome fantasia"
+                  />
+                </div>
+              )}
 
               <div>
                 <label

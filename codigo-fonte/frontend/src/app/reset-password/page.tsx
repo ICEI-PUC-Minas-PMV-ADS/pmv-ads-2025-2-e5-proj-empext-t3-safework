@@ -67,7 +67,17 @@ export default function ResetPasswordPage() {
         router.push('/');
       }, 3000);
     } catch (error: any) {
-      setErrors({ general: error.message || 'Erro ao redefinir senha. Verifique os dados e tente novamente.' });
+      let errorMessage = 'Erro ao redefinir senha. Verifique os dados e tente novamente.';
+      
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response?.status === 500) {
+        errorMessage = 'Erro no servidor ao redefinir senha. Tente novamente mais tarde.';
+      } else if (!error?.response) {
+        errorMessage = 'Erro de conexão com o servidor. Verifique sua conexão e tente novamente.';
+      }
+      
+      setErrors({ general: errorMessage });
     } finally {
       setIsLoading(false);
     }

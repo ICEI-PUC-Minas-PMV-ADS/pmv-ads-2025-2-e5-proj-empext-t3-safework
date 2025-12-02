@@ -46,6 +46,8 @@ namespace safeWorkTests.Controller
             };
         }
 
+        #region Delete
+
         [Fact]
         public async Task Delete_WithNonExistingId_ReturnsNotFound()
         {
@@ -82,6 +84,10 @@ namespace safeWorkTests.Controller
             var deleted = await _context.EmpresasClientes.FindAsync(empresa.Id);
             Assert.Null(deleted);
         }
+
+        #endregion
+
+        #region GetById
 
         [Fact]
         public async Task GetById_WithoutIdEmpresaPrestadoraClaim_ReturnsUnauthorized()
@@ -199,6 +205,10 @@ namespace safeWorkTests.Controller
             Assert.Equal("Empresa Cliente Teste", dto.NomeRazao);
             Assert.Equal("cliente@safework.com", dto.Email);
         }
+
+        #endregion
+
+        #region GetAll
 
         [Fact]
         public async Task GetAll_WithoutRoleClaim_ReturnsUnauthorized()
@@ -360,6 +370,10 @@ namespace safeWorkTests.Controller
             Assert.Equal("vinculada@safework.com", dto.Email);
         }
 
+        #endregion
+
+        #region Create
+
         [Fact]
         public async Task Create_WithInvalidModel_ReturnsBadRequest()
         {
@@ -392,7 +406,7 @@ namespace safeWorkTests.Controller
                 NomeRazao = "Empresa Teste",
                 Email = "empresa@safework.com",
                 Status = true,
-                DataInicioContrto = DateTime.UtcNow.Date,
+                DataInicioContrato = DateTime.UtcNow.Date,
                 DataFimContrato = DateTime.UtcNow.Date.AddYears(1),
                 NumeroContrato = "CTR-001",
                 ValorContrato = 1000m
@@ -426,7 +440,7 @@ namespace safeWorkTests.Controller
                 NomeRazao = "Empresa Teste",
                 Email = "empresa@safework.com",
                 Status = true,
-                DataInicioContrto = DateTime.UtcNow.Date,
+                DataInicioContrato = DateTime.UtcNow.Date,
                 DataFimContrato = DateTime.UtcNow.Date.AddYears(1),
                 NumeroContrato = "CTR-001",
                 ValorContrato = 1000m
@@ -470,8 +484,8 @@ namespace safeWorkTests.Controller
                 NumeroContrato = "CTR-001",
                 PathFileContrato = "contratos/ctr-001.pdf",
                 ValorContrato = 1500m,
-                ObservacoesContrto = "Contrato de teste",
-                DataInicioContrto = dataInicio,
+                ObservacoesContrato = "Contrato de teste",
+                DataInicioContrato = dataInicio,
                 DataFimContrato = dataFim
             };
 
@@ -496,6 +510,10 @@ namespace safeWorkTests.Controller
             Assert.Equal(1, contratoDb.IdEmpresaPrestadora);
             Assert.Equal(1500m, contratoDb.Valor);
         }
+
+        #endregion
+
+        #region Update
 
         [Fact]
         public async Task Update_WithMismatchedId_ReturnsBadRequest()
@@ -611,5 +629,7 @@ namespace safeWorkTests.Controller
         {
             _context?.Dispose();
         }
+
+        #endregion
     }
 }

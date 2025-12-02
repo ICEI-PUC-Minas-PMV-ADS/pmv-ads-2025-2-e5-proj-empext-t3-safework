@@ -53,6 +53,8 @@ namespace safeWorkTests.Controller
             _context?.Dispose();
         }
 
+        #region GetAll
+
         [Fact]
         public async Task GetAll_WithoutRoleClaim_ReturnsUnauthorized()
         {
@@ -357,6 +359,10 @@ namespace safeWorkTests.Controller
             Assert.Equal("Perfil do usuario nao encontrado.", message);
         }
 
+        #endregion
+
+        #region GetById
+
         [Fact]
         public async Task GetById_WithNonExistingId_ReturnsNotFound()
         {
@@ -423,6 +429,10 @@ namespace safeWorkTests.Controller
             Assert.NotNull(dto.Endereco);
             Assert.Equal("Rua Teste", dto.Endereco!.Logradouro);
         }
+
+        #endregion
+
+        #region Create
 
         [Fact]
         public async Task Create_WithInvalidModel_ReturnsBadRequest()
@@ -635,6 +645,10 @@ namespace safeWorkTests.Controller
             Assert.Equal(empresaCliente.Id, colabDb!.IdEmpresaCliente);
         }
 
+        #endregion
+
+        #region Update
+
         [Fact]
         public async Task Update_WithMismatchedId_ReturnsBadRequest()
         {
@@ -727,6 +741,10 @@ namespace safeWorkTests.Controller
             Assert.Equal(20, colabDb.IdEmpresaCliente);
         }
 
+        #endregion
+
+        #region Delete
+
         [Fact]
         public async Task Delete_WithNonExistingId_ReturnsNotFound()
         {
@@ -767,5 +785,7 @@ namespace safeWorkTests.Controller
             var colabDb = await _context.Colaboradores.FindAsync(colaborador.Id);
             Assert.Null(colabDb);
         }
+
+        #endregion
     }
 }
